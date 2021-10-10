@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: com.ra11p0.Main
+Class-Path: com/ra11p0/Main.java
+

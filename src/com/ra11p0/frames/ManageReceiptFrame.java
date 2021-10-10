@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
 import com.ra11p0.structures.ReceiptItem;
+import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -17,8 +20,6 @@ public class ManageReceiptFrame extends JFrame {
     public ManageReceiptFrame(ArrayList<Item> items){
         JComboBox<String> stores = new JComboBox<String>();
         ArrayList<String> storesList = new ArrayList<String>();
-        //*****Sample stores
-        storesList.add("Biedronka");
         //Get stores from all receipts
         String[] receiptFiles = new File("res/receipts/").list();
         for(String file : receiptFiles){
@@ -137,33 +138,20 @@ public class ManageReceiptFrame extends JFrame {
         frame.setVisible(true);
     }
     public ManageReceiptFrame(Receipt receipt, ArrayList<Item> items){
-        //*****
-        Item cocaCola = new Item("Coca-Cola", 0.05F, 5.99F, "Biedronka");
-        Item pepsi = new Item("Pepsi", 0.05F, 2.99F, "Biedronka");
-        Item kinderki = new Item("Kinderki", 0.23F, 8.99F, "Biedronka");
-
-        ReceiptItem cocaColaRec = new ReceiptItem(cocaCola, 5);
-        ReceiptItem pepsiRec = new ReceiptItem(pepsi, 2);
-        ReceiptItem kinderkiRec = new ReceiptItem(kinderki, 5);
-
-        receipt.addItem(cocaColaRec);
-        receipt.addItem(pepsiRec);
-        receipt.addItem(kinderkiRec);
-
-        //*****
         JPanel _receiptView = new JPanel();
-        _receiptView.setBorder(BorderFactory.createLoweredBevelBorder());
         JPanel _management = new JPanel();
-        generateTools(_management, receipt, items);
+        generateTools(_management, _receiptView, receipt, items);
         setLayout(new GridLayout(1, 2));
         setTitle("Receipt manager.");
-        setSize(800, 600);
+        setSize(800, 300);
+        setResizable(false);
         add(_management);
         add(_receiptView);
         setVisible(true);
         generateTable(_receiptView, receipt);
     }
     private void generateTable(JPanel panel, Receipt receipt){
+        panel.setBorder(BorderFactory.createLoweredBevelBorder());
         DefaultTableModel tableModel = new DefaultTableModel();
         tableModel.addColumn("Item");
         tableModel.addColumn("QTY");
@@ -183,8 +171,8 @@ public class ManageReceiptFrame extends JFrame {
         tablePane.setPreferredSize(new Dimension(panel.getWidth(), panel.getHeight()-5));
         panel.add(tablePane);
     }
-    private void generateTools(JPanel panel, Receipt receipt, ArrayList<Item> items){
-        panel.setLayout(new GridLayout(7, 2));
+    private void generateTools(JPanel panel, JPanel tablePanel, Receipt receipt, ArrayList<Item> items){
+        panel.setLayout(new GridLayout(6, 2));
         TextField storeName = new TextField(receipt.get_store());
         storeName.setEditable(false);
         TextField ID = new TextField(receipt.get_ID());
@@ -208,9 +196,9 @@ public class ManageReceiptFrame extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 JFrame addItemFrame = new JFrame("Add item.");
                 addItemFrame.setLayout(new GridLayout(5, 1));
-                addItemFrame.setSize(300, 200);
+                addItemFrame.setSize(350, 200);
                 JComboBox<Item> itemsBox = new JComboBox<Item>();
-                for(Item item : items) if (item.get_store() != receipt.get_store()) itemsBox.addItem(item);
+                for(Item item : items) if (item.get_store().equals(receipt.get_store())) itemsBox.addItem(item);
                 TextField qty = new TextField();
                 Button confirm = new Button("Confirm.");
                 confirm.addMouseListener(new MouseListener() {
@@ -218,6 +206,9 @@ public class ManageReceiptFrame extends JFrame {
                     public void mouseClicked(MouseEvent e) {
                         receipt.addItem(new ReceiptItem((Item)itemsBox.getSelectedItem(), Float.parseFloat(qty.getText())));
                         addItemFrame.setVisible(false);
+                        //setVisible(false);
+                        repaintFrame(panel, tablePanel, receipt, items);
+                        //new ManageReceiptFrame(receipt, items);
                     }
 
                     @Override
@@ -240,12 +231,12 @@ public class ManageReceiptFrame extends JFrame {
 
                     }
                 });
-                Button newItem = new Button("Add new item.");
+                Button newItem = new Button("Create new item.");
                 newItem.addMouseListener(new MouseListener() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         JFrame createNewItemFrame = new JFrame("Create new item.");
-                        createNewItemFrame.setSize(200, 160);
+                        createNewItemFrame.setSize(200, 180);
                         createNewItemFrame.setLayout(new FlowLayout());
                         TextField name = new TextField();
                         name.setPreferredSize(new Dimension(175, 25));
@@ -341,8 +332,134 @@ public class ManageReceiptFrame extends JFrame {
             }
         });
         Button removeItem = new Button("Remove item.");
-        Button editItem = new Button("Edit item.");
+        removeItem.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JFrame removeItemFrame = new JFrame("Remove item.");
+                JComboBox<ReceiptItem> itemsList = new JComboBox<>();
+                for(ReceiptItem receiptItem:receipt.get_items()) itemsList.addItem(receiptItem);
+                Button removeButton = new Button("Remove.");
+                removeButton.addMouseListener(new MouseListener() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        receipt.removeItem((ReceiptItem) itemsList.getSelectedItem());
+                        repaintFrame(panel, tablePanel, receipt, items);
+                        removeItemFrame.setVisible(false);
+                    }
+
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+
+                    }
+
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+
+                    }
+
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+
+                    }
+                });
+                removeItemFrame.setLayout(new GridLayout(3, 1));
+                removeItemFrame.setSize(200, 200);
+                removeItemFrame.add(new Label("Select item to remove: "));
+                removeItemFrame.add(itemsList);
+                removeItemFrame.add(removeButton);
+                removeItemFrame.setVisible(true);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
         Button editDate = new Button("Edit date.");
+        editDate.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JFrame datePickerFrame = new JFrame("Date picker.");
+                UtilDateModel model = new UtilDateModel();
+                JDatePanelImpl datePanel = new JDatePanelImpl(model);
+                JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
+                Button confirm = new Button("Confirm.");
+                confirm.addMouseListener(new MouseListener() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        receipt.setNewId(model.getValue());
+                        datePickerFrame.setVisible(false);
+                        repaintFrame(panel, tablePanel, receipt, items);
+                    }
+
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+
+                    }
+
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+
+                    }
+
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+
+                    }
+                });
+                datePickerFrame.setLayout(new GridLayout(3, 1));
+                datePickerFrame.setSize(200, 200);
+                datePickerFrame.add(new Label("Pick the date: "));
+                datePickerFrame.add(datePicker);
+                datePickerFrame.add(confirm);
+                datePickerFrame.setVisible(true);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
         Button save = new Button("Save.");
         save.addMouseListener(new MouseListener() {
             @Override
@@ -385,8 +502,19 @@ public class ManageReceiptFrame extends JFrame {
         panel.add(total);
         panel.add(addItem);
         panel.add(removeItem);
-        panel.add(editItem);
         panel.add(editDate);
         panel.add(save);
+    }
+    private void repaintFrame(JPanel panel, JPanel tablePanel, Receipt receipt, ArrayList<Item> items){
+        remove(panel);
+        remove(tablePanel);
+        panel = new JPanel();
+        tablePanel = new JPanel();
+        generateTools(panel, tablePanel, receipt, items);
+        setVisible(false);
+        add(panel);
+        add(tablePanel);
+        setVisible(true);
+        generateTable(tablePanel, receipt);
     }
 }
