@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jpackage" build-on-make="true" name="receiptManager">
+  <artifact type="jpackage" name="receiptManager">
     <output-path>$PROJECT_DIR$/out/artifacts/receiptManager</output-path>
     <root id="root">
       <element id="archive" name="receiptManager.jar">

@@ -4,9 +4,6 @@ public class Item {
     private String _name; public String get_name() {
         return _name;
     }
-    private String _ID; public String get_ID() {
-        return _ID;
-    }
     private String _store; public String get_store() {
         return _store;
     }
@@ -24,5 +21,12 @@ public class Item {
     }
     public String toString(){
         return _name + " - " + String.format("%.2f", _price);
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        Item item = (Item) obj;
+        if (item.get_name().equals(this.get_name()) && item.get_price() == this.get_price()) return true;
+        else return false;
     }
 }

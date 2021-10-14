@@ -5,9 +5,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 
 public class HomeFrame extends JFrame {
     public HomeFrame(String title, int width, int height){
+        File file = new File("res");
+        if (!file.exists()) file.mkdir();
+        file = new File("res/receipts");
+        if (!file.exists())file.mkdir();
         GridLayout layout = new GridLayout(3,1);
         setTitle(title);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

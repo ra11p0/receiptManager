@@ -10,34 +10,41 @@ import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 
 public class ManageReceiptFrame extends JFrame {
 
     public ManageReceiptFrame(ArrayList<Item> items){
+        JFrame frame = new JFrame("Select store.");
         JComboBox<String> stores = new JComboBox<String>();
         ArrayList<String> storesList = new ArrayList<String>();
+        //
         //Get stores from all receipts
+        //
         String[] receiptFiles = new File("res/receipts/").list();
         for(String file : receiptFiles){
             Gson gson = new Gson();
             try {
-                Receipt receipt = gson.fromJson(new FileReader("res/receipts/" + file), Receipt.class);
-                if (!storesList.contains(receipt.get_store()))storesList.add(receipt.get_store());
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                if (!file.substring(0, 1).equals(".")) {
+                    Receipt receipt = gson.fromJson(new FileReader("res/receipts/" + file), Receipt.class);
+                    if (!storesList.contains(receipt.get_store())) storesList.add(receipt.get_store());
+                }
+            } catch (Exception e) {
+                new JOptionPane().showMessageDialog(this, e,"Error!", JOptionPane.ERROR_MESSAGE);
             }
         }
-        //
         for(String store : storesList) stores.addItem(store);
         Button confirm = new Button ("Confirm");
+        //
+        //Confirm button
+        //
         confirm.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 new ManageReceiptFrame(new Receipt(stores.getSelectedItem().toString(), new Date(System.currentTimeMillis())), items);
+                frame.setVisible(false);
             }
 
             @Override
@@ -61,6 +68,9 @@ public class ManageReceiptFrame extends JFrame {
             }
         });
         Button addNew = new Button("Add new store.");
+        //
+        //Add new store button
+        //
         addNew.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -128,7 +138,6 @@ public class ManageReceiptFrame extends JFrame {
 
             }
         });
-        JFrame frame = new JFrame("Select store.");
         frame.setSize(300, 150);
         frame.setLayout(new GridLayout(4, 1));
         frame.add(new Label("Select store:"));
@@ -138,6 +147,81 @@ public class ManageReceiptFrame extends JFrame {
         frame.setVisible(true);
     }
     public ManageReceiptFrame(Receipt receipt, ArrayList<Item> items){
+        //
+        //Save or discard changes
+        //
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                if(!receipt._changesMade)return;
+                JFrame youSure = new JFrame("Save changes before exiting?");
+                youSure.setLayout(new GridLayout(1, 2));
+                youSure.setSize(300, 75);
+                Button save = new Button("Save.");
+                save.addMouseListener(new MouseListener() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        try {
+                            receipt.saveReceipt();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        youSure.setVisible(false);
+                    }
+
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+
+                    }
+
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+
+                    }
+
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+
+                    }
+                });
+                Button discard = new Button("Discard");
+                discard.addMouseListener(new MouseListener() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        youSure.setVisible(false);
+                    }
+
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+
+                    }
+
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+
+                    }
+
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+
+                    }
+                });
+                youSure.add(save);
+                youSure.add(discard);
+                youSure.setVisible(true);
+            }
+        });
         JPanel _receiptView = new JPanel();
         JPanel _management = new JPanel();
         generateTools(_management, _receiptView, receipt, items);
@@ -200,15 +284,23 @@ public class ManageReceiptFrame extends JFrame {
                 JComboBox<Item> itemsBox = new JComboBox<Item>();
                 for(Item item : items) if (item.get_store().equals(receipt.get_store())) itemsBox.addItem(item);
                 TextField qty = new TextField();
+                qty.addTextListener(new TextListener() {
+                    @Override
+                    public void textValueChanged(TextEvent e) {
+                        try{
+                            Float.parseFloat(qty.getText());
+                        }catch(Exception ex){
+                            qty.setText("");
+                        }
+                    }
+                });
                 Button confirm = new Button("Confirm.");
                 confirm.addMouseListener(new MouseListener() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         receipt.addItem(new ReceiptItem((Item)itemsBox.getSelectedItem(), Float.parseFloat(qty.getText())));
                         addItemFrame.setVisible(false);
-                        //setVisible(false);
                         repaintFrame(panel, tablePanel, receipt, items);
-                        //new ManageReceiptFrame(receipt, items);
                     }
 
                     @Override
@@ -232,6 +324,9 @@ public class ManageReceiptFrame extends JFrame {
                     }
                 });
                 Button newItem = new Button("Create new item.");
+                //
+                //Add item dialog
+                //
                 newItem.addMouseListener(new MouseListener() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -241,8 +336,28 @@ public class ManageReceiptFrame extends JFrame {
                         TextField name = new TextField();
                         name.setPreferredSize(new Dimension(175, 25));
                         TextField taxRate = new TextField();
+                        taxRate.addTextListener(new TextListener() {
+                            @Override
+                            public void textValueChanged(TextEvent e) {
+                                try{
+                                    Float.parseFloat(taxRate.getText());
+                                }catch(Exception ex){
+                                    taxRate.setText("");
+                                }
+                            }
+                        });
                         taxRate.setPreferredSize(new Dimension(50, 25));
                         TextField cost = new TextField();
+                        cost.addTextListener(new TextListener() {
+                            @Override
+                            public void textValueChanged(TextEvent e) {
+                                try{
+                                    Float.parseFloat(cost.getText());
+                                }catch(Exception ex){
+                                    cost.setText("");
+                                }
+                            }
+                        });
                         cost.setPreferredSize(new Dimension(50, 25));
                         Button confirm = new Button("Confirm.");
                         confirm.addMouseListener(new MouseListener() {
@@ -308,7 +423,6 @@ public class ManageReceiptFrame extends JFrame {
                 addItemFrame.add(newItem);
                 addItemFrame.add(confirm);
                 addItemFrame.setVisible(true);
-
             }
 
             @Override
@@ -466,6 +580,7 @@ public class ManageReceiptFrame extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 try {
                     receipt.saveReceipt();
+                    new JOptionPane().showMessageDialog(panel, receipt.get_ID() + " saved!","Saved!", JOptionPane.INFORMATION_MESSAGE);
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
