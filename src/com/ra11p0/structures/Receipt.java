@@ -12,7 +12,7 @@ public class Receipt {
     private String _ID; public String get_ID() {
         return _ID;
     }
-    private String _store; public String get_store() {
+    private final String _store; public String get_store() {
         return _store;
     }
     private float _paid; public float get_paid() {
@@ -24,7 +24,7 @@ public class Receipt {
     private int _qty; public int get_qty() {
         return _qty;
     }
-    private ArrayList<ReceiptItem> _items = new ArrayList<ReceiptItem>(); public ArrayList<ReceiptItem> get_items() {
+    private final ArrayList<ReceiptItem> _items = new ArrayList<>(); public ArrayList<ReceiptItem> get_items() {
         return _items;
     }
     private Date _date; public Date get_date() {
@@ -49,11 +49,11 @@ public class Receipt {
     }
     public void saveReceipt() throws IOException {
         File oldReceipt = new File("res/receipts/" + _ID + ".json");
-        _ID = _newId;
+        if (_newId != null) _ID = _newId;
         try {
             if (oldReceipt.exists())  oldReceipt.renameTo(new File("res/receipts/" + _ID + ".json"));
         }catch(Exception e){
-            new JOptionPane().showMessageDialog(new JFrame(), e, "Error!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(new JFrame(), e, "Error!", JOptionPane.ERROR_MESSAGE);
         }
         Gson gson = new Gson();
         FileWriter fw = new FileWriter("res/receipts/" + _ID + ".json");
@@ -67,9 +67,6 @@ public class Receipt {
         _totalTax -= 1+ item.get_Item().get_taxRate()/(item.get_Item().get_price() * item.get_qty());
         _qty --;
         _changesMade=true;
-    }
-    public String toString(){
-        return _ID;
     }
     public void setNewId(Date date){
         _changesMade=true;
@@ -91,4 +88,24 @@ public class Receipt {
         if(counter != 0) _newId += "-" + counter;
 
     }
+    public boolean deleteReceipt(){
+        File receiptFile = new File("res/receipts/" + this.get_ID() + ".json");
+        return receiptFile.delete();
+    }
+    public String toString(){
+        return _ID;
+    }
+    public String get_dateString(){
+        String dateString = "";
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+        calendar.setTimeInMillis(_date.getTime());
+        dateString += (calendar.get(Calendar.YEAR)-2000) + "-";
+        if (calendar.get(Calendar.MONTH)+1 < 10) dateString += "0" + calendar.get(Calendar.MONTH)+1 + "-";
+        else dateString += calendar.get(Calendar.MONTH)+1 + "-";
+        if (calendar.get(Calendar.DAY_OF_MONTH) < 10) dateString += "0" + calendar.get(Calendar.DAY_OF_MONTH);
+        else dateString += calendar.get(Calendar.DAY_OF_MONTH);
+        return dateString;
+    }
+
 }

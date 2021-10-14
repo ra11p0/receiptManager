@@ -1,6 +1,7 @@
 package com.ra11p0.frames;
 
-import com.ra11p0.dialogs.CreateOrEditReceiptDialog;
+import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -24,7 +25,7 @@ public class HomeFrame extends JFrame {
         add.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                new CreateOrEditReceiptDialog();
+                ReceiptsManager.showDialog();
             }
 
             @Override
