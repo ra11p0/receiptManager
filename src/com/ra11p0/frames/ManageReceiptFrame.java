@@ -280,7 +280,7 @@ public class ManageReceiptFrame extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 JFrame addItemFrame = new JFrame("Add item.");
                 addItemFrame.setLayout(new GridLayout(5, 1));
-                addItemFrame.setSize(350, 200);
+                addItemFrame.setSize(350, 250);
                 JComboBox<Item> itemsBox = new JComboBox<Item>();
                 for(Item item : items) if (item.get_store().equals(receipt.get_store())) itemsBox.addItem(item);
                 TextField qty = new TextField();
@@ -331,7 +331,7 @@ public class ManageReceiptFrame extends JFrame {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         JFrame createNewItemFrame = new JFrame("Create new item.");
-                        createNewItemFrame.setSize(200, 180);
+                        createNewItemFrame.setSize(200, 200);
                         createNewItemFrame.setLayout(new FlowLayout());
                         TextField name = new TextField();
                         name.setPreferredSize(new Dimension(175, 25));

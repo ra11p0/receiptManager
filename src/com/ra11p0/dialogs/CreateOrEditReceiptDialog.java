@@ -27,7 +27,9 @@ public class CreateOrEditReceiptDialog {
             Gson gson = new Gson();
             try {
                 if (!file.substring(0, 1).equals(".")) {
-                    Receipt receipt = gson.fromJson(new FileReader("res/receipts/" + file), Receipt.class);
+                    FileReader gsonFileReader = new FileReader("res/receipts/" + file);
+                    Receipt receipt = gson.fromJson(gsonFileReader, Receipt.class);
+                    gsonFileReader.close();
                     receipts.add(receipt);
                     for (ReceiptItem item : receipt.get_items())
                         if (!items.contains(item.get_Item())) items.add(item.get_Item());
@@ -40,6 +42,7 @@ public class CreateOrEditReceiptDialog {
         JComboBox<Receipt> receiptSelector = new JComboBox<Receipt>();
         for(Receipt receipt : receipts) receiptSelector.addItem(receipt);
         Button _new = new Button("Create new receipt.");
+        //NEW RECEIPT DIALOG
         _new.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -68,6 +71,7 @@ public class CreateOrEditReceiptDialog {
             }
         });
         Button remove = new Button("Remove selected receipt.");
+        //REMOVE DIALOG
         remove.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -80,9 +84,11 @@ public class CreateOrEditReceiptDialog {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         File receiptFile = new File("res/receipts/" + selectedReceipt.get_ID() + ".json");
-                        receiptSelector.removeItem(selectedReceipt);
-                        receiptFile.delete();
-                        new JOptionPane().showMessageDialog(frame, "Receipt removed!", "Information", JOptionPane.INFORMATION_MESSAGE);
+                        boolean deleteStatus = receiptFile.delete();
+                        if (deleteStatus){
+                            receiptSelector.removeItem(selectedReceipt);
+                            new JOptionPane().showMessageDialog(frame, "Receipt "+ selectedReceipt.get_ID() +" removed!", "Information", JOptionPane.INFORMATION_MESSAGE);}
+                        else new JOptionPane().showMessageDialog(frame, "Receipt "+ selectedReceipt.get_ID() + " could not be removed!", "Information", JOptionPane.ERROR_MESSAGE);
                         youSure.setVisible(false);
                     }
 
@@ -160,6 +166,7 @@ public class CreateOrEditReceiptDialog {
             }
         });
         Button edit = new Button("Modify selected receipt.");
+        //EDIT DIALOG
         edit.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
