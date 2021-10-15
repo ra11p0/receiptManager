@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="updater:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/receiptManager_jar</output-path>
+    <root id="archive" name="updater.jar">
+      <element id="module-output" name="updater" />
+    </root>
+  </artifact>
+</component>

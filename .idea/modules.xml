@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/receiptManager.iml" filepath="$PROJECT_DIR$/receiptManager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/updater/updater.iml" filepath="$PROJECT_DIR$/updater/updater.iml" />
     </modules>
   </component>
 </project>
