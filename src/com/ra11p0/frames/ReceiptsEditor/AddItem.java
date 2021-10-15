@@ -1,15 +1,16 @@
 package com.ra11p0.frames.ReceiptsEditor;
 
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
 import com.ra11p0.structures.ReceiptItem;
-import javafx.scene.control.cell.ComboBoxListCell;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Vector;
+import java.util.Locale;
 
 public class AddItem {
     public static void showDialog(ArrayList<Item> items, Receipt receipt, JPanel panel, JPanel tablePanel, ReceiptEditor receiptEditor){
@@ -29,7 +30,7 @@ public class AddItem {
                 int i = 0;
                 itemsBox.removeAllItems();
                 if (searchBar.getText().length()==0){ for(Item item : itemsAtThisStore) itemsBox.addItem(item); i++;}
-                else for(Item item : itemsAtThisStore) if(item.get_name().contains(searchBar.getText())) {itemsBox.addItem(item); i++;}
+                else for(Item item : itemsAtThisStore) if(item.get_name().toUpperCase(Locale.ROOT).contains(searchBar.getText().toUpperCase(Locale.ROOT))) {itemsBox.addItem(item); i++;}
                 if(i>0) searchBar.setBackground(Color.WHITE);
                 else searchBar.setBackground(Color.RED);
                 itemsBox.setPopupVisible(false);
@@ -103,7 +104,7 @@ public class AddItem {
         newItem.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                newItem(itemsBox, receipt);
+                newItem(itemsBox, receipt, items);
             }
 
             @Override
@@ -136,12 +137,16 @@ public class AddItem {
         addItemFrame.add(confirm);
         addItemFrame.setVisible(true);
     }
-    private static void newItem(JComboBox<Item> itemsBox, Receipt receipt){
+    private static void newItem(JComboBox<Item> itemsBox, Receipt receipt, ArrayList<Item> items){
         JFrame createNewItemFrame = new JFrame("Create new item.");
         createNewItemFrame.setAlwaysOnTop(true);
         createNewItemFrame.setSize(200, 200);
         createNewItemFrame.setLayout(new FlowLayout());
-        TextField name = new TextField();
+        ArrayList<String> namesOfProducts = new ArrayList<>();
+        JComboBox name = new JComboBox();
+        for(Item item : items) namesOfProducts.add(item.get_name());
+        namesOfProducts.stream().distinct();
+        AutoCompleteSupport.install(name, GlazedLists.eventListOf(namesOfProducts.toArray()));
         name.setPreferredSize(new Dimension(175, 25));
         JComboBox<Float> taxRate = new JComboBox<>();
         taxRate.addItem(0.23F);
@@ -162,7 +167,7 @@ public class AddItem {
             @Override
             public void keyPressed(KeyEvent e) {
                 if(e.getKeyCode() == KeyEvent.VK_ENTER){
-                    itemsBox.addItem(new Item(name.getText(), (Float)taxRate.getSelectedItem(), Float.parseFloat(cost.getText()), receipt.get_store()));
+                    itemsBox.addItem(new Item(name.getSelectedItem().toString(), (Float)taxRate.getSelectedItem(), Float.parseFloat(cost.getText()), receipt.get_store()));
                     createNewItemFrame.setVisible(false);
                     createNewItemFrame.dispose();
                     itemsBox.setSelectedIndex(itemsBox.getItemCount()-1);
@@ -175,7 +180,7 @@ public class AddItem {
         confirm.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                itemsBox.addItem(new Item(name.getText(), (Float)taxRate.getSelectedItem(), Float.parseFloat(cost.getText()), receipt.get_store()));
+                itemsBox.addItem(new Item(name.getSelectedItem().toString(), (Float)taxRate.getSelectedItem(), Float.parseFloat(cost.getText()), receipt.get_store()));
                 createNewItemFrame.setVisible(false);
                 createNewItemFrame.dispose();
                 itemsBox.setSelectedIndex(itemsBox.getItemCount()-1);

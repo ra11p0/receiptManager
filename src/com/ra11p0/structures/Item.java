@@ -27,9 +27,14 @@ public class Item {
 
     @Override
     public boolean equals(Object obj){
-        if (obj==null) return false;
-        Item item = (Item) obj;
-        if (item.get_name().toLowerCase(Locale.ROOT).equals(this.get_name().toLowerCase(Locale.ROOT)) && item.get_price() == this.get_price()) return true;
-        else return false;
+        try {
+            if (obj == null) return false;
+            Item item = (Item) obj;
+            if (item.get_name().toLowerCase(Locale.ROOT).equals(this.get_name().toLowerCase(Locale.ROOT)) && item.get_price() == this.get_price())
+                return true;
+            else return false;
+        }catch (Exception ex){
+            return false;
+        }
     }
 }

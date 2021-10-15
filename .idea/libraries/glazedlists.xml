@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="glazedlists" type="repository">
+    <properties maven-id="com.glazedlists:glazedlists:1.11.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/glazedlists/glazedlists/1.11.0/glazedlists-1.11.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -81,10 +81,7 @@ public class Receipt {
         int counter = 0;
         String[] receiptFiles = new File("res/receipts/").list();
         assert receiptFiles != null;
-        for(String file : receiptFiles) {
-            String substring = file.substring(0, file.length() - 5);
-            if (substring.equals(_newId) || substring.equals(_newId + "-" + counter)) counter++;
-        }
+        for(String file : receiptFiles) if (file.contains(_newId)) counter++;
         if(counter != 0) _newId += "-" + counter;
 
     }
