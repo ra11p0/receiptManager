@@ -19,6 +19,7 @@ public class AddNewStore extends JFrame {
                 if(e.getKeyCode() == KeyEvent.VK_ENTER){
                     confirm(storesList, nameOfNewStore, stores);
                     addNewStoreFrame.setVisible(false);
+                    addNewStoreFrame.dispose();
                 }
             }
         });
@@ -29,6 +30,7 @@ public class AddNewStore extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 confirm(storesList, nameOfNewStore, stores);
                 addNewStoreFrame.setVisible(false);
+                addNewStoreFrame.dispose();
             }
 
             @Override
@@ -64,6 +66,7 @@ public class AddNewStore extends JFrame {
             stores.removeAllItems();
             storesList.add(nameOfNewStore.getText());
             for(String store : storesList) stores.addItem(store);
+            stores.setSelectedIndex(stores.getItemCount()-1);
         }
     }
 }

@@ -17,6 +17,7 @@ public class ReceiptEditor extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 saveOnClose(receipt);
+                dispose();
             }
         });
         JPanel _receiptView = new JPanel();
@@ -158,6 +159,7 @@ public class ReceiptEditor extends JFrame {
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
+                ID.setText(receipt.get_ID());
             }
 
             @Override
@@ -222,6 +224,7 @@ public class ReceiptEditor extends JFrame {
                     ex.printStackTrace();
                 }
                 youSure.setVisible(false);
+                youSure.dispose();
             }
 
             @Override
@@ -249,6 +252,7 @@ public class ReceiptEditor extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 youSure.setVisible(false);
+                youSure.dispose();
             }
 
             @Override

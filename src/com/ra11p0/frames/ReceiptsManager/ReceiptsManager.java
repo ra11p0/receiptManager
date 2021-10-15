@@ -30,6 +30,7 @@ public class ReceiptsManager {
             public void mouseClicked(MouseEvent e) {
                 StoreSelector.showDialog(items);
                 frame.setVisible(false);
+                frame.dispose();
             }
 
             @Override
@@ -87,6 +88,7 @@ public class ReceiptsManager {
             public void mouseClicked(MouseEvent e) {
                 new ReceiptEditor((Receipt)receiptSelector.getSelectedItem(), items);
                 frame.setVisible(false);
+                frame.dispose();
             }
 
             @Override
@@ -153,6 +155,7 @@ public class ReceiptsManager {
                     JOptionPane.showMessageDialog(frame, "Receipt "+ selectedReceipt.get_ID() +" removed!", "Information", JOptionPane.INFORMATION_MESSAGE);}
                 else JOptionPane.showMessageDialog(frame, "Receipt "+ selectedReceipt.get_ID() + " could not be removed!", "Information", JOptionPane.ERROR_MESSAGE);
                 youSure.setVisible(false);
+                youSure.dispose();
             }
 
             @Override
@@ -180,6 +183,7 @@ public class ReceiptsManager {
             @Override
             public void mouseClicked(MouseEvent e) {
                 youSure.setVisible(false);
+                youSure.dispose();
             }
 
             @Override

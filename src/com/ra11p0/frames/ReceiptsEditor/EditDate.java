@@ -25,6 +25,7 @@ public class EditDate {
             public void mouseClicked(MouseEvent e) {
                 receipt.setNewId(model.getValue());
                 datePickerFrame.setVisible(false);
+                datePickerFrame.dispose();
                 receiptEditor.repaintFrame(panel, tablePanel, receipt, items);
             }
 

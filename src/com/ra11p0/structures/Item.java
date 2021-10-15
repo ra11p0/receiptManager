@@ -1,5 +1,7 @@
 package com.ra11p0.structures;
 
+import java.util.Locale;
+
 public class Item {
     private String _name; public String get_name() {
         return _name;
@@ -25,8 +27,9 @@ public class Item {
 
     @Override
     public boolean equals(Object obj){
+        if (obj==null) return false;
         Item item = (Item) obj;
-        if (item.get_name().equals(this.get_name()) && item.get_price() == this.get_price()) return true;
+        if (item.get_name().toLowerCase(Locale.ROOT).equals(this.get_name().toLowerCase(Locale.ROOT)) && item.get_price() == this.get_price()) return true;
         else return false;
     }
 }

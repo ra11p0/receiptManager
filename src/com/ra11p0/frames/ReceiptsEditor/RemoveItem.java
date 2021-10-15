@@ -22,6 +22,7 @@ public class RemoveItem {
                 receipt.removeItem((ReceiptItem) itemsList.getSelectedItem());
                 receiptEditor.repaintFrame(panel, tablePanel, receipt, items);
                 removeItemFrame.setVisible(false);
+                removeItemFrame.dispose();
             }
 
             @Override

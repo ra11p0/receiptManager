@@ -12,6 +12,7 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 
 public class StoreSelector{
@@ -19,9 +20,7 @@ public class StoreSelector{
         JFrame frame = new JFrame("Select store.");
         JComboBox<String> stores = new JComboBox<>();
         ArrayList<String> storesList = new ArrayList<>();
-        //
         //Get stores from all receipts
-        //
         String[] receiptFiles = new File("res/receipts/").list();
         for(String file : receiptFiles){
             Gson gson = new Gson();
@@ -38,14 +37,13 @@ public class StoreSelector{
         }
         for(String store : storesList) stores.addItem(store);
         Button confirm = new Button ("Confirm");
-        //
         //Confirm button
-        //
         confirm.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 new ReceiptEditor(new Receipt(stores.getSelectedItem().toString(), new Date(System.currentTimeMillis())), items);
                 frame.setVisible(false);
+                frame.dispose();
             }
 
             @Override
@@ -69,9 +67,7 @@ public class StoreSelector{
             }
         });
         Button addNew = new Button("Add new store.");
-        //
         //Add new store button
-        //
         addNew.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
