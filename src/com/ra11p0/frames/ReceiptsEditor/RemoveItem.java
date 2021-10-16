@@ -1,6 +1,5 @@
 package com.ra11p0.frames.ReceiptsEditor;
 
-import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
 import com.ra11p0.structures.ReceiptItem;
 
@@ -8,10 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
 
 public class RemoveItem {
-    public static void showDialog(ArrayList<Item> items, Receipt receipt, JPanel panel, JPanel tablePanel, ReceiptEditor receiptEditor){
+    public static void showDialog(Receipt receipt, ReceiptEditor receiptEditor){
         JFrame removeItemFrame = new JFrame("Remove item.");
         JComboBox<ReceiptItem> itemsList = new JComboBox<>();
         for(ReceiptItem receiptItem:receipt.get_items()) itemsList.addItem(receiptItem);
@@ -20,7 +18,7 @@ public class RemoveItem {
             @Override
             public void mouseClicked(MouseEvent e) {
                 receipt.removeItem((ReceiptItem) itemsList.getSelectedItem());
-                receiptEditor.repaintFrame(panel, tablePanel, receipt, items);
+                receiptEditor.repaintFrame();
                 removeItemFrame.setVisible(false);
                 removeItemFrame.dispose();
             }

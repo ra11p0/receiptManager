@@ -1,6 +1,5 @@
 package com.ra11p0.frames.ReceiptsEditor;
 
-import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
@@ -10,10 +9,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
 
 public class EditDate {
-    public static void showDialog(ArrayList<Item> items, Receipt receipt, JPanel panel, JPanel tablePanel, ReceiptEditor receiptEditor){
+    public static void showDialog(Receipt receipt, ReceiptEditor receiptEditor){
 
         JFrame datePickerFrame = new JFrame("Date picker.");
         UtilDateModel model = new UtilDateModel();
@@ -26,7 +24,7 @@ public class EditDate {
                 receipt.setNewId(model.getValue());
                 datePickerFrame.setVisible(false);
                 datePickerFrame.dispose();
-                receiptEditor.repaintFrame(panel, tablePanel, receipt, items);
+                receiptEditor.repaintFrame();
             }
 
             @Override

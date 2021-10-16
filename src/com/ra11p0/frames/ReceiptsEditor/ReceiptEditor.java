@@ -11,18 +11,28 @@ import java.io.*;
 import java.util.*;
 
 public class ReceiptEditor extends JFrame {
+
+    private JPanel _receiptView = new JPanel();
+        public JPanel get_receiptView() {return _receiptView;}
+    private JPanel _management = new JPanel();
+        public JPanel get_management() {return _management;}
+    private static Receipt _receipt;
+        public static Receipt get_receipt() {return _receipt;}
+    private static ArrayList<Item> _items;
+        public static ArrayList<Item> get_items() {return _items;}
+
     public ReceiptEditor(Receipt receipt, ArrayList<Item> items){
+        _receipt = receipt;
+        _items = items;
+        generateTools();
         //SAVE ON CLOSE
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                saveOnClose(receipt);
+                saveOnClose();
                 dispose();
             }
         });
-        JPanel _receiptView = new JPanel();
-        JPanel _management = new JPanel();
-        generateTools(_management, _receiptView, receipt, items);
         setLayout(new GridLayout(1, 2));
         setTitle("Receipt manager.");
         setSize(800, 300);
@@ -30,19 +40,31 @@ public class ReceiptEditor extends JFrame {
         add(_management);
         add(_receiptView);
         setVisible(true);
-        generateTable(_receiptView, receipt);
+        generateTable();
     }
-    private void generateTable(JPanel panel, Receipt receipt){
-        panel.setBorder(BorderFactory.createLoweredBevelBorder());
+    public ReceiptEditor(Receipt receipt, ArrayList<Item> items, boolean background){
+            if(!background) {
+                new ReceiptEditor(receipt, items);
+                return;
+            }
+        _receipt = receipt;
+        _items = items;
+        generateTools();
+        _receiptView.setVisible(true);
+        generateTable();
+    }
+    private void generateTable(){
         DefaultTableModel tableModel = new DefaultTableModel();
+        JTable table = new JTable(tableModel);
+        JScrollPane tablePane = new JScrollPane(table);
+        _receiptView.setLayout(new FlowLayout());
+        _receiptView.setBorder(BorderFactory.createLoweredBevelBorder());
         tableModel.addColumn("Item");
         tableModel.addColumn("QTY");
         tableModel.addColumn("Price");
         tableModel.addColumn("Tax");
         tableModel.addColumn("Total");
-        JTable table = new JTable(tableModel);
-        JScrollPane tablePane = new JScrollPane(table);
-        for(ReceiptItem item : receipt.get_items())
+        for(ReceiptItem item : _receipt.get_items())
             tableModel.addRow(new String[] {
                 item.get_Item().get_name(),
                 String.format("%.2f", item.get_qty()),
@@ -50,26 +72,26 @@ public class ReceiptEditor extends JFrame {
                 String.format("%.2f", item.get_Item().get_taxRate()),
                 String.format("%.2f", item.get_Item().get_price() * item.get_qty())
             });
-        tablePane.setPreferredSize(new Dimension(panel.getWidth(), panel.getHeight()-5));
-        panel.add(tablePane);
+        tablePane.setPreferredSize(new Dimension(400, 295));
+        _receiptView.add(tablePane);
     }
-    private void generateTools(JPanel panel, JPanel tablePanel, Receipt receipt, ArrayList<Item> items){
+    private void generateTools(){
         ReceiptEditor currentReceiptEditor = this;
-        panel.setLayout(new GridLayout(6, 2));
-        TextField storeName = new TextField(receipt.get_store());
+        _management.setLayout(new GridLayout(6, 2));
+        TextField storeName = new TextField(_receipt.get_store());
         storeName.setEditable(false);
-        TextField ID = new TextField(receipt.get_ID());
+        TextField ID = new TextField(_receipt.get_ID());
         ID.setEditable(false);
-        TextField date = new TextField(receipt.get_dateString());
+        TextField date = new TextField(_receipt.get_dateString());
         date.setEditable(false);
-        TextField total = new TextField(String.format("%.2f", receipt.get_paid()));
+        TextField total = new TextField(String.format("%.2f", _receipt.get_paid()));
         total.setEditable(false);
         Button addItem = new Button("Add item.");
         //ADD ITEM
         addItem.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                AddItem.showDialog(items, receipt, panel, tablePanel, currentReceiptEditor);
+                AddItem.showDialog(_items, _receipt, currentReceiptEditor);
             }
 
             @Override
@@ -97,7 +119,7 @@ public class ReceiptEditor extends JFrame {
         removeItem.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                RemoveItem.showDialog(items, receipt, panel, tablePanel, currentReceiptEditor);
+                RemoveItem.showDialog(_receipt, currentReceiptEditor);
             }
 
             @Override
@@ -125,7 +147,7 @@ public class ReceiptEditor extends JFrame {
         editDate.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                EditDate.showDialog(items, receipt, panel, tablePanel, currentReceiptEditor);
+                EditDate.showDialog(_receipt, currentReceiptEditor);
             }
 
             @Override
@@ -154,12 +176,12 @@ public class ReceiptEditor extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    receipt.saveReceipt();
-                    JOptionPane.showMessageDialog(panel, receipt.get_ID() + " saved!","Saved!", JOptionPane.INFORMATION_MESSAGE);
+                    _receipt.saveReceipt();
+                    JOptionPane.showMessageDialog(_management, _receipt.get_ID() + " saved!","Saved!", JOptionPane.INFORMATION_MESSAGE);
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
-                ID.setText(receipt.get_ID());
+                ID.setText(_receipt.get_ID());
             }
 
             @Override
@@ -183,34 +205,34 @@ public class ReceiptEditor extends JFrame {
             }
         });
         //*****
-        panel.add(new Label("Store: "));
-        panel.add(storeName);
-        panel.add(new Label("ID: "));
-        panel.add(ID);
-        panel.add(new Label("Date (YY-MM-DD): "));
-        panel.add(date);
-        panel.add(new Label("Total: "));
-        panel.add(total);
-        panel.add(addItem);
-        panel.add(removeItem);
-        panel.add(editDate);
-        panel.add(save);
+        _management.add(new Label("Store: "));
+        _management.add(storeName);
+        _management.add(new Label("ID: "));
+        _management.add(ID);
+        _management.add(new Label("Date (YY-MM-DD): "));
+        _management.add(date);
+        _management.add(new Label("Total: "));
+        _management.add(total);
+        _management.add(addItem);
+        _management.add(removeItem);
+        _management.add(editDate);
+        _management.add(save);
     }
-    public void repaintFrame(JPanel panel, JPanel tablePanel, Receipt receipt, ArrayList<Item> items){
-        remove(panel);
-        remove(tablePanel);
-        panel = new JPanel();
-        tablePanel = new JPanel();
-        generateTools(panel, tablePanel, receipt, items);
+    public void repaintFrame(){
+        remove(_management);
+        remove(_receiptView);
+        _management = new JPanel();
+        _receiptView = new JPanel();
+        generateTools();
         setVisible(false);
-        add(panel);
-        add(tablePanel);
+        add(_management);
+        add(_receiptView);
         setVisible(true);
-        generateTable(tablePanel, receipt);
+        generateTable();
     }
-    public static void saveOnClose(Receipt receipt){
+    private static void saveOnClose(){
 
-        if(!receipt._changesMade)return;
+        if(!_receipt._changesMade)return;
         JFrame youSure = new JFrame("Save changes before exiting?");
         youSure.setLayout(new GridLayout(1, 2));
         youSure.setSize(300, 75);
@@ -219,7 +241,7 @@ public class ReceiptEditor extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    receipt.saveReceipt();
+                    _receipt.saveReceipt();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }

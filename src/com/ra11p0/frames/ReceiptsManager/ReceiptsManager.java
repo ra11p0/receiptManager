@@ -15,15 +15,21 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class ReceiptsManager {
+
+    private static JFrame frame;
+    private final static ArrayList<Receipt> receipts = new ArrayList<>();
+    private final static ArrayList<Item> items = new ArrayList<>();
+
+
     public static void showDialog(){
-        ArrayList<Receipt> receipts = new ArrayList<>();
-        ArrayList<Item> items = new ArrayList<>();
-        JFrame frame = new JFrame("Select or create new receipt.");
-        //GET ITEMS
-        getItems(receipts, items, frame);
+        frame = new JFrame("Select or create new receipt.");
         JComboBox<Receipt> receiptSelector = new JComboBox<>();
-        for(Receipt receipt : receipts) receiptSelector.addItem(receipt);
         Button _new = new Button("Create new receipt.");
+        Button remove = new Button("Remove selected receipt.");
+        Button edit = new Button("Modify selected receipt.");
+        //GET ITEMS AND RECEIPTS
+        getItemsAndReceipts();
+        for(Receipt receipt : receipts) receiptSelector.addItem(receipt);
         //STORE SELECTOR DIALOG
         _new.addMouseListener(new MouseListener() {
             @Override
@@ -53,12 +59,11 @@ public class ReceiptsManager {
 
             }
         });
-        Button remove = new Button("Remove selected receipt.");
         //REMOVE RECEIPT DIALOG
         remove.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                removeReceipt(receiptSelector, frame);
+                removeReceipt(receiptSelector);
             }
 
             @Override
@@ -81,7 +86,6 @@ public class ReceiptsManager {
 
             }
         });
-        Button edit = new Button("Modify selected receipt.");
         //EDIT RECEIPT DIALOG
         edit.addMouseListener(new MouseListener() {
             @Override
@@ -121,8 +125,11 @@ public class ReceiptsManager {
         frame.add(_new);
         frame.setVisible(true);
     }
-    private static void getItems(ArrayList<Receipt> receipts, ArrayList<Item> items, JFrame frame){
+    private static void getItemsAndReceipts(){
+        items.clear();
+        receipts.clear();
         String[] receiptFiles = new File("res/receipts/").list();
+        assert receiptFiles != null;
         for(String file : receiptFiles){
             Gson gson = new Gson();
             try {
@@ -140,11 +147,12 @@ public class ReceiptsManager {
         }
         items.sort(Comparator.comparing(Item::get_name));
     }
-    private static void removeReceipt(JComboBox<Receipt> receiptSelector, JFrame frame){
+    private static void removeReceipt(JComboBox<Receipt> receiptSelector){
         Receipt selectedReceipt = (Receipt)receiptSelector.getSelectedItem();
         JFrame youSure = new JFrame("Are you sure?");
         youSure.setLayout(new GridLayout(1, 2));
         youSure.setSize(375, 75);
+        assert selectedReceipt != null;
         Button imSure = new Button("Remove " +  selectedReceipt.get_ID() + ".");
         imSure.addMouseListener(new MouseListener() {
             @Override
@@ -209,5 +217,15 @@ public class ReceiptsManager {
         youSure.add(imSure);
         youSure.add(notSure);
         youSure.setVisible(true);
+    }
+    public static ArrayList<Receipt> getReceipts() {
+        items.clear();
+        getItemsAndReceipts();
+        return receipts;
+    }
+    public static ArrayList<Item> getItems() {
+        items.clear();
+        getItemsAndReceipts();
+        return items;
     }
 }
