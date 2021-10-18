@@ -14,5 +14,6 @@ public class EditorPanel extends JPanel {
         setLayout(new GridLayout(1, 2));
         add(editor.get_management());
         add(editor.get_receiptView());
+        setVisible(true);
     }
 }

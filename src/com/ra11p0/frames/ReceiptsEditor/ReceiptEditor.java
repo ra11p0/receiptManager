@@ -30,7 +30,6 @@ public class ReceiptEditor extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 saveOnClose();
-                dispose();
             }
         });
         setLayout(new GridLayout(1, 2));
@@ -230,9 +229,12 @@ public class ReceiptEditor extends JFrame {
         setVisible(true);
         generateTable();
     }
-    private static void saveOnClose(){
+    private void saveOnClose(){
 
-        if(!_receipt._changesMade)return;
+        if(!_receipt._changesMade) {
+            dispose();
+            return;
+        }
         JFrame youSure = new JFrame("Save changes before exiting?");
         youSure.setLayout(new GridLayout(1, 2));
         youSure.setSize(300, 75);
@@ -247,6 +249,7 @@ public class ReceiptEditor extends JFrame {
                 }
                 youSure.setVisible(false);
                 youSure.dispose();
+                dispose();
             }
 
             @Override
@@ -275,6 +278,7 @@ public class ReceiptEditor extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 youSure.setVisible(false);
                 youSure.dispose();
+                dispose();
             }
 
             @Override

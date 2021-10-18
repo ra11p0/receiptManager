@@ -1,6 +1,5 @@
 package com.ra11p0.frames.ReceiptsManager;
 
-import com.google.gson.Gson;
 import com.ra11p0.frames.ReceiptsEditor.ReceiptEditor;
 import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
@@ -9,41 +8,32 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.FileReader;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Objects;
 
 public class StoreSelector{
-    public static void showDialog(ArrayList<Item> items){
+    private static JFrame editorFrame = new JFrame();
+    public static JFrame showDialog(ArrayList<Item> items){
+        editorFrame = new JFrame();
         JFrame frame = new JFrame("Select store.");
         JComboBox<String> stores = new JComboBox<>();
         ArrayList<String> storesList = new ArrayList<>();
         Button addNew = new Button("Add new store.");
         Button confirm = new Button ("Confirm");
         //Get stores from all receipts
-        String[] receiptFiles = new File("res/receipts/").list();
-        assert receiptFiles != null;
-        for(String file : receiptFiles){
-            Gson gson = new Gson();
-            try {
-                if (file.charAt(0) != '.') {
-                    FileReader gsonFileReader = new FileReader("res/receipts/" + file);
-                    Receipt receipt = gson.fromJson(gsonFileReader, Receipt.class);
-                    gsonFileReader.close();
-                    if (!storesList.contains(receipt.get_store())) storesList.add(receipt.get_store());
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(frame, e,"Error!", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        for(Receipt receipt : ReceiptsManager.getReceipts()) if (!storesList.contains(receipt.get_store())) storesList.add(receipt.get_store());
+        storesList.sort(Comparator.naturalOrder());
         for(String store : storesList) stores.addItem(store);
         //Confirm button
         confirm.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                new ReceiptEditor(new Receipt(Objects.requireNonNull(stores.getSelectedItem()).toString(), new Date(System.currentTimeMillis())), items);
+                WindowListener editorFrameListener = editorFrame.getWindowListeners()[0];
+                editorFrame = new ReceiptEditor(new Receipt(Objects.requireNonNull(stores.getSelectedItem()).toString(), new Date(System.currentTimeMillis())), items);
+                editorFrame.addWindowListener(editorFrameListener);
                 frame.setVisible(false);
                 frame.dispose();
             }
@@ -102,5 +92,6 @@ public class StoreSelector{
         frame.add(addNew);
         frame.add(confirm);
         frame.setVisible(true);
+        return editorFrame;
     }
 }
