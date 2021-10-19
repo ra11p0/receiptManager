@@ -1,6 +1,7 @@
 package com.ra11p0.structures;
 
 import com.google.gson.Gson;
+import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 
 import javax.swing.*;
 import java.io.File;
@@ -78,11 +79,11 @@ public class Receipt {
                 "-" + (calendar.get(Calendar.YEAR)-2000) +
                 "-" + (calendar.get(Calendar.MONTH)+1) + "-" +
                 calendar.get(Calendar.DAY_OF_MONTH);
-        int counter = 0;
-        String[] receiptFiles = new File("res/receipts/").list();
-        assert receiptFiles != null;
-        for(String file : receiptFiles) if (file.contains(_newId)) counter++;
-        if(counter != 0) _newId += "-" + counter;
+        int counter = 1;
+        ArrayList<String> idsOfExisting = new ArrayList<>();
+        for(Receipt receipt : ReceiptsManager.getReceipts()) idsOfExisting.add(receipt.get_ID());
+        while(idsOfExisting.contains(_newId + "-" + counter)) counter++;
+        _newId += "-" + counter;
 
     }
     public boolean deleteReceipt(){
@@ -104,5 +105,4 @@ public class Receipt {
         else dateString += calendar.get(Calendar.DAY_OF_MONTH);
         return dateString;
     }
-
 }

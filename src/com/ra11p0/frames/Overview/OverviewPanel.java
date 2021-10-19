@@ -41,6 +41,12 @@ public class OverviewPanel extends JPanel {
         add(navigation, BorderLayout.PAGE_START);
         //*****
         Button previous = new Button("Previous");
+        Button next = new Button("Next");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+        calendar.setTimeInMillis(days.get(0).get_date().getTime());
+        JLabel month = new JLabel(new SimpleDateFormat("MMMMMMMMMMM").format(calendar.getTime()), SwingConstants.CENTER);
+        //*****
         previous.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -71,11 +77,6 @@ public class OverviewPanel extends JPanel {
 
             }
         });
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeZone(TimeZone.getTimeZone("GMT+1"));
-        calendar.setTimeInMillis(days.get(0).get_date().getTime());
-        JLabel month = new JLabel(new SimpleDateFormat("MMMMMMMMMMM").format(calendar.getTime()), SwingConstants.CENTER);
-        Button next = new Button("Next");
         next.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -106,13 +107,13 @@ public class OverviewPanel extends JPanel {
 
             }
         });
+        //*****
         navigation.add(previous, BorderLayout.LINE_START);
         navigation.add(month, BorderLayout.CENTER);
         navigation.add(next, BorderLayout.LINE_END);
         navigation.setVisible(true);
     }
     private void generateContentPanel() {
-        //*****
         final int daysPerView = 7;
         //*****
         content.setVisible(false);
@@ -120,19 +121,22 @@ public class OverviewPanel extends JPanel {
         add(content, BorderLayout.CENTER);
         //*****
         JPanel dates = new JPanel(new GridLayout(1, daysPerView));
+        JPanel receiptsPanel = new JPanel(new GridLayout(1, daysPerView));
+        JPanel controlButtons = new JPanel(new GridLayout(1, 3));
+        ArrayList<JLabel> totalValues = new ArrayList<>();
+        ArrayList<DefaultListModel<Receipt>> receiptListModels = new ArrayList<>();
+        ArrayList<JList<Receipt>> receiptListArray = new ArrayList<>();
+        ArrayList<JPanel> jPanels = new ArrayList<>();
+        Button edit = new Button("Edit");
+        Button newReceipt = new Button("New receipt");
+        Button remove = new Button("Remove");
+        //*****
         for (Day day : days) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeZone(TimeZone.getTimeZone("GMT+1"));
             calendar.setTimeInMillis(day.get_date().getTime());
             dates.add(new JLabel(calendar.get(Calendar.MONTH) + 1 + " - " + calendar.get(Calendar.DAY_OF_MONTH), SwingConstants.CENTER));
         }
-        content.add(dates, BorderLayout.PAGE_START);
-        //*****
-        JPanel receiptsPanel = new JPanel(new GridLayout(1, daysPerView));
-        ArrayList<JLabel> totalValues = new ArrayList<>();
-        ArrayList<DefaultListModel<Receipt>> receiptListModels = new ArrayList<>();
-        ArrayList<JList<Receipt>> receiptListArray = new ArrayList<>();
-        ArrayList<JPanel> jPanels = new ArrayList<>();
         for (int i = 0; i < daysPerView; i++) {
             jPanels.add(new JPanel(new BorderLayout()));
             receiptsPanel.add(jPanels.get(jPanels.size() - 1));
@@ -163,10 +167,7 @@ public class OverviewPanel extends JPanel {
             if (day.get_receipts() != null)
                 for (Receipt receipt : day.get_receipts())
                     receiptListModels.get(days.indexOf(day)).addElement(receipt);
-        content.add(receiptsPanel, BorderLayout.CENTER);
         //*****
-        JPanel controlButtons = new JPanel(new GridLayout(1, 4));
-        Button edit = new Button("Edit");
         edit.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -180,9 +181,11 @@ public class OverviewPanel extends JPanel {
                         backButton.addMouseListener(new MouseListener() {
                             @Override
                             public void mouseClicked(MouseEvent e) {
+                                setVisible(false);
                                 generateContentPanel();
                                 generateNavigationPanel();
                                 generateDataPanel();
+                                setVisible(true);
                             }
 
                             @Override
@@ -233,7 +236,6 @@ public class OverviewPanel extends JPanel {
 
             }
         });
-        Button newReceipt = new Button("New receipt");
         newReceipt.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -241,7 +243,6 @@ public class OverviewPanel extends JPanel {
                 temp.addWindowListener(new WindowAdapter() {
                     @Override
                     public void windowClosed(WindowEvent e) {
-                        //super.windowClosing(e);
                         generateDaySet(days.get(0).get_date(), new Date(days.get(0).get_date().getTime() + (7 * 24 * 60 * 60 * 1000)));
                         generateNavigationPanel();
                         generateContentPanel();
@@ -269,7 +270,6 @@ public class OverviewPanel extends JPanel {
 
             }
         });
-        Button remove = new Button("Remove");
         remove.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -303,11 +303,12 @@ public class OverviewPanel extends JPanel {
 
             }
         });
-        Button stats = new Button("Statistics");
         controlButtons.add(edit);
         controlButtons.add(newReceipt);
         controlButtons.add(remove);
-        controlButtons.add(stats);
+        //*****
+        content.add(dates, BorderLayout.PAGE_START);
+        content.add(receiptsPanel, BorderLayout.CENTER);
         content.add(controlButtons, BorderLayout.PAGE_END);
         content.setVisible(true);
     }
@@ -328,12 +329,12 @@ public class OverviewPanel extends JPanel {
         data.add(total);
     }
     private void generateDaySet(Date from, Date to){
+        days.clear();
         float aTaxValue = 0;
         float bTaxValue = 0;
         float cTaxValue = 0;
         float noTaxValue = 0;
         float totalValue = 0;
-        days.clear();
         long diffInMs = Math.abs(to.getTime() - from.getTime());
         int dayCount = (int)TimeUnit.DAYS.convert(diffInMs, TimeUnit.MILLISECONDS);
         for(int i=0; i<dayCount; i++){
@@ -342,17 +343,17 @@ public class OverviewPanel extends JPanel {
             for(Receipt receipt : ReceiptsManager.getReceipts()) {
                 Calendar cal1 = Calendar.getInstance();
                 Calendar cal2 = Calendar.getInstance();
+                //*****
                 cal1.setTime(currentlyProcessedDate);
                 cal2.setTime(receipt.get_date());
                 boolean sameDay = cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR) &&
                         cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR);
-                if (sameDay) {
-                    currentDayReceipts.add(receipt);
-                }
+                if (sameDay) currentDayReceipts.add(receipt);
             }
             if (currentDayReceipts.size()!=0) days.add(new Day(currentlyProcessedDate, currentDayReceipts));
             else days.add(new Day(currentlyProcessedDate, null));
         }
+        //*****
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(days.get(0).get_date());
         for(Receipt receipt : ReceiptsManager.getReceipts()){
@@ -368,6 +369,7 @@ public class OverviewPanel extends JPanel {
                 }
             }
         }
+        //*****
         aTax.setText(String.format("%.2f", aTaxValue) + " PLN");
         bTax.setText(String.format("%.2f", bTaxValue) + " PLN");
         cTax.setText(String.format("%.2f", cTaxValue) + " PLN");

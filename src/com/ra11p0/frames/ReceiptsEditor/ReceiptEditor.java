@@ -17,7 +17,7 @@ public class ReceiptEditor extends JFrame {
     private JPanel _management = new JPanel();
         public JPanel get_management() {return _management;}
     private static Receipt _receipt;
-        public static Receipt get_receipt() {return _receipt;}
+        //public static Receipt get_receipt() {return _receipt;}
     private static ArrayList<Item> _items;
         public static ArrayList<Item> get_items() {return _items;}
 
@@ -230,7 +230,6 @@ public class ReceiptEditor extends JFrame {
         generateTable();
     }
     private void saveOnClose(){
-
         if(!_receipt._changesMade) {
             dispose();
             return;
