@@ -32,6 +32,13 @@ public class OverviewPanel extends JPanel {
         //*****
         setLayout(new BorderLayout());
         //setSize(800, 300);
+        //*****
+        aTax.setForeground(Color.LIGHT_GRAY);
+        bTax.setForeground(Color.LIGHT_GRAY);
+        cTax.setForeground(Color.LIGHT_GRAY);
+        noTax.setForeground(Color.LIGHT_GRAY);
+        total.setForeground(Color.LIGHT_GRAY);
+        //*****
         generateDaySet(new Date(System.currentTimeMillis()-(6*24 * 60 * 60 * 1000)), new Date(System.currentTimeMillis() + (24 * 60 * 60 * 1000)));
         generateDataPanel();
         generateNavigationPanel();
