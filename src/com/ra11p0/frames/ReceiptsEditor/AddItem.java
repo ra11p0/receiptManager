@@ -7,6 +7,8 @@ import com.ra11p0.structures.Receipt;
 import com.ra11p0.structures.ReceiptItem;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -22,19 +24,22 @@ public class AddItem {
         ArrayList<Item> itemsAtThisStore = new ArrayList<>();
         for(Item item : items) if (item.get_store().equals(receipt.get_store())) itemsAtThisStore.add(item);
         for(Item item : itemsAtThisStore) itemsBox.addItem(item);
-        TextField qty = new TextField();
-        TextField searchBar = new TextField();
+        JTextField qty = new JTextField();
+        JTextField searchBar = new JTextField();
         //SEARCH BAR
-        searchBar.addTextListener(e -> {
-            int i = 0;
-            itemsBox.removeAllItems();
-            if (searchBar.getText().length()==0){ for(Item item : itemsAtThisStore) itemsBox.addItem(item); i++;}
-            else for(Item item : itemsAtThisStore) if(item.get_name().toUpperCase(Locale.ROOT).contains(searchBar.getText().toUpperCase(Locale.ROOT))) {itemsBox.addItem(item); i++;}
-            if(i>0) searchBar.setBackground(Color.WHITE);
-            else searchBar.setBackground(Color.RED);
-            itemsBox.setPopupVisible(false);
-            itemsBox.showPopup();
-            itemsBox.setPopupVisible(true);
+        searchBar.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                int i = 0;
+                itemsBox.removeAllItems();
+                if (searchBar.getText().length()==0){ for(Item item : itemsAtThisStore) itemsBox.addItem(item); i++;}
+                else for(Item item : itemsAtThisStore) if(item.get_name().toUpperCase(Locale.ROOT).contains(searchBar.getText().toUpperCase(Locale.ROOT))) {itemsBox.addItem(item); i++;}
+                if(i>0) searchBar.setBackground(Color.WHITE);
+                else searchBar.setBackground(Color.RED);
+                itemsBox.setPopupVisible(false);
+                itemsBox.showPopup();
+                itemsBox.setPopupVisible(true);
+            }
         });
         //ENTER -> SELECT ITEM FROM COMBO BOX
         searchBar.addKeyListener(new KeyAdapter() {
@@ -47,11 +52,14 @@ public class AddItem {
             }
         });
         //QTY PARSE CHECK
-        qty.addTextListener(e1 -> {
-            try{
-                Float.parseFloat(qty.getText());
-            }catch(Exception ex){
-                qty.setText("");
+        qty.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                try{
+                    Float.parseFloat(qty.getText());
+                }catch(Exception ex){
+                    qty.setText("");
+                }
             }
         });
         //ENTER -> CONFIRM
@@ -66,7 +74,7 @@ public class AddItem {
                 }
             }
         });
-        Button confirm = new Button("Confirm.");
+        JButton confirm = new JButton("Confirm.");
         //CONFIRM
         confirm.addMouseListener(new MouseListener() {
             @Override
@@ -97,7 +105,7 @@ public class AddItem {
 
             }
         });
-        Button newItem = new Button("Create new item.");
+        JButton newItem = new JButton("Create new item.");
         //NEW ITEM DIALOG
         newItem.addMouseListener(new MouseListener() {
             @Override
@@ -154,13 +162,16 @@ public class AddItem {
         taxRate.addItem(0.05F);
         taxRate.addItem(0F);
         taxRate.setPreferredSize(new Dimension(80, 25));
-        TextField cost = new TextField();
+        JTextField cost = new JTextField();
         //PRICE PARSE CHECK
-        cost.addTextListener(e13 -> {
-            try{
-                Float.parseFloat(cost.getText());
-            }catch(Exception ex){
-                cost.setText("");
+        cost.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                try{
+                    Float.parseFloat(cost.getText());
+                }catch(Exception ex){
+                    cost.setText("");
+                }
             }
         });
         //ENTER -> CONFIRM
@@ -179,7 +190,7 @@ public class AddItem {
             }
         });
         cost.setPreferredSize(new Dimension(50, 25));
-        Button confirm = new Button("Confirm.");
+        JButton confirm = new JButton("Confirm.");
         //CONFIRM
         confirm.addMouseListener(new MouseListener() {
             @Override

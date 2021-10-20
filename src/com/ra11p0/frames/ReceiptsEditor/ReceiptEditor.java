@@ -77,15 +77,15 @@ public class ReceiptEditor extends JFrame {
     private void generateTools(){
         ReceiptEditor currentReceiptEditor = this;
         _management.setLayout(new GridLayout(6, 2));
-        TextField storeName = new TextField(_receipt.get_store());
+        JTextField storeName = new JTextField(_receipt.get_store());
         storeName.setEditable(false);
-        TextField ID = new TextField(_receipt.get_ID());
+        JTextField ID = new JTextField(_receipt.get_ID());
         ID.setEditable(false);
-        TextField date = new TextField(_receipt.get_dateString());
+        JTextField date = new JTextField(_receipt.get_dateString());
         date.setEditable(false);
-        TextField total = new TextField(String.format("%.2f", _receipt.get_paid()));
+        JTextField total = new JTextField(String.format("%.2f", _receipt.get_paid()));
         total.setEditable(false);
-        Button addItem = new Button("Add item.");
+        JButton addItem = new JButton("Add item.");
         //ADD ITEM
         addItem.addMouseListener(new MouseListener() {
             @Override
@@ -113,7 +113,7 @@ public class ReceiptEditor extends JFrame {
 
             }
         });
-        Button removeItem = new Button("Remove item.");
+        JButton removeItem = new JButton("Remove item.");
         //REMOVE ITEM
         removeItem.addMouseListener(new MouseListener() {
             @Override
@@ -141,7 +141,7 @@ public class ReceiptEditor extends JFrame {
 
             }
         });
-        Button editDate = new Button("Edit date.");
+        JButton editDate = new JButton("Edit date.");
         //EDIT DATE
         editDate.addMouseListener(new MouseListener() {
             @Override
@@ -169,7 +169,7 @@ public class ReceiptEditor extends JFrame {
 
             }
         });
-        Button save = new Button("Save.");
+        JButton save = new JButton("Save.");
         //SAVE
         save.addMouseListener(new MouseListener() {
             @Override
@@ -237,7 +237,7 @@ public class ReceiptEditor extends JFrame {
         JFrame youSure = new JFrame("Save changes before exiting?");
         youSure.setLayout(new GridLayout(1, 2));
         youSure.setSize(300, 75);
-        Button save = new Button("Save.");
+        JButton save = new JButton("Save.");
         save.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -271,7 +271,7 @@ public class ReceiptEditor extends JFrame {
 
             }
         });
-        Button discard = new Button("Discard");
+        JButton discard = new JButton("Discard");
         discard.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {

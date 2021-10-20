@@ -1,5 +1,9 @@
 package com.ra11p0.frames.Overview;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import com.ra11p0.frames.Overview.structures.Day;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.ra11p0.frames.ReceiptsManager.StoreSelector;
@@ -26,7 +30,9 @@ public class OverviewPanel extends JPanel {
     private final JLabel cTax = new JLabel("0", SwingConstants.CENTER);
     private final JLabel noTax = new JLabel("0", SwingConstants.CENTER);
     private final JLabel total = new JLabel("0", SwingConstants.CENTER);
-    public OverviewPanel(){
+    public OverviewPanel() throws Exception{
+        UIManager.setLookAndFeel( new FlatIntelliJLaf());
+        //*****
         setLayout(new BorderLayout());
         setSize(800, 650);
         generateDaySet(new Date(System.currentTimeMillis()-(6*24 * 60 * 60 * 1000)), new Date(System.currentTimeMillis() + (24 * 60 * 60 * 1000)));
@@ -40,8 +46,8 @@ public class OverviewPanel extends JPanel {
         navigation = new JPanel(new BorderLayout());
         add(navigation, BorderLayout.PAGE_START);
         //*****
-        Button previous = new Button("Previous");
-        Button next = new Button("Next");
+        JButton previous = new JButton("Previous");
+        JButton next = new JButton("Next");
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeZone(TimeZone.getTimeZone("GMT+1"));
         calendar.setTimeInMillis(days.get(0).get_date().getTime());
@@ -122,14 +128,14 @@ public class OverviewPanel extends JPanel {
         //*****
         JPanel dates = new JPanel(new GridLayout(1, daysPerView));
         JPanel receiptsPanel = new JPanel(new GridLayout(1, daysPerView));
-        JPanel controlButtons = new JPanel(new GridLayout(1, 3));
+        JPanel controlJButtons = new JPanel(new GridLayout(1, 3));
         ArrayList<JLabel> totalValues = new ArrayList<>();
         ArrayList<DefaultListModel<Receipt>> receiptListModels = new ArrayList<>();
         ArrayList<JList<Receipt>> receiptListArray = new ArrayList<>();
         ArrayList<JPanel> jPanels = new ArrayList<>();
-        Button edit = new Button("Edit");
-        Button newReceipt = new Button("New receipt");
-        Button remove = new Button("Remove");
+        JButton edit = new JButton("Edit");
+        JButton newReceipt = new JButton("New receipt");
+        JButton remove = new JButton("Remove");
         //*****
         for (Day day : days) {
             Calendar calendar = Calendar.getInstance();
@@ -177,8 +183,8 @@ public class OverviewPanel extends JPanel {
                         data.removeAll();
                         content.removeAll();
                         content.add(new EditorPanel(jList.getSelectedValue(), ReceiptsManager.getItems()), BorderLayout.CENTER);
-                        Button backButton = new Button("Back");
-                        backButton.addMouseListener(new MouseListener() {
+                        JButton backJButton = new JButton("Back");
+                        backJButton.addMouseListener(new MouseListener() {
                             @Override
                             public void mouseClicked(MouseEvent e) {
                                 setVisible(false);
@@ -209,7 +215,7 @@ public class OverviewPanel extends JPanel {
                             }
                         });
                         navigation.removeAll();
-                        navigation.add(backButton, BorderLayout.PAGE_START);
+                        navigation.add(backJButton, BorderLayout.PAGE_START);
                         setVisible(true);
                         break;
                     }
@@ -303,13 +309,13 @@ public class OverviewPanel extends JPanel {
 
             }
         });
-        controlButtons.add(edit);
-        controlButtons.add(newReceipt);
-        controlButtons.add(remove);
+        controlJButtons.add(edit);
+        controlJButtons.add(newReceipt);
+        controlJButtons.add(remove);
         //*****
         content.add(dates, BorderLayout.PAGE_START);
         content.add(receiptsPanel, BorderLayout.CENTER);
-        content.add(controlButtons, BorderLayout.PAGE_END);
+        content.add(controlJButtons, BorderLayout.PAGE_END);
         content.setVisible(true);
     }
     private void generateDataPanel(){

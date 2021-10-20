@@ -17,7 +17,7 @@ public class EditDate {
         UtilDateModel model = new UtilDateModel();
         JDatePanelImpl datePanel = new JDatePanelImpl(model);
         JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
-        Button confirm = new Button("Confirm.");
+        JButton confirm = new JButton("Confirm.");
         confirm.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {

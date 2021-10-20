@@ -99,8 +99,8 @@ public class Receipt {
         calendar.setTimeZone(TimeZone.getTimeZone("GMT+1"));
         calendar.setTimeInMillis(_date.getTime());
         dateString += (calendar.get(Calendar.YEAR)-2000) + "-";
-        if (calendar.get(Calendar.MONTH)+1 < 10) dateString += "0" + calendar.get(Calendar.MONTH)+1 + "-";
-        else dateString += calendar.get(Calendar.MONTH)+1 + "-";
+        if (calendar.get(Calendar.MONTH)+1 < 10) dateString += "0" + (calendar.get(Calendar.MONTH)+1) + "-";
+        else dateString += (calendar.get(Calendar.MONTH)+1) + "-";
         if (calendar.get(Calendar.DAY_OF_MONTH) < 10) dateString += "0" + calendar.get(Calendar.DAY_OF_MONTH);
         else dateString += calendar.get(Calendar.DAY_OF_MONTH);
         return dateString;

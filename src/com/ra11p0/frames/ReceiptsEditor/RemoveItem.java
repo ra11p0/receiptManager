@@ -13,8 +13,8 @@ public class RemoveItem {
         JFrame removeItemFrame = new JFrame("Remove item.");
         JComboBox<ReceiptItem> itemsList = new JComboBox<>();
         for(ReceiptItem receiptItem:receipt.get_items()) itemsList.addItem(receiptItem);
-        Button removeButton = new Button("Remove.");
-        removeButton.addMouseListener(new MouseListener() {
+        JButton removeJButton = new JButton("Remove.");
+        removeJButton.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 receipt.removeItem((ReceiptItem) itemsList.getSelectedItem());
@@ -47,7 +47,7 @@ public class RemoveItem {
         removeItemFrame.setSize(200, 200);
         removeItemFrame.add(new Label("Select item to remove: "));
         removeItemFrame.add(itemsList);
-        removeItemFrame.add(removeButton);
+        removeItemFrame.add(removeJButton);
         removeItemFrame.setVisible(true);
     }
 }

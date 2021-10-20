@@ -7,10 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 
 public class HomeFrame extends JFrame {
-    public HomeFrame(String title, int width, int height){
+    public HomeFrame(String title, int width, int height) throws Exception{
         //*****
         new OverviewFrame(title);
         dispose();
@@ -32,7 +31,7 @@ public class HomeFrame extends JFrame {
         setLayout(new GridLayout(3,1));
         */
     }
-    public void build(){
+    public void build() throws Exception{
         Button add = new Button("Receipt manager.");
         Button overview = new Button("Show overview.");
         Button stats = new Button("Show stats.");
@@ -64,8 +63,12 @@ public class HomeFrame extends JFrame {
         });
         overview.addMouseListener(new MouseListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                new OverviewFrame("");
+            public void mouseClicked(MouseEvent e){
+                try {
+                    new OverviewFrame("");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
 
             @Override
