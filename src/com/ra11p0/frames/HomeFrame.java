@@ -11,7 +11,11 @@ import java.io.File;
 
 public class HomeFrame extends JFrame {
     public HomeFrame(String title, int width, int height){
-        GridLayout layout = new GridLayout(3,1);
+        //*****
+        new OverviewFrame(title);
+        dispose();
+        //***** DISABLED FRAME
+        /*
         File file = new File("res");
         boolean mkdirStatus = true;
         if (!file.exists())
@@ -25,7 +29,8 @@ public class HomeFrame extends JFrame {
         setTitle(title);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(width, height);
-        setLayout(layout);
+        setLayout(new GridLayout(3,1));
+        */
     }
     public void build(){
         Button add = new Button("Receipt manager.");
@@ -60,7 +65,7 @@ public class HomeFrame extends JFrame {
         overview.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                new OverviewFrame();
+                new OverviewFrame("");
             }
 
             @Override
