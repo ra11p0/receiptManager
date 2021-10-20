@@ -7,8 +7,6 @@ import com.ra11p0.structures.Receipt;
 import com.ra11p0.structures.ReceiptItem;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -34,7 +32,7 @@ public class AddItem {
                 itemsBox.removeAllItems();
                 if (searchBar.getText().length()==0){ for(Item item : itemsAtThisStore) itemsBox.addItem(item); i++;}
                 else for(Item item : itemsAtThisStore) if(item.get_name().toUpperCase(Locale.ROOT).contains(searchBar.getText().toUpperCase(Locale.ROOT))) {itemsBox.addItem(item); i++;}
-                if(i>0) searchBar.setBackground(Color.WHITE);
+                if(i>0) searchBar.setBackground(null);
                 else searchBar.setBackground(Color.RED);
                 itemsBox.setPopupVisible(false);
                 itemsBox.showPopup();
@@ -76,7 +74,7 @@ public class AddItem {
         });
         JButton confirm = new JButton("Confirm.");
         //CONFIRM
-        confirm.addMouseListener(new MouseListener() {
+        confirm.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 receipt.addItem(new ReceiptItem((Item)itemsBox.getSelectedItem(), Float.parseFloat(qty.getText())));
@@ -84,53 +82,13 @@ public class AddItem {
                 addItemFrame.dispose();
                 receiptEditor.repaintFrame();
             }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
         });
         JButton newItem = new JButton("Create new item.");
         //NEW ITEM DIALOG
-        newItem.addMouseListener(new MouseListener() {
+        newItem.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 newItem(itemsBox, receipt, items);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
             }
         });
         addItemFrame.add(new Label("Select item or create new one, then type quantity:"));
@@ -192,7 +150,7 @@ public class AddItem {
         cost.setPreferredSize(new Dimension(50, 25));
         JButton confirm = new JButton("Confirm.");
         //CONFIRM
-        confirm.addMouseListener(new MouseListener() {
+        confirm.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 itemsBox.addItem(new Item(Objects.requireNonNull(name.getSelectedItem()).toString(),
@@ -202,26 +160,6 @@ public class AddItem {
                 createNewItemFrame.setVisible(false);
                 createNewItemFrame.dispose();
                 itemsBox.setSelectedIndex(itemsBox.getItemCount()-1);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
             }
         });
         createNewItemFrame.add(new Label("Name of new item:"));

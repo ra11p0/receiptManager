@@ -19,12 +19,8 @@ public class Receipt {
     private float _paid; public float get_paid() {
         return _paid;
     }
-    private float _totalTax; public float get_totalTax() {
-        return _totalTax;
-    }
-    private int _qty; public int get_qty() {
-        return _qty;
-    }
+    private float _totalTax; public float get_totalTax() {return _totalTax;}
+    private int _qty; public int get_qty() {return _qty;}
     private final ArrayList<ReceiptItem> _items = new ArrayList<>(); public ArrayList<ReceiptItem> get_items() {
         return _items;
     }

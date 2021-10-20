@@ -5,8 +5,8 @@ import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 public class HomeFrame extends JFrame {
     public HomeFrame(String title, int width, int height) throws Exception{
@@ -31,64 +31,24 @@ public class HomeFrame extends JFrame {
         setLayout(new GridLayout(3,1));
         */
     }
-    public void build() throws Exception{
+    public void build(){
         Button add = new Button("Receipt manager.");
         Button overview = new Button("Show overview.");
         Button stats = new Button("Show stats.");
-        add.addMouseListener(new MouseListener() {
+        add.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 ReceiptsManager.showDialog();
             }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
         });
-        overview.addMouseListener(new MouseListener() {
+        overview.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e){
+            public void mouseClicked(MouseEvent e) {
                 try {
                     new OverviewFrame("");
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
             }
         });
         add(add);

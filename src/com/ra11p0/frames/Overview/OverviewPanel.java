@@ -1,9 +1,6 @@
 package com.ra11p0.frames.Overview;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatIntelliJLaf;
-import com.formdev.flatlaf.FlatLightLaf;
 import com.ra11p0.frames.Overview.structures.Day;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.ra11p0.frames.ReceiptsManager.StoreSelector;
@@ -31,10 +28,10 @@ public class OverviewPanel extends JPanel {
     private final JLabel noTax = new JLabel("0", SwingConstants.CENTER);
     private final JLabel total = new JLabel("0", SwingConstants.CENTER);
     public OverviewPanel() throws Exception{
-        UIManager.setLookAndFeel( new FlatIntelliJLaf());
+        UIManager.setLookAndFeel( new FlatDarculaLaf());
         //*****
         setLayout(new BorderLayout());
-        setSize(800, 650);
+        //setSize(800, 300);
         generateDaySet(new Date(System.currentTimeMillis()-(6*24 * 60 * 60 * 1000)), new Date(System.currentTimeMillis() + (24 * 60 * 60 * 1000)));
         generateDataPanel();
         generateNavigationPanel();
@@ -53,7 +50,7 @@ public class OverviewPanel extends JPanel {
         calendar.setTimeInMillis(days.get(0).get_date().getTime());
         JLabel month = new JLabel(new SimpleDateFormat("MMMMMMMMMMM").format(calendar.getTime()), SwingConstants.CENTER);
         //*****
-        previous.addMouseListener(new MouseListener() {
+        previous.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 Date from = new Date(days.get(0).get_date().getTime()-(7*24 * 60 * 60 * 1000));
@@ -62,28 +59,8 @@ public class OverviewPanel extends JPanel {
                 generateNavigationPanel();
                 generateContentPanel();
             }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
         });
-        next.addMouseListener(new MouseListener() {
+        next.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 Date to = new Date(days.get(6).get_date().getTime() + (8*24 * 60 * 60 * 1000));
@@ -91,26 +68,6 @@ public class OverviewPanel extends JPanel {
                 generateDaySet(from, to);
                 generateNavigationPanel();
                 generateContentPanel();
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
             }
         });
         //*****
@@ -174,7 +131,7 @@ public class OverviewPanel extends JPanel {
                 for (Receipt receipt : day.get_receipts())
                     receiptListModels.get(days.indexOf(day)).addElement(receipt);
         //*****
-        edit.addMouseListener(new MouseListener() {
+        edit.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 for(JList<Receipt> jList : receiptListArray){
@@ -184,7 +141,7 @@ public class OverviewPanel extends JPanel {
                         content.removeAll();
                         content.add(new EditorPanel(jList.getSelectedValue(), ReceiptsManager.getItems()), BorderLayout.CENTER);
                         JButton backJButton = new JButton("Back");
-                        backJButton.addMouseListener(new MouseListener() {
+                        backJButton.addMouseListener(new MouseAdapter() {
                             @Override
                             public void mouseClicked(MouseEvent e) {
                                 setVisible(false);
@@ -192,26 +149,6 @@ public class OverviewPanel extends JPanel {
                                 generateNavigationPanel();
                                 generateDataPanel();
                                 setVisible(true);
-                            }
-
-                            @Override
-                            public void mousePressed(MouseEvent e) {
-
-                            }
-
-                            @Override
-                            public void mouseReleased(MouseEvent e) {
-
-                            }
-
-                            @Override
-                            public void mouseEntered(MouseEvent e) {
-
-                            }
-
-                            @Override
-                            public void mouseExited(MouseEvent e) {
-
                             }
                         });
                         navigation.removeAll();
@@ -221,28 +158,8 @@ public class OverviewPanel extends JPanel {
                     }
                 }
             }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
         });
-        newReceipt.addMouseListener(new MouseListener() {
+        newReceipt.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 JFrame temp = StoreSelector.showDialog(ReceiptsManager.getItems());
@@ -255,28 +172,8 @@ public class OverviewPanel extends JPanel {
                     }
                 });
             }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
         });
-        remove.addMouseListener(new MouseListener() {
+        remove.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 for(JList<Receipt> jList : receiptListArray){
@@ -287,26 +184,6 @@ public class OverviewPanel extends JPanel {
                         generateContentPanel();
                     }
                 }
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
             }
         });
         controlJButtons.add(edit);

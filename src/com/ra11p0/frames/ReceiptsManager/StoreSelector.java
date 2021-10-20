@@ -6,8 +6,8 @@ import com.ra11p0.structures.Receipt;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,14 +21,14 @@ public class StoreSelector{
         JFrame frame = new JFrame("Select store.");
         JComboBox<String> stores = new JComboBox<>();
         ArrayList<String> storesList = new ArrayList<>();
-        Button addNew = new Button("Add new store.");
-        Button confirm = new Button ("Confirm");
+        JButton addNew = new JButton("Add new store.");
+        JButton confirm = new JButton ("Confirm");
         //Get stores from all receipts
         for(Receipt receipt : ReceiptsManager.getReceipts()) if (!storesList.contains(receipt.get_store())) storesList.add(receipt.get_store());
         storesList.sort(Comparator.naturalOrder());
         for(String store : storesList) stores.addItem(store);
         //Confirm button
-        confirm.addMouseListener(new MouseListener() {
+        confirm.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 WindowListener editorFrameListener = editorFrame.getWindowListeners()[0];
@@ -37,52 +37,12 @@ public class StoreSelector{
                 frame.setVisible(false);
                 frame.dispose();
             }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
         });
         //Add new store button
-        addNew.addMouseListener(new MouseListener() {
+        addNew.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 AddNewStore.showDialog(storesList, stores);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
             }
         });
         frame.setSize(300, 150);

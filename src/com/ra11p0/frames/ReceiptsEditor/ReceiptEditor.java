@@ -19,7 +19,7 @@ public class ReceiptEditor extends JFrame {
     private static Receipt _receipt;
         //public static Receipt get_receipt() {return _receipt;}
     private static ArrayList<Item> _items;
-        public static ArrayList<Item> get_items() {return _items;}
+        //public static ArrayList<Item> get_items() {return _items;}
 
     public ReceiptEditor(Receipt receipt, ArrayList<Item> items){
         _receipt = receipt;
@@ -34,7 +34,7 @@ public class ReceiptEditor extends JFrame {
         });
         setLayout(new GridLayout(1, 2));
         setTitle("Receipt manager.");
-        setSize(800, 300);
+        setSize(800, 350);
         setResizable(false);
         add(_management);
         add(_receiptView);
@@ -71,7 +71,7 @@ public class ReceiptEditor extends JFrame {
                 String.format("%.2f", item.get_Item().get_taxRate()),
                 String.format("%.2f", item.get_Item().get_price() * item.get_qty())
             });
-        tablePane.setPreferredSize(new Dimension(400, 295));
+        tablePane.setPreferredSize(new Dimension(380, 295));
         _receiptView.add(tablePane);
     }
     private void generateTools(){

@@ -66,7 +66,7 @@ public class Main {
         URL buildUrl = getUrlToLastBuild();
         BufferedInputStream inputStream = new BufferedInputStream(buildUrl.openStream());
         FileOutputStream fileOutputStream = new FileOutputStream("core_temp.exe");
-        byte dataBuffer[] = new byte[1024];
+        byte[] dataBuffer = new byte[1024];
         int bytesRead;
         while ((bytesRead = inputStream.read(dataBuffer, 0, 1024)) != -1) {
             fileOutputStream.write(dataBuffer, 0, bytesRead);

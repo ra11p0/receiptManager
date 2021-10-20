@@ -7,8 +7,8 @@ import com.ra11p0.structures.Receipt;
 import com.ra11p0.structures.ReceiptItem;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -31,88 +31,28 @@ public class ReceiptsManager {
         getItemsAndReceipts();
         for(Receipt receipt : receipts) receiptSelector.addItem(receipt);
         //STORE SELECTOR DIALOG
-        _new.addMouseListener(new MouseListener() {
+        _new.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 StoreSelector.showDialog(items);
                 frame.setVisible(false);
                 frame.dispose();
             }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
         });
         //REMOVE RECEIPT DIALOG
-        remove.addMouseListener(new MouseListener() {
+        remove.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 removeReceipt(receiptSelector);
             }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
         });
         //EDIT RECEIPT DIALOG
-        edit.addMouseListener(new MouseListener() {
+        edit.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 new ReceiptEditor((Receipt)receiptSelector.getSelectedItem(), items);
                 frame.setVisible(false);
                 frame.dispose();
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
             }
         });
         //*********
@@ -154,7 +94,7 @@ public class ReceiptsManager {
         youSure.setSize(375, 75);
         assert selectedReceipt != null;
         Button imSure = new Button("Remove " +  selectedReceipt.get_ID() + ".");
-        imSure.addMouseListener(new MouseListener() {
+        imSure.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 boolean deleteStatus = selectedReceipt.deleteReceipt();
@@ -165,53 +105,13 @@ public class ReceiptsManager {
                 youSure.setVisible(false);
                 youSure.dispose();
             }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
         });
         Button notSure = new Button("Do not remove.");
-        notSure.addMouseListener(new MouseListener() {
+        notSure.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 youSure.setVisible(false);
                 youSure.dispose();
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
             }
         });
         youSure.add(imSure);

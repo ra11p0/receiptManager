@@ -2,16 +2,13 @@ package com.ra11p0.frames.ReceiptsManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 public class AddNewStore extends JFrame {
     public static void showDialog(ArrayList<String> storesList, JComboBox<String> stores){
         JFrame addNewStoreFrame = new JFrame();
-        TextField nameOfNewStore = new TextField();
+        JTextField nameOfNewStore = new JTextField();
         //ENTER -> CONFIRM
         nameOfNewStore.addKeyListener(new KeyAdapter() {
             @Override
@@ -23,34 +20,14 @@ public class AddNewStore extends JFrame {
                 }
             }
         });
-        Button confirm = new Button("Confirm");
+        JButton confirm = new JButton("Confirm");
         //CONFIRM BUTTON
-        confirm.addMouseListener(new MouseListener() {
+        confirm.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 confirm(storesList, nameOfNewStore, stores);
                 addNewStoreFrame.setVisible(false);
                 addNewStoreFrame.dispose();
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
             }
         });
         addNewStoreFrame.setLayout(new GridLayout());
@@ -61,7 +38,7 @@ public class AddNewStore extends JFrame {
         addNewStoreFrame.add(confirm);
         addNewStoreFrame.setVisible(true);
     }
-    private static void confirm(ArrayList<String> storesList, TextField nameOfNewStore, JComboBox<String> stores){
+    private static void confirm(ArrayList<String> storesList, JTextField nameOfNewStore, JComboBox<String> stores){
         if (!storesList.contains(nameOfNewStore.getText())){
             stores.removeAllItems();
             storesList.add(nameOfNewStore.getText());
