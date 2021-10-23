@@ -12,8 +12,7 @@ public class EditorPanel extends JPanel {
     public EditorPanel(Receipt receipt, ArrayList<Item> items){
         ReceiptEditor editor = new ReceiptEditor(receipt, items, true);
         setLayout(new GridLayout(1, 2));
-        add(editor.get_management());
-        add(editor.get_receiptView());
+        add(editor.get_editorPanel());
         setVisible(true);
     }
 }

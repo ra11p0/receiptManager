@@ -13,9 +13,11 @@ import java.util.*;
 public class ReceiptEditor extends JFrame {
 
     private JPanel _receiptView = new JPanel();
-        public JPanel get_receiptView() {return _receiptView;}
+        //public JPanel get_receiptView() {return _receiptView;}
     private JPanel _management = new JPanel();
-        public JPanel get_management() {return _management;}
+        //public JPanel get_management() {return _management;}
+    private final JPanel _editorPanel = new JPanel();
+        public JPanel get_editorPanel() {return _editorPanel;}
     private static Receipt _receipt;
         //public static Receipt get_receipt() {return _receipt;}
     private static ArrayList<Item> _items;
@@ -32,12 +34,13 @@ public class ReceiptEditor extends JFrame {
                 saveOnClose();
             }
         });
-        setLayout(new GridLayout(1, 2));
+        _editorPanel.setLayout(new GridLayout(1, 2));
+        add(_editorPanel);
         setTitle("Receipt manager.");
         setSize(800, 350);
         setResizable(false);
-        add(_management);
-        add(_receiptView);
+        _editorPanel.add(_management);
+        _editorPanel.add(_receiptView);
         setVisible(true);
         generateTable();
     }
@@ -46,11 +49,14 @@ public class ReceiptEditor extends JFrame {
                 new ReceiptEditor(receipt, items);
                 return;
             }
+        _editorPanel.setLayout(new GridLayout(1, 2));
         _receipt = receipt;
         _items = items;
         generateTools();
         _receiptView.setVisible(true);
         generateTable();
+        _editorPanel.add(_management);
+        _editorPanel.add(_receiptView);
     }
     private void generateTable(){
         DefaultTableModel tableModel = new DefaultTableModel();
@@ -87,91 +93,31 @@ public class ReceiptEditor extends JFrame {
         total.setEditable(false);
         JButton addItem = new JButton("Add item.");
         //ADD ITEM
-        addItem.addMouseListener(new MouseListener() {
+        addItem.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 AddItem.showDialog(_items, _receipt, currentReceiptEditor);
             }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
         });
         JButton removeItem = new JButton("Remove item.");
         //REMOVE ITEM
-        removeItem.addMouseListener(new MouseListener() {
+        removeItem.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 RemoveItem.showDialog(_receipt, currentReceiptEditor);
             }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
         });
         JButton editDate = new JButton("Edit date.");
         //EDIT DATE
-        editDate.addMouseListener(new MouseListener() {
+        editDate.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 EditDate.showDialog(_receipt, currentReceiptEditor);
             }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
         });
         JButton save = new JButton("Save.");
         //SAVE
-        save.addMouseListener(new MouseListener() {
+        save.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
@@ -181,26 +127,6 @@ public class ReceiptEditor extends JFrame {
                     ex.printStackTrace();
                 }
                 ID.setText(_receipt.get_ID());
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
             }
         });
         //*****
@@ -218,15 +144,15 @@ public class ReceiptEditor extends JFrame {
         _management.add(save);
     }
     public void repaintFrame(){
-        remove(_management);
-        remove(_receiptView);
+        _editorPanel.remove(_management);
+        _editorPanel.remove(_receiptView);
         _management = new JPanel();
         _receiptView = new JPanel();
         generateTools();
-        setVisible(false);
-        add(_management);
-        add(_receiptView);
-        setVisible(true);
+        _editorPanel.setVisible(false);
+        _editorPanel.add(_management);
+        _editorPanel.add(_receiptView);
+        _editorPanel.setVisible(true);
         generateTable();
     }
     private void saveOnClose(){
@@ -238,7 +164,7 @@ public class ReceiptEditor extends JFrame {
         youSure.setLayout(new GridLayout(1, 2));
         youSure.setSize(300, 75);
         JButton save = new JButton("Save.");
-        save.addMouseListener(new MouseListener() {
+        save.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
@@ -250,54 +176,14 @@ public class ReceiptEditor extends JFrame {
                 youSure.dispose();
                 dispose();
             }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
         });
         JButton discard = new JButton("Discard");
-        discard.addMouseListener(new MouseListener() {
+        discard.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 youSure.setVisible(false);
                 youSure.dispose();
                 dispose();
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
             }
         });
         youSure.add(save);

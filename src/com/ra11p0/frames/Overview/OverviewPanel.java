@@ -115,16 +115,12 @@ public class OverviewPanel extends JPanel {
             JList<Receipt> jList = new JList<>();
             receiptListArray.add(jList);
             JScrollPane scrollPane = new JScrollPane(jList);
-            jList.addFocusListener(new FocusListener() {
+            jList.addFocusListener(new FocusAdapter() {
                 @Override
                 public void focusGained(FocusEvent e) {
                     for(JList<Receipt> receiptJListItem : receiptListArray){
                         if(!receiptJListItem.equals(jList)) receiptJListItem.clearSelection();
                     }
-                }
-
-                @Override
-                public void focusLost(FocusEvent e) {
                 }
             });
             totalValues.add(new JLabel(String.format("%.2f", days.get(receiptListModels.size()).get_total()) + "PLN", SwingConstants.CENTER));
@@ -147,11 +143,12 @@ public class OverviewPanel extends JPanel {
                         data.removeAll();
                         content.removeAll();
                         content.add(new EditorPanel(jList.getSelectedValue(), ReceiptsManager.getItems()), BorderLayout.CENTER);
-                        JButton backJButton = new JButton("Back");
-                        backJButton.addMouseListener(new MouseAdapter() {
+                        JButton backButton = new JButton("Back");
+                        backButton.addMouseListener(new MouseAdapter() {
                             @Override
                             public void mouseClicked(MouseEvent e) {
                                 setVisible(false);
+                                generateDaySet(days.get(0).get_date(), new Date(days.get(0).get_date().getTime() + (7 * 24 * 60 * 60 * 1000)));
                                 generateContentPanel();
                                 generateNavigationPanel();
                                 generateDataPanel();
@@ -159,7 +156,7 @@ public class OverviewPanel extends JPanel {
                             }
                         });
                         navigation.removeAll();
-                        navigation.add(backJButton, BorderLayout.PAGE_START);
+                        navigation.add(backButton, BorderLayout.PAGE_START);
                         setVisible(true);
                         break;
                     }
