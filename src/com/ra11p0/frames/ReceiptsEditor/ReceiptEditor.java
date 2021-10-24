@@ -1,5 +1,6 @@
 package com.ra11p0.frames.ReceiptsEditor;
 
+import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
 import com.ra11p0.structures.ReceiptItem;
@@ -12,9 +13,9 @@ import java.util.*;
 
 public class ReceiptEditor extends JFrame {
 
-    private JPanel _receiptView = new JPanel();
+    private final JPanel _receiptView = new JPanel();
         //public JPanel get_receiptView() {return _receiptView;}
-    private JPanel _management = new JPanel();
+    private final JPanel _management = new JPanel();
         //public JPanel get_management() {return _management;}
     private final JPanel _editorPanel = new JPanel();
         public JPanel get_editorPanel() {return _editorPanel;}
@@ -23,10 +24,7 @@ public class ReceiptEditor extends JFrame {
     private static ArrayList<Item> _items;
         //public static ArrayList<Item> get_items() {return _items;}
 
-    public ReceiptEditor(Receipt receipt, ArrayList<Item> items){
-        _receipt = receipt;
-        _items = items;
-        generateTools();
+    public ReceiptEditor(Receipt receipt){
         //SAVE ON CLOSE
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -34,26 +32,25 @@ public class ReceiptEditor extends JFrame {
                 saveOnClose();
             }
         });
-        _editorPanel.setLayout(new GridLayout(1, 2));
+        generateEditorPanel(receipt);
         add(_editorPanel);
         setTitle("Receipt manager.");
         setSize(800, 350);
         setResizable(false);
-        _editorPanel.add(_management);
-        _editorPanel.add(_receiptView);
         setVisible(true);
-        generateTable();
     }
-    public ReceiptEditor(Receipt receipt, ArrayList<Item> items, boolean background){
+    public ReceiptEditor(Receipt receipt, boolean background){
             if(!background) {
-                new ReceiptEditor(receipt, items);
+                new ReceiptEditor(receipt);
                 return;
             }
+        generateEditorPanel(receipt);
+    }
+    private void generateEditorPanel(Receipt receipt){
         _editorPanel.setLayout(new GridLayout(1, 2));
         _receipt = receipt;
-        _items = items;
+        _items = ReceiptsManager.getItems();
         generateTools();
-        _receiptView.setVisible(true);
         generateTable();
         _editorPanel.add(_management);
         _editorPanel.add(_receiptView);
@@ -82,16 +79,17 @@ public class ReceiptEditor extends JFrame {
     }
     private void generateTools(){
         ReceiptEditor currentReceiptEditor = this;
-        _management.setLayout(new GridLayout(6, 2));
         JTextField storeName = new JTextField(_receipt.get_store());
-        storeName.setEditable(false);
         JTextField ID = new JTextField(_receipt.get_ID());
-        ID.setEditable(false);
         JTextField date = new JTextField(_receipt.get_dateString());
-        date.setEditable(false);
         JTextField total = new JTextField(String.format("%.2f", _receipt.get_paid()));
-        total.setEditable(false);
         JButton addItem = new JButton("Add item.");
+        JButton editDate = new JButton("Edit date.");
+        JButton save = new JButton("Save.");
+        storeName.setEditable(false);
+        ID.setEditable(false);
+        date.setEditable(false);
+        total.setEditable(false);
         //ADD ITEM
         addItem.addMouseListener(new MouseAdapter() {
             @Override
@@ -107,7 +105,6 @@ public class ReceiptEditor extends JFrame {
                 RemoveItem.showDialog(_receipt, currentReceiptEditor);
             }
         });
-        JButton editDate = new JButton("Edit date.");
         //EDIT DATE
         editDate.addMouseListener(new MouseAdapter() {
             @Override
@@ -115,7 +112,6 @@ public class ReceiptEditor extends JFrame {
                 EditDate.showDialog(_receipt, currentReceiptEditor);
             }
         });
-        JButton save = new JButton("Save.");
         //SAVE
         save.addMouseListener(new MouseAdapter() {
             @Override
@@ -130,6 +126,7 @@ public class ReceiptEditor extends JFrame {
             }
         });
         //*****
+        _management.setLayout(new GridLayout(6, 2));
         _management.add(new Label("Store: "));
         _management.add(storeName);
         _management.add(new Label("ID: "));
@@ -144,26 +141,22 @@ public class ReceiptEditor extends JFrame {
         _management.add(save);
     }
     public void repaintFrame(){
+        _editorPanel.setVisible(false);
         _editorPanel.remove(_management);
         _editorPanel.remove(_receiptView);
-        _management = new JPanel();
-        _receiptView = new JPanel();
+        _management.removeAll();
+        _receiptView.removeAll();
         generateTools();
-        _editorPanel.setVisible(false);
+        generateTable();
         _editorPanel.add(_management);
         _editorPanel.add(_receiptView);
         _editorPanel.setVisible(true);
-        generateTable();
     }
     public JFrame saveOnClose(){
-        if(!_receipt._changesMade) {
-            dispose();
-            return null;
-        }
+        if(!_receipt._changesMade) return null;
         JFrame youSure = new JFrame("Save changes before exiting?");
-        youSure.setLayout(new GridLayout(1, 2));
-        youSure.setSize(300, 75);
         JButton save = new JButton("Save.");
+        JButton discard = new JButton("Discard");
         save.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -177,7 +170,6 @@ public class ReceiptEditor extends JFrame {
                 dispose();
             }
         });
-        JButton discard = new JButton("Discard");
         discard.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -186,6 +178,8 @@ public class ReceiptEditor extends JFrame {
                 dispose();
             }
         });
+        youSure.setLayout(new GridLayout(1, 2));
+        youSure.setSize(300, 75);
         youSure.add(save);
         youSure.add(discard);
         youSure.setVisible(true);

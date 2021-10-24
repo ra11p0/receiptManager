@@ -9,18 +9,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.Objects;
 
 public class ReceiptsManager {
 
     private static JFrame frame;
     private final static ArrayList<Receipt> receipts = new ArrayList<>();
     private final static ArrayList<Item> items = new ArrayList<>();
-
-
     public static void showDialog(){
         frame = new JFrame("Select or create new receipt.");
         JComboBox<Receipt> receiptSelector = new JComboBox<>();
@@ -34,7 +36,18 @@ public class ReceiptsManager {
         _new.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                StoreSelector.showDialog(items);
+                JFrame storeSelectorFrame = StoreSelector.getStoreDialog();
+                storeSelectorFrame.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        Object stores = null;
+                        for(Component component : storeSelectorFrame.getRootPane().getContentPane().getComponents()) if (component.getClass() == JComboBox.class) stores = component;
+                        assert stores != null;
+                        @SuppressWarnings("unchecked")
+                        String selectedStore = Objects.requireNonNull(((JComboBox<String>) stores).getSelectedItem()).toString();
+                        new ReceiptEditor(new Receipt(selectedStore, new Date(System.currentTimeMillis())));
+                    }
+                });
                 frame.setVisible(false);
                 frame.dispose();
             }
@@ -50,7 +63,7 @@ public class ReceiptsManager {
         edit.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                new ReceiptEditor((Receipt)receiptSelector.getSelectedItem(), items);
+                new ReceiptEditor((Receipt)receiptSelector.getSelectedItem());
                 frame.setVisible(false);
                 frame.dispose();
             }

@@ -11,18 +11,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
 public class OverviewPanel extends JPanel {
     private final ArrayList<Day> days = new ArrayList<>();
-    private JPanel content = new JPanel(new BorderLayout());
-    private JPanel navigation = new JPanel(new BorderLayout());
-    private JPanel data = new JPanel(new GridLayout(2, 5));
+    private JPanel content = new JPanel();
+    private JPanel navigation = new JPanel();
+    private JPanel data = new JPanel();
     private final JLabel aTax = new JLabel("0", SwingConstants.CENTER);
     private final JLabel bTax = new JLabel("0", SwingConstants.CENTER);
     private final JLabel cTax = new JLabel("0", SwingConstants.CENTER);
@@ -47,7 +43,6 @@ public class OverviewPanel extends JPanel {
     }
     private void generateNavigationPanel(){
         navigation.setVisible(false);
-        navigation.removeAll();
         navigation = new JPanel(new BorderLayout());
         add(navigation, BorderLayout.PAGE_START);
         //*****
@@ -93,14 +88,10 @@ public class OverviewPanel extends JPanel {
         //*****
         JPanel dates = new JPanel(new GridLayout(1, daysPerView));
         JPanel receiptsPanel = new JPanel(new GridLayout(1, daysPerView));
-        JPanel controlJButtons = new JPanel(new GridLayout(1, 3));
         ArrayList<JLabel> totalValues = new ArrayList<>();
         ArrayList<DefaultListModel<Receipt>> receiptListModels = new ArrayList<>();
         ArrayList<JList<Receipt>> receiptListArray = new ArrayList<>();
         ArrayList<JPanel> jPanels = new ArrayList<>();
-        JButton edit = new JButton("Edit");
-        JButton newReceipt = new JButton("New receipt");
-        JButton remove = new JButton("Remove");
         //*****
         for (Day day : days) {
             Calendar calendar = Calendar.getInstance();
@@ -135,88 +126,66 @@ public class OverviewPanel extends JPanel {
                 for (Receipt receipt : day.get_receipts())
                     receiptListModels.get(days.indexOf(day)).addElement(receipt);
         //*****
+        content.add(dates, BorderLayout.PAGE_START);
+        content.add(receiptsPanel, BorderLayout.CENTER);
+        content.add(generateControlButtons(receiptListArray), BorderLayout.PAGE_END);
+        content.setVisible(true);
+    }
+    private JPanel generateControlButtons(ArrayList<JList<Receipt>> receiptListArray){
+        JPanel controlButtons = new JPanel(new GridLayout(1, 3));
+        JButton edit = new JButton("Edit");
+        JButton newReceipt = new JButton("New receipt");
+        JButton remove = new JButton("Remove");
+        //*****
         edit.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                for(JList<Receipt> jList : receiptListArray){
-                    if(jList.getSelectedValue()!=null){
-                        setVisible(false);
-                        EditorPanel editorPanel = new EditorPanel(jList.getSelectedValue(), ReceiptsManager.getItems());
-                        data.removeAll();
-                        content.removeAll();
-                        content.add(editorPanel, BorderLayout.CENTER);
-                        JButton backButton = new JButton("Back");
-                        backButton.addMouseListener(new MouseAdapter() {
-                            @Override
-                            public void mouseClicked(MouseEvent e) {
-                                JFrame saveOnCloseFrame = editorPanel.saveOnClose();
-                                Function<Object, Object> refresh = o -> {
-                                    setVisible(false);
-                                    generateContentPanel();
-                                    generateNavigationPanel();
-                                    generateDataPanel();
-                                    setVisible(true);
-                                    return null;
-                                };
-                                if (saveOnCloseFrame == null) {
-                                    refresh.apply(null);
-                                    return;
-                                }
-                                saveOnCloseFrame.addWindowListener(new WindowAdapter() {
-                                    @Override
-                                    public void windowDeactivated(WindowEvent e) {
-                                        generateDaySet(days.get(0).get_date(), new Date(days.get(0).get_date().getTime() + (7 * 24 * 60 * 60 * 1000)));
-                                        refresh.apply(null);
-                                    }
-                                });
-                            }
-                        });
-                        navigation.removeAll();
-                        navigation.add(backButton, BorderLayout.PAGE_START);
-                        setVisible(true);
-                        break;
-                    }
-                }
+                Receipt receipt = null;
+                for(JList<Receipt> jList : receiptListArray)
+                    if (jList.getSelectedValue() != null)
+                        receipt = jList.getSelectedValue();
+                if(receipt == null) return;
+                generateEditorPanel(receipt);
             }
         });
+        //*****
         newReceipt.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                JFrame temp = StoreSelector.showDialog(ReceiptsManager.getItems());
-                temp.addWindowListener(new WindowAdapter() {
+                JFrame storeSelectorFrame = StoreSelector.getStoreDialog();
+                storeSelectorFrame.addWindowListener(new WindowAdapter() {
                     @Override
                     public void windowClosed(WindowEvent e) {
-                        generateDaySet(days.get(0).get_date(), new Date(days.get(0).get_date().getTime() + (7 * 24 * 60 * 60 * 1000)));
-                        generateNavigationPanel();
-                        generateContentPanel();
+                        Object stores = null;
+                        for(Component component : storeSelectorFrame.getRootPane().getContentPane().getComponents()) if (component.getClass() == JComboBox.class) stores = component;
+                        assert stores != null;
+                        @SuppressWarnings("unchecked")
+                        String selectedStore = Objects.requireNonNull(((JComboBox<String>) stores).getSelectedItem()).toString();
+                        generateEditorPanel(new Receipt(selectedStore, new Date(System.currentTimeMillis())));
                     }
                 });
             }
         });
+        //*****
         remove.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 for(JList<Receipt> jList : receiptListArray){
                     if(jList.getSelectedValue()!=null){
                         jList.getSelectedValue().deleteReceipt();
-                        generateDaySet(days.get(0).get_date(), new Date(days.get(0).get_date().getTime() + (7 * 24 * 60 * 60 * 1000)));
-                        generateNavigationPanel();
-                        generateContentPanel();
+                        generateOverviewPanel();
                     }
                 }
             }
         });
-        controlJButtons.add(edit);
-        controlJButtons.add(newReceipt);
-        controlJButtons.add(remove);
         //*****
-        content.add(dates, BorderLayout.PAGE_START);
-        content.add(receiptsPanel, BorderLayout.CENTER);
-        content.add(controlJButtons, BorderLayout.PAGE_END);
-        content.setVisible(true);
+        controlButtons.add(edit);
+        controlButtons.add(newReceipt);
+        controlButtons.add(remove);
+        return controlButtons;
     }
     private void generateDataPanel(){
-        data.removeAll();
+        data.setVisible(false);
         data = new JPanel(new GridLayout(2, 5));
         add(data, BorderLayout.PAGE_END);
         //*****
@@ -230,6 +199,7 @@ public class OverviewPanel extends JPanel {
         data.add(cTax);
         data.add(noTax);
         data.add(total);
+        data.setVisible(true);
     }
     private void generateDaySet(Date from, Date to){
         days.clear();
@@ -278,5 +248,40 @@ public class OverviewPanel extends JPanel {
         cTax.setText(String.format("%.2f", cTaxValue) + " PLN");
         noTax.setText(String.format("%.2f", noTaxValue) + " PLN");
         total.setText(String.format("%.2f", totalValue) + " PLN");
+    }
+    private void generateOverviewPanel(){
+        generateDaySet(days.get(0).get_date(), new Date(days.get(0).get_date().getTime() + (7 * 24 * 60 * 60 * 1000)));
+        setVisible(false);
+        generateNavigationPanel();
+        generateContentPanel();
+        generateDataPanel();
+        setVisible(true);
+    }
+    private void generateEditorPanel(Receipt receipt){
+        setVisible(false);
+        EditorPanel editorPanel = new EditorPanel(receipt);
+        data.removeAll();
+        content.removeAll();
+        content.add(editorPanel, BorderLayout.CENTER);
+        JButton backButton = new JButton("Back");
+        backButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JFrame saveOnCloseFrame = editorPanel.saveOnClose();
+                if (saveOnCloseFrame == null) {
+                    generateOverviewPanel();
+                    return;
+                }
+                saveOnCloseFrame.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowDeactivated(WindowEvent e) {
+                        generateOverviewPanel();
+                    }
+                });
+            }
+        });
+        navigation.removeAll();
+        navigation.add(backButton, BorderLayout.PAGE_START);
+        setVisible(true);
     }
 }
