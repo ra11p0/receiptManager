@@ -9,10 +9,14 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class EditorPanel extends JPanel {
+    private final ReceiptEditor editor;
     public EditorPanel(Receipt receipt, ArrayList<Item> items){
-        ReceiptEditor editor = new ReceiptEditor(receipt, items, true);
+        editor = new ReceiptEditor(receipt, items, true);
         setLayout(new GridLayout(1, 2));
         add(editor.get_editorPanel());
         setVisible(true);
+    }
+    public JFrame saveOnClose(){
+        return editor.saveOnClose();
     }
 }

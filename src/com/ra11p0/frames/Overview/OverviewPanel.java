@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 public class OverviewPanel extends JPanel {
     private final ArrayList<Day> days = new ArrayList<>();
@@ -140,19 +141,34 @@ public class OverviewPanel extends JPanel {
                 for(JList<Receipt> jList : receiptListArray){
                     if(jList.getSelectedValue()!=null){
                         setVisible(false);
+                        EditorPanel editorPanel = new EditorPanel(jList.getSelectedValue(), ReceiptsManager.getItems());
                         data.removeAll();
                         content.removeAll();
-                        content.add(new EditorPanel(jList.getSelectedValue(), ReceiptsManager.getItems()), BorderLayout.CENTER);
+                        content.add(editorPanel, BorderLayout.CENTER);
                         JButton backButton = new JButton("Back");
                         backButton.addMouseListener(new MouseAdapter() {
                             @Override
                             public void mouseClicked(MouseEvent e) {
-                                setVisible(false);
-                                generateDaySet(days.get(0).get_date(), new Date(days.get(0).get_date().getTime() + (7 * 24 * 60 * 60 * 1000)));
-                                generateContentPanel();
-                                generateNavigationPanel();
-                                generateDataPanel();
-                                setVisible(true);
+                                JFrame saveOnCloseFrame = editorPanel.saveOnClose();
+                                Function<Object, Object> refresh = o -> {
+                                    setVisible(false);
+                                    generateContentPanel();
+                                    generateNavigationPanel();
+                                    generateDataPanel();
+                                    setVisible(true);
+                                    return null;
+                                };
+                                if (saveOnCloseFrame == null) {
+                                    refresh.apply(null);
+                                    return;
+                                }
+                                saveOnCloseFrame.addWindowListener(new WindowAdapter() {
+                                    @Override
+                                    public void windowDeactivated(WindowEvent e) {
+                                        generateDaySet(days.get(0).get_date(), new Date(days.get(0).get_date().getTime() + (7 * 24 * 60 * 60 * 1000)));
+                                        refresh.apply(null);
+                                    }
+                                });
                             }
                         });
                         navigation.removeAll();

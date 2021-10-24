@@ -155,10 +155,10 @@ public class ReceiptEditor extends JFrame {
         _editorPanel.setVisible(true);
         generateTable();
     }
-    private void saveOnClose(){
+    public JFrame saveOnClose(){
         if(!_receipt._changesMade) {
             dispose();
-            return;
+            return null;
         }
         JFrame youSure = new JFrame("Save changes before exiting?");
         youSure.setLayout(new GridLayout(1, 2));
@@ -189,5 +189,6 @@ public class ReceiptEditor extends JFrame {
         youSure.add(save);
         youSure.add(discard);
         youSure.setVisible(true);
+        return youSure;
     }
 }
