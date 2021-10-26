@@ -18,7 +18,12 @@ public class Main {
     public static void main(String[] args) throws Exception{
         float lastBuild = checkLatestBuild();
         if(lastBuild != getBuild()) {
-            Object choice = JOptionPane.showOptionDialog(null, "New update to v." + lastBuild + " available. Current version: v." + getBuild()+ ". Download update?", "Update!", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{"NO", "YES"}, "YES");
+            Object choice = JOptionPane.showOptionDialog(null,
+                    "New update to v." + lastBuild + " available. Current version: v." +
+                            getBuild()+ ". Download update?", "Update!",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                    null, new Object[]{"NO", "YES"},
+                    "YES");
             if((Integer)choice == 1) {
                 update();
             }

@@ -56,7 +56,7 @@ public class EditItem extends JFrame {
         for(Item item : items) if(!namesOfProducts.contains(item.get_name())) namesOfProducts.add(item.get_name());
         AutoCompleteSupport.install(nameCombo,
                 GlazedLists.eventListOf(namesOfProducts.toArray()));
-        nameCombo.setSelectedIndex(0);
+        nameCombo.setSelectedIndex(namesOfProducts.indexOf(((Item) Objects.requireNonNull(itemsCombo.getSelectedItem())).get_name()));
         //INITIALIZE PRICE
         price.setText(String.format("%.2f", ((Item) Objects.requireNonNull(itemsCombo.getSelectedItem())).get_price()));
         price.setText(price.getText().replaceAll(",", "."));
@@ -79,6 +79,11 @@ public class EditItem extends JFrame {
                     JOptionPane.showMessageDialog(null, "Wrong input!", "Error!", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+                oldItem = (Item) itemsCombo.getSelectedItem();
+                newItem = new Item(Objects.requireNonNull(nameCombo.getSelectedItem()).toString(),
+                        oldItem.get_taxRate(),
+                        Float.parseFloat(price.getText()),
+                        "");
                 for(Receipt receipt : ReceiptsManager.getReceipts()){
                     ArrayList<ReceiptItem> receiptItems = receipt.get_items();
                     for(ReceiptItem receiptItem : receiptItems){
@@ -88,8 +93,6 @@ public class EditItem extends JFrame {
                                     Float.parseFloat(price.getText()),
                                     receiptItem.get_Item().get_store());
                             ReceiptItem newReceiptItem = new ReceiptItem(_newItem, receiptItem.get_qty());
-                            oldItem = receiptItem.get_Item();
-                            newItem = _newItem;
                             receipt.removeItem(receiptItem);
                             receipt.addItem(newReceiptItem);
                             try {
@@ -101,7 +104,8 @@ public class EditItem extends JFrame {
                         }
                     }
                 }
-                anyChange = true;
+                if(newItem.equals(oldItem)) anyChange = false;
+                else anyChange = true;
                 setVisible(false);
                 dispose();
             }

@@ -160,70 +160,14 @@ public class SearchResultPanel extends JPanel {
         setDateBounds.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                JFrame frame = new JFrame();
-                frame.setLayout(new BorderLayout());
-                JPanel labelPanel = new JPanel(new GridLayout(1, 2));
-                JPanel datePickerPanel = new JPanel(new GridLayout(1, 2));
-                UtilDateModel fromModel = new UtilDateModel();
-                UtilDateModel toModel = new UtilDateModel();
-                JDatePanelImpl fromDatePanel = new JDatePanelImpl(fromModel);
-                JDatePanelImpl toDatePanel = new JDatePanelImpl(toModel);
-                JButton confirm = new JButton("Confirm");
-                JLabel toLabel = new JLabel("to:");
-                fromModel.setDate(fromModel.getYear(), fromModel.getMonth(), 1);
-                toModel.setDate(toModel.getYear(), toModel.getMonth(), Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH));
-                fromModel.setSelected(true);
-                toModel.setSelected(true);
-                confirm.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        _fromDate = fromModel.getValue();
-                        _toDate = toModel.getValue();
-                        initializeDateAndItems(_items);
-                        generateReceiptsPanel();
-                        generateOptionsPanel();
-                        generateDataPanel();
-                        frame.setVisible(false);
-                        frame.dispose();
-                    }
-                });
-                //*****
-                labelPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
-                toLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-                labelPanel.add(new JLabel("Date bounds since:"));
-                labelPanel.add(toLabel);
-                //*****
-                fromDatePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 5));
-                toDatePanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 0));
-                datePickerPanel.add(fromDatePanel);
-                datePickerPanel.add(toDatePanel);
-                //*****
-                frame.setSize(400, 277);
-                frame.add(labelPanel, BorderLayout.PAGE_START);
-                frame.add(datePickerPanel, BorderLayout.CENTER);
-                frame.add(confirm, BorderLayout.AFTER_LAST_LINE);
-                frame.setVisible(true);
+                setDateBoundsFrame();
             }
         });
         //PREVIEW BUTTON BEHAVIOR
         previewReceipt.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(previewReceipt.getText().equals("Show receipt")) {
-                    JList<Receipt> receiptList = (JList<Receipt>) (((JScrollPane) receiptsPanel.getComponents()[0]).getViewport().getView());
-                    if(receiptList.getSelectedValue() == null) return;
-                    receiptsPanel.setVisible(false);
-                    receiptsPanel.removeAll();
-                    ReceiptEditor editor = new ReceiptEditor(receiptList.getSelectedValue(), true);
-                    receiptsPanel.add(editor.get_receiptView());
-                    receiptsPanel.setVisible(true);
-                    optionsPanel.setVisible(false);
-                    previewReceipt.setText("Hide receipt");
-                    optionsPanel.setVisible(true);
-                }else{
-                    generateReceiptsPanel();
-                    generateOptionsPanel();
-                }
+                showReceiptPreview(previewReceipt);
             }
         });
         //EDIT ITEM BUTTON BEHAVIOR
@@ -234,9 +178,15 @@ public class SearchResultPanel extends JPanel {
                 editItem.addWindowListener(new WindowAdapter() {
                     @Override
                     public void windowClosed(WindowEvent e) {
-                        if(!editItem.anyChange) return;
+                        if(!editItem.anyChange || editItem.oldItem == null || editItem.newItem == null) return;
+                        Object choice = JOptionPane.showOptionDialog(null,
+                                "Are you sure you want to replace " + editItem.oldItem.toString() + " with " + editItem.newItem.toString() + "?" , "",
+                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                                null, new Object[]{"NO", "YES"},
+                                "NO");
+                        if((int)choice != 1) return;
                         _items.remove(editItem.oldItem);
-                        _items.add(editItem.newItem);
+                        _items.add(new Item(editItem.newItem.get_name(), editItem.oldItem.get_taxRate(), editItem.newItem.get_price(), editItem.oldItem.get_store()));
                         _receipts = ReceiptsManager.getReceiptsContaining(_items);
                         generateReceiptsPanel();
                         generateOptionsPanel();
@@ -250,29 +200,94 @@ public class SearchResultPanel extends JPanel {
         optionsPanel.add(editItem);
         optionsPanel.setVisible(true);
     }
-    public static String findCommon(ArrayList<String> arr) {
-        int qty = 0;
-        int index = 0;
-        for(String string : arr){
-            int counter = 0;
-            for(char _char : string.toCharArray()) if(_char == ' ') counter++;
-            if(counter < qty) {
-                qty = counter;
-                index = arr.indexOf(string);
+    private void setDateBoundsFrame(){
+        JFrame frame = new JFrame();
+        frame.setLayout(new BorderLayout());
+        JPanel labelPanel = new JPanel(new GridLayout(1, 2));
+        JPanel datePickerPanel = new JPanel(new GridLayout(1, 2));
+        UtilDateModel fromModel = new UtilDateModel();
+        UtilDateModel toModel = new UtilDateModel();
+        JDatePanelImpl fromDatePanel = new JDatePanelImpl(fromModel);
+        JDatePanelImpl toDatePanel = new JDatePanelImpl(toModel);
+        JButton confirm = new JButton("Confirm");
+        JLabel toLabel = new JLabel("to:");
+        fromModel.setDate(fromModel.getYear(), fromModel.getMonth(), 1);
+        toModel.setDate(toModel.getYear(), toModel.getMonth(), Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH));
+        fromModel.setSelected(true);
+        toModel.setSelected(true);
+        confirm.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                _fromDate = fromModel.getValue();
+                _toDate = toModel.getValue();
+                initializeDateAndItems(_items);
+                generateReceiptsPanel();
+                generateOptionsPanel();
+                generateDataPanel();
+                frame.setVisible(false);
+                frame.dispose();
             }
+        });
+        //*****
+        labelPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+        toLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        labelPanel.add(new JLabel("Date bounds since:"));
+        labelPanel.add(toLabel);
+        //*****
+        fromDatePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 5));
+        toDatePanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 0));
+        datePickerPanel.add(fromDatePanel);
+        datePickerPanel.add(toDatePanel);
+        //*****
+        frame.setSize(400, 277);
+        frame.add(labelPanel, BorderLayout.PAGE_START);
+        frame.add(datePickerPanel, BorderLayout.CENTER);
+        frame.add(confirm, BorderLayout.AFTER_LAST_LINE);
+        frame.setVisible(true);
+    }
+    private void showReceiptPreview(JButton previewReceipt){
+        if(previewReceipt.getText().equals("Show receipt")) {
+            JList<Receipt> receiptList = (JList<Receipt>) (((JScrollPane) receiptsPanel.getComponents()[0]).getViewport().getView());
+            if(receiptList.getSelectedValue() == null) return;
+            receiptsPanel.setVisible(false);
+            receiptsPanel.removeAll();
+            ReceiptEditor editor = new ReceiptEditor(receiptList.getSelectedValue(), true);
+            receiptsPanel.add(editor.get_receiptView());
+            receiptsPanel.setVisible(true);
+            optionsPanel.setVisible(false);
+            previewReceipt.setText("Hide receipt");
+            optionsPanel.setVisible(true);
+        }else{
+            generateReceiptsPanel();
+            generateOptionsPanel();
         }
-        String nameWithMostWords = arr.get(index);
-        StringBuilder result = new StringBuilder();
-        String[] words = nameWithMostWords.split(" ");
-        for(String word : words) {
-            if(word.length() > 1) {
-                boolean contains = true;
-                for (String name : arr) {
-                    if (!name.toUpperCase(Locale.ROOT).contains(word.toUpperCase(Locale.ROOT))) contains = false;
+    }
+    public static String findCommon(ArrayList<String> inputArray) {
+        ArrayList<String> arr = new ArrayList<>();
+        for(String string : inputArray) arr.add(string.replaceAll("-", " "));
+        ArrayList<String> outputArray = new ArrayList<>();
+        for(String string : arr) {
+            StringBuilder result = new StringBuilder();
+            String[] words = string.split(" ");
+            for (String word : words) {
+                if (word.length() > 1) {
+                    boolean contains = true;
+                    for (String name : arr) {
+                        if (!name.toUpperCase(Locale.ROOT).contains(word.toUpperCase(Locale.ROOT))) contains = false;
+                    }
+                    if (contains) result.append(word).append(" ");
                 }
-                if (contains) result.append(word).append(" ");
+            }
+            outputArray.add(result.toString());
+        }
+        int length = 0;
+        int index = 0;
+        for(String string : outputArray){
+            if(string.split(" ").length > length){
+                index = outputArray.indexOf(string);
+                length = string.split(" ").length;
             }
         }
-        return result.toString();
+        return outputArray.get(index);
     }
 }
