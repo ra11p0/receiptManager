@@ -141,4 +141,16 @@ public class ReceiptsManager {
         getItemsAndReceipts();
         return items;
     }
+    public static ArrayList<Receipt> getReceiptsContaining(ArrayList<Item> items){
+        ArrayList<Receipt> receipts = new ArrayList<>();
+        for(Receipt receipt : ReceiptsManager.getReceipts()){
+            for(Item item : items){
+                for(ReceiptItem receiptItem : receipt.get_items())
+                {
+                    if(receiptItem.get_Item().get_name().equals(item.get_name()) && !receipts.contains(receipt)) receipts.add(receipt);
+                }
+            }
+        }
+        return receipts;
+    }
 }

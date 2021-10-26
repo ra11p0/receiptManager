@@ -1,17 +1,32 @@
 package com.ra11p0.structures;
 
+import java.util.Locale;
+
 public class ReceiptItem {
     private final Item _item; public Item get_Item() {
         return _item;
     }
-    private final float _qty; public float get_qty() {
+    private float _qty; public float get_qty() {
         return _qty;
     }
     public ReceiptItem(Item item, float qty){
         _item = item;
         _qty = qty;
     }
+    public void addQty(float qty){
+        _qty+=qty;
+    }
     public String toString(){
         return _item.get_name() + " - " + String.format("%.2f", _item.get_price() * _qty);
+    }
+    @Override
+    public boolean equals(Object obj){
+        try {
+            if (obj == null) return false;
+            ReceiptItem item = (ReceiptItem) obj;
+            return item.get_Item().equals(this._item);
+        }catch (Exception ex){
+            return false;
+        }
     }
 }

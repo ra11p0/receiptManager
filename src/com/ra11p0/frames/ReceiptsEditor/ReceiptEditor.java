@@ -14,7 +14,7 @@ import java.util.*;
 public class ReceiptEditor extends JFrame {
 
     private final JPanel _receiptView = new JPanel();
-        //public JPanel get_receiptView() {return _receiptView;}
+        public JPanel get_receiptView() {return _receiptView;}
     private final JPanel _management = new JPanel();
         //public JPanel get_management() {return _management;}
     private final JPanel _editorPanel = new JPanel();
@@ -56,7 +56,13 @@ public class ReceiptEditor extends JFrame {
         _editorPanel.add(_receiptView);
     }
     private void generateTable(){
-        DefaultTableModel tableModel = new DefaultTableModel();
+        DefaultTableModel tableModel = new DefaultTableModel(){
+            //READ ONLY TABLE
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         JTable table = new JTable(tableModel);
         JScrollPane tablePane = new JScrollPane(table);
         _receiptView.setLayout(new FlowLayout());

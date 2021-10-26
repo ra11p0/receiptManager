@@ -7,6 +7,7 @@ import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -16,9 +17,9 @@ public class EditDate {
         JFrame datePickerFrame = new JFrame("Date picker.");
         UtilDateModel model = new UtilDateModel();
         JDatePanelImpl datePanel = new JDatePanelImpl(model);
-        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
+        //JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
         JButton confirm = new JButton("Confirm.");
-        confirm.addMouseListener(new MouseListener() {
+        confirm.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 receipt.setNewId(model.getValue());
@@ -26,31 +27,12 @@ public class EditDate {
                 datePickerFrame.dispose();
                 receiptEditor.repaintFrame();
             }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
         });
-        datePickerFrame.setLayout(new GridLayout(3, 1));
-        datePickerFrame.setSize(200, 200);
+        datePickerFrame.setLayout(new FlowLayout());
+        datePanel.setPreferredSize(new Dimension(200, 185));
+        datePickerFrame.setSize(250, 300);
         datePickerFrame.add(new Label("Pick the date: "));
-        datePickerFrame.add(datePicker);
+        datePickerFrame.add(datePanel);
         datePickerFrame.add(confirm);
         datePickerFrame.setVisible(true);
     }

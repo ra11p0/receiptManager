@@ -2,6 +2,8 @@ package com.ra11p0.frames.ReceiptsEditor;
 
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
+import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
+import com.ra11p0.structures.CheckListRenderer;
 import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
 import com.ra11p0.structures.ReceiptItem;
@@ -24,7 +26,7 @@ public class AddItem {
         for(Item item : itemsAtThisStore) itemsBox.addItem(item);
         JTextField qty = new JTextField();
         JTextField searchBar = new JTextField();
-        //SEARCH BAR
+        //SEARCH BAR BEHAVIOR
         searchBar.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -103,24 +105,48 @@ public class AddItem {
     }
     private static void newItem(JComboBox<Item> itemsBox, Receipt receipt, ArrayList<Item> items) throws NullPointerException{
         JFrame createNewItemFrame = new JFrame("Create new item.");
+        ArrayList<String> namesOfProducts = new ArrayList<>();
+        JComboBox<Object> name = new JComboBox<>();
+        JComboBox<Float> taxRate = new JComboBox<>();
+        JTextField cost = new JTextField();
+        JButton confirm = new JButton("Confirm.");
+        //*****
         createNewItemFrame.setAlwaysOnTop(true);
         createNewItemFrame.setSize(200, 200);
         createNewItemFrame.setLayout(new FlowLayout());
-        ArrayList<String> namesOfProducts = new ArrayList<>();
-        JComboBox<Object> name = new JComboBox<>();
+        //NAME COMBO BEHAVIOR
         for(Item item : items)
             if(!namesOfProducts.contains(item.get_name()))
                 namesOfProducts.add(item.get_name());
         AutoCompleteSupport.install(name,
                 GlazedLists.eventListOf(namesOfProducts.toArray()));
         name.setPreferredSize(new Dimension(175, 25));
-        JComboBox<Float> taxRate = new JComboBox<>();
+        name.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(name.getSelectedItem() == null) return;
+                for(Item _item : ReceiptsManager.getItems())
+                    if(_item.get_name().equals(name.getSelectedItem())){
+                        taxRate.setSelectedItem(_item.get_taxRate());
+                        break;
+                    }
+            }
+        });
+        //TAX RATE BEHAVIOR
         taxRate.addItem(0.23F);
         taxRate.addItem(0.08F);
         taxRate.addItem(0.05F);
         taxRate.addItem(0F);
         taxRate.setPreferredSize(new Dimension(80, 25));
-        JTextField cost = new JTextField();
+        taxRate.setRenderer(new ListCellRenderer<Float>() {
+            @Override
+            public Component getListCellRendererComponent(JList<? extends Float> list, Float value, int index, boolean isSelected, boolean cellHasFocus) {
+                DefaultListCellRenderer renderer = new DefaultListCellRenderer();
+                Component component = renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                renderer.setText(String.format("%.0f", value*100) + "%");
+                return component;
+            }
+        });
         //PRICE PARSE CHECK
         cost.addKeyListener(new KeyAdapter() {
             @Override
@@ -148,7 +174,6 @@ public class AddItem {
             }
         });
         cost.setPreferredSize(new Dimension(50, 25));
-        JButton confirm = new JButton("Confirm.");
         //CONFIRM
         confirm.addMouseListener(new MouseAdapter() {
             @Override
@@ -162,6 +187,7 @@ public class AddItem {
                 itemsBox.setSelectedIndex(itemsBox.getItemCount()-1);
             }
         });
+        //*****
         createNewItemFrame.add(new Label("Name of new item:"));
         createNewItemFrame.add(name);
         createNewItemFrame.add(new Label("Cost of one unit:"));

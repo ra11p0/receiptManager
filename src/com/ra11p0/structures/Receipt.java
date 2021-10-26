@@ -38,6 +38,11 @@ public class Receipt {
         setNewId(date);
     }
     public void addItem(ReceiptItem item){
+        if(_items.contains(item)) {
+            _items.get(_items.indexOf(item)).addQty(item.get_qty());
+            _changesMade = true;
+            return;
+        }
         _items.add(item);
         _paid += item.get_Item().get_price() * item.get_qty();
         _totalTax += 1+ item.get_Item().get_taxRate()/(item.get_Item().get_price() * item.get_qty());
@@ -87,7 +92,10 @@ public class Receipt {
         return receiptFile.delete();
     }
     public String toString(){
-        return _ID;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+        calendar.setTimeInMillis(_date.getTime());
+        return _store; //+ "-" + calendar.get(Calendar.DAY_OF_MONTH) + "." + (calendar.get(Calendar.MONTH)+1);
     }
     public String get_dateString(){
         String dateString = "";

@@ -1,4 +1,4 @@
-package com.ra11p0.frames.Overview;
+package com.ra11p0.frames.Overview.Panels;
 
 import com.ra11p0.frames.ReceiptsEditor.ReceiptEditor;
 import com.ra11p0.structures.Receipt;

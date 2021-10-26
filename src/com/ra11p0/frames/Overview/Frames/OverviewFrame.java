@@ -1,4 +1,6 @@
-package com.ra11p0.frames.Overview;
+package com.ra11p0.frames.Overview.Frames;
+
+import com.ra11p0.frames.Overview.Panels.OverviewPanel;
 
 import javax.swing.*;
 

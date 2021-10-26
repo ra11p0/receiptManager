@@ -1,6 +1,7 @@
 package com.ra11p0.frames;
 
-import com.ra11p0.frames.Overview.OverviewFrame;
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.ra11p0.frames.Overview.Frames.OverviewFrame;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 
 import javax.swing.*;
@@ -10,6 +11,7 @@ import java.awt.event.MouseEvent;
 
 public class HomeFrame extends JFrame {
     public HomeFrame(String title, int width, int height) throws Exception{
+        UIManager.setLookAndFeel( new FlatDarculaLaf());
         //*****
         new OverviewFrame(title);
         dispose();

@@ -13,6 +13,6 @@
     <orderEntry type="library" exported="" name="google.code.gson" level="project" />
     <orderEntry type="library" exported="" name="net.sourceforge.jdatepicker" level="project" />
     <orderEntry type="library" exported="" name="glazedlists" level="project" />
-    <orderEntry type="library" name="formdev.flatlaf" level="project" />
+    <orderEntry type="library" exported="" name="formdev.flatlaf" level="project" />
   </component>
 </module>

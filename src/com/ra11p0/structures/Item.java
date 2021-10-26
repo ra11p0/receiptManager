@@ -1,6 +1,7 @@
 package com.ra11p0.structures;
 
 import java.util.Locale;
+import java.util.Objects;
 
 public class Item {
     private final String _name; public String get_name() {
@@ -30,7 +31,7 @@ public class Item {
         try {
             if (obj == null) return false;
             Item item = (Item) obj;
-            return item.get_name().toLowerCase(Locale.ROOT).equals(this.get_name().toLowerCase(Locale.ROOT)) && item.get_price() == this.get_price();
+            return item.get_name().toLowerCase(Locale.ROOT).equals(this.get_name().toLowerCase(Locale.ROOT)) && item.get_price() == this.get_price() && item.get_store().equals(_store);
         }catch (Exception ex){
             return false;
         }

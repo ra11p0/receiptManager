@@ -1,9 +1,11 @@
-package com.ra11p0.frames.Overview;
+package com.ra11p0.frames.Overview.Panels;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
+import com.ra11p0.frames.Overview.Frames.GetItem;
 import com.ra11p0.frames.Overview.structures.Day;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.ra11p0.frames.ReceiptsManager.StoreSelector;
+import com.ra11p0.structures.CheckListItem;
+import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
 import com.ra11p0.structures.ReceiptItem;
 
@@ -24,11 +26,9 @@ public class OverviewPanel extends JPanel {
     private final JLabel cTax = new JLabel("0", SwingConstants.CENTER);
     private final JLabel noTax = new JLabel("0", SwingConstants.CENTER);
     private final JLabel total = new JLabel("0", SwingConstants.CENTER);
-    public OverviewPanel() throws Exception{
-        UIManager.setLookAndFeel( new FlatDarculaLaf());
-        //*****
+    //*****
+    public OverviewPanel() {
         setLayout(new BorderLayout());
-        //setSize(800, 300);
         //*****
         aTax.setForeground(Color.LIGHT_GRAY);
         bTax.setForeground(Color.LIGHT_GRAY);
@@ -105,6 +105,11 @@ public class OverviewPanel extends JPanel {
         }
         for (JPanel panel : jPanels) {
             JList<Receipt> jList = new JList<>();
+            jList.setCellRenderer((list, value, index, isSelected, cellHasFocus) -> {
+                DefaultListCellRenderer renderer = new DefaultListCellRenderer();
+                renderer.setText(value.get_store());
+                return renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            });
             receiptListArray.add(jList);
             JScrollPane scrollPane = new JScrollPane(jList);
             jList.addFocusListener(new FocusAdapter() {
@@ -136,7 +141,8 @@ public class OverviewPanel extends JPanel {
         JButton edit = new JButton("Edit");
         JButton newReceipt = new JButton("New receipt");
         JButton remove = new JButton("Remove");
-        //*****
+        JButton search = new JButton("Search items");
+        //EDIT BUTTON BEHAVIOR
         edit.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -148,7 +154,7 @@ public class OverviewPanel extends JPanel {
                 generateEditorPanel(receipt);
             }
         });
-        //*****
+        //NEW RECEIPT BUTTON BEHAVIOR
         newReceipt.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -166,7 +172,7 @@ public class OverviewPanel extends JPanel {
                 });
             }
         });
-        //*****
+        //REMOVE BUTTON BEHAVIOR
         remove.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -178,10 +184,39 @@ public class OverviewPanel extends JPanel {
                 }
             }
         });
+        //SEARCH BUTTON BEHAVIOR
+        search.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JFrame getItemFrame = new GetItem().showDialog();
+                getItemFrame.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        JList<Object> itemsList = null;
+                        ArrayList<String> itemsNames = new ArrayList<>();
+                        ArrayList<Item> itemsArray = new ArrayList<>();
+                        for(Object object : getItemFrame.getRootPane().getContentPane().getComponents())
+                            if (object.getClass() == JScrollPane.class)
+                                itemsList = (JList<Object>)((JScrollPane)object).getViewport().getView();
+                        for(int i = 0; i < Objects.requireNonNull(itemsList).getModel().getSize(); i++){
+                            CheckListItem checkListItem = (CheckListItem) itemsList.getModel().getElementAt(i);
+                            if(checkListItem.isSelected())
+                                itemsNames.add(((Item)checkListItem.getObject()).get_name());
+                        }
+                        if(itemsNames.size() == 0) return;
+                        for(String name : itemsNames) {
+                            for(Item item : ReceiptsManager.getItems()) if(item.get_name().equals(name) && !itemsArray.contains(item)) itemsArray.add(item);
+                        }
+                        generateSearchResultPanel(itemsArray);
+                    }
+                });
+            }
+        });
         //*****
         controlButtons.add(edit);
         controlButtons.add(newReceipt);
         controlButtons.add(remove);
+        controlButtons.add(search);
         return controlButtons;
     }
     private void generateDataPanel(){
@@ -278,6 +313,23 @@ public class OverviewPanel extends JPanel {
                         generateOverviewPanel();
                     }
                 });
+            }
+        });
+        navigation.removeAll();
+        navigation.add(backButton, BorderLayout.PAGE_START);
+        setVisible(true);
+    }
+    private void generateSearchResultPanel(ArrayList<Item> items){
+        setVisible(false);
+        SearchResultPanel searchResultPanel = new SearchResultPanel(items);
+        data.removeAll();
+        content.removeAll();
+        content.add(searchResultPanel, BorderLayout.CENTER);
+        JButton backButton = new JButton("Back");
+        backButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                generateOverviewPanel();
             }
         });
         navigation.removeAll();
