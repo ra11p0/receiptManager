@@ -267,7 +267,8 @@ public class OverviewPanel extends JPanel {
         for(Receipt receipt : ReceiptsManager.getReceipts()){
             Calendar receiptCalendar = Calendar.getInstance();
             receiptCalendar.setTime(receipt.get_date());
-            if(receiptCalendar.get(Calendar.MONTH) == calendar.get(Calendar.MONTH)){
+            if(receiptCalendar.get(Calendar.MONTH) == calendar.get(Calendar.MONTH) &&
+                    receiptCalendar.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)){
                 totalValue+= receipt.get_paid();
                 for(ReceiptItem receiptItem : receipt.get_items()){
                     if(receiptItem.get_Item().get_taxRate() == 0.23F) aTaxValue += receiptItem.get_qty() * receiptItem.get_Item().get_price();
