@@ -1,7 +1,5 @@
 package com.ra11p0.structures;
 
-import java.util.Locale;
-
 public class ReceiptItem {
     private final Item _item; public Item get_Item() {
         return _item;
@@ -24,7 +22,7 @@ public class ReceiptItem {
         try {
             if (obj == null) return false;
             ReceiptItem item = (ReceiptItem) obj;
-            return item.get_Item().equals(this._item);
+            return item.get_Item().equals(this._item) && item.get_qty() == this._qty;
         }catch (Exception ex){
             return false;
         }

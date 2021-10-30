@@ -1,7 +1,6 @@
 package com.ra11p0.structures;
 
 import java.util.Locale;
-import java.util.Objects;
 
 public class Item {
     private final String _name; public String get_name() {

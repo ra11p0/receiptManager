@@ -19,8 +19,8 @@ public class Receipt {
     private float _paid; public float get_paid() {
         return _paid;
     }
-    private float _totalTax; public float get_totalTax() {return _totalTax;}
-    private int _qty; public int get_qty() {return _qty;}
+    private float _totalTax;// public float get_totalTax() {return _totalTax;}
+    private int _qty;// public int get_qty() {return _qty;}
     private final ArrayList<ReceiptItem> _items = new ArrayList<>(); public ArrayList<ReceiptItem> get_items() {
         return _items;
     }
@@ -108,5 +108,14 @@ public class Receipt {
         if (calendar.get(Calendar.DAY_OF_MONTH) < 10) dateString += "0" + calendar.get(Calendar.DAY_OF_MONTH);
         else dateString += calendar.get(Calendar.DAY_OF_MONTH);
         return dateString;
+    }
+    @Override
+    public boolean equals(Object obj){
+        if(obj == null || obj.getClass() != Receipt.class) return false;
+        Receipt receipt = (Receipt) obj;
+        return Objects.equals(receipt.get_ID(), this._ID) &&
+                receipt.get_paid() == this._paid &&
+                receipt.get_items().equals(this._items) &&
+                receipt.get_store().equals(this.get_store());
     }
 }

@@ -3,15 +3,24 @@ package com.ra11p0.frames;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.ra11p0.frames.Overview.Frames.OverviewFrame;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
+import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 public class HomeFrame extends JFrame {
     public HomeFrame(String title, int width, int height) throws Exception{
         UIManager.setLookAndFeel( new FlatDarculaLaf());
+        File temp = new File("res/.temp");
+        if(temp.exists()) {
+            FileUtils.cleanDirectory(temp);
+            temp.delete();
+        }
+        File source = new File("res/receipts");
+        FileUtils.copyDirectoryToDirectory(source, temp);
         //*****
         new OverviewFrame(title);
         dispose();

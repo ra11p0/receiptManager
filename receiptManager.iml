@@ -14,5 +14,6 @@
     <orderEntry type="library" exported="" name="net.sourceforge.jdatepicker" level="project" />
     <orderEntry type="library" exported="" name="glazedlists" level="project" />
     <orderEntry type="library" exported="" name="formdev.flatlaf" level="project" />
+    <orderEntry type="library" exported="" name="commons.io" level="project" />
   </component>
 </module>

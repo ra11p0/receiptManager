@@ -176,12 +176,21 @@ public class OverviewPanel extends JPanel {
         remove.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                Receipt receiptToDelete = null;
                 for(JList<Receipt> jList : receiptListArray){
                     if(jList.getSelectedValue()!=null){
-                        jList.getSelectedValue().deleteReceipt();
-                        generateOverviewPanel();
+                        receiptToDelete = jList.getSelectedValue();
                     }
                 }
+                if(receiptToDelete == null) return;
+                Object choice = JOptionPane.showOptionDialog(null,
+                        "Are you sure you want to remove receipt?" , "",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                        null, new Object[]{"NO", "YES"},
+                        "NO");
+                if((int)choice != 1) return;
+                receiptToDelete.deleteReceipt();
+                generateOverviewPanel();
             }
         });
         //SEARCH BUTTON BEHAVIOR
