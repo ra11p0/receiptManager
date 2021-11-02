@@ -51,6 +51,7 @@ public class Receipt {
     }
     public void saveReceipt() throws IOException {
         File oldReceipt = new File("res/receipts/" + _ID + ".json");
+        ReceiptsManager.removeReceipt(this);
         if (_newId != null) _ID = _newId;
         try {
             if (oldReceipt.exists())  oldReceipt.renameTo(new File("res/receipts/" + _ID + ".json"));
@@ -62,6 +63,7 @@ public class Receipt {
         gson.toJson(this, fw);
         fw.close();
         _changesMade=false;
+        ReceiptsManager.addReceipt(this);
     }
     public void removeItem(ReceiptItem item){
         _items.remove(item);
@@ -89,6 +91,7 @@ public class Receipt {
     }
     public boolean deleteReceipt(){
         File receiptFile = new File("res/receipts/" + this.get_ID() + ".json");
+        ReceiptsManager.removeReceipt(this);
         return receiptFile.delete();
     }
     public String toString(){

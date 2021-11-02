@@ -21,7 +21,7 @@ import java.util.Objects;
 public class ReceiptsManager {
     private static JFrame _frame;
     private final static ArrayList<Receipt> _receipts = new ArrayList<>();
-    private final static ArrayList<Item> _items = new ArrayList<>();
+    public final static ArrayList<Item> _items = new ArrayList<>();
     public static void showDialog(){
         _frame = new JFrame("Select or create new receipt.");
         JComboBox<Receipt> receiptSelector = new JComboBox<>();
@@ -29,7 +29,7 @@ public class ReceiptsManager {
         Button remove = new Button("Remove selected receipt.");
         Button edit = new Button("Modify selected receipt.");
         //GET ITEMS AND RECEIPTS
-        getItemsAndReceipts();
+        refreshItemsAndReceipts();
         for(Receipt receipt : _receipts) receiptSelector.addItem(receipt);
         //STORE SELECTOR DIALOG
         _new.addMouseListener(new MouseAdapter() {
@@ -77,7 +77,7 @@ public class ReceiptsManager {
         _frame.add(_new);
         _frame.setVisible(true);
     }
-    private static void getItemsAndReceipts(){
+    public static void refreshItemsAndReceipts(){
         _items.clear();
         _receipts.clear();
         String[] receiptFiles = new File("res/receipts/").list();
@@ -131,24 +131,32 @@ public class ReceiptsManager {
         youSure.setVisible(true);
     }
     public static ArrayList<Receipt> getReceipts() {
-        getItemsAndReceipts();
+        if(_receipts.size() == 0) refreshItemsAndReceipts();
         return _receipts;
     }
     public static ArrayList<Item> getItems() {
-        getItemsAndReceipts();
+        if(_items.size() == 0) refreshItemsAndReceipts();
+        if(_receipts.size() != 0) {
+            for(Receipt receipt : _receipts)
+                for(ReceiptItem receiptItem : receipt.get_items())
+                    if (!_items.contains(receiptItem.get_Item())) _items.add(receiptItem.get_Item());
+            _items.sort(Comparator.comparing(Item::get_name));
+        }
         return _items;
     }
     public static ArrayList<Receipt> getReceiptsContaining(ArrayList<Item> items){
         ArrayList<Receipt> receipts = new ArrayList<>();
-        for(Receipt receipt : ReceiptsManager.getReceipts()){
-            for(Item item : items){
+        for(Receipt receipt : _receipts)
+            for(Item item : items)
                 for(ReceiptItem receiptItem : receipt.get_items())
-                {
                     if(receiptItem.get_Item().get_name().equals(item.get_name()) && !receipts.contains(receipt)) receipts.add(receipt);
-                }
-            }
-        }
         return receipts;
+    }
+    public static void addReceipt(Receipt receipt){
+        _receipts.add(receipt);
+    }
+    public static void removeReceipt(Receipt receipt){
+        _receipts.remove(receipt);
     }
     public static boolean checkIfChangesMade(){
         ArrayList<Receipt> oldReceipts = new ArrayList<>();

@@ -84,6 +84,7 @@ public class EditItem extends JFrame {
                         oldItem.get_taxRate(),
                         Float.parseFloat(price.getText()),
                         "");
+                ArrayList<Receipt> receiptsToSave = new ArrayList<>();
                 for(Receipt receipt : ReceiptsManager.getReceipts()){
                     ArrayList<ReceiptItem> receiptItems = receipt.get_items();
                     for(ReceiptItem receiptItem : receiptItems){
@@ -95,13 +96,16 @@ public class EditItem extends JFrame {
                             ReceiptItem newReceiptItem = new ReceiptItem(_newItem, receiptItem.get_qty());
                             receipt.removeItem(receiptItem);
                             receipt.addItem(newReceiptItem);
-                            try {
-                                receipt.saveReceipt();
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
-                            }
+                            receiptsToSave.add(receipt);
                             break;
                         }
+                    }
+                }
+                for(Receipt receipt : receiptsToSave) {
+                    try {
+                        receipt.saveReceipt();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
                     }
                 }
                 if(newItem.equals(oldItem)) anyChange = false;

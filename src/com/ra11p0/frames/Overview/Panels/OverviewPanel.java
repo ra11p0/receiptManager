@@ -198,25 +198,53 @@ public class OverviewPanel extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 JFrame getItemFrame = new GetItem().showDialog();
+                Thread refreshItemsAndReceipts = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ReceiptsManager.refreshItemsAndReceipts();
+                    }
+                });
+                refreshItemsAndReceipts.start();
                 getItemFrame.addWindowListener(new WindowAdapter() {
                     @Override
                     public void windowClosed(WindowEvent e) {
-                        JList<Object> itemsList = null;
-                        ArrayList<String> itemsNames = new ArrayList<>();
-                        ArrayList<Item> itemsArray = new ArrayList<>();
-                        for(Object object : getItemFrame.getRootPane().getContentPane().getComponents())
-                            if (object.getClass() == JScrollPane.class)
-                                itemsList = (JList<Object>)((JScrollPane)object).getViewport().getView();
-                        for(int i = 0; i < Objects.requireNonNull(itemsList).getModel().getSize(); i++){
-                            CheckListItem checkListItem = (CheckListItem) itemsList.getModel().getElementAt(i);
-                            if(checkListItem.isSelected())
-                                itemsNames.add(((Item)checkListItem.getObject()).get_name());
+                        Label statusLabel = new Label("Collecting data...", SwingConstants.CENTER);
+                        setVisible(false);
+                        content.removeAll();
+                        navigation.removeAll();
+                        data.removeAll();
+                        content.setLayout(new FlowLayout());
+                        content.add(statusLabel);
+                        setVisible(true);
+                        Long startTime = System.currentTimeMillis();
+                        try {
+                            refreshItemsAndReceipts.join();
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
                         }
-                        if(itemsNames.size() == 0) return;
-                        for(String name : itemsNames) {
-                            for(Item item : ReceiptsManager.getItems()) if(item.get_name().equals(name) && !itemsArray.contains(item)) itemsArray.add(item);
-                        }
-                        generateSearchResultPanel(itemsArray);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ArrayList<Item> itemsArray = new ArrayList<>();
+                                JList<Object> itemsList = null;
+                                for(Object object : getItemFrame.getRootPane().getContentPane().getComponents())
+                                    if (object.getClass() == JScrollPane.class) {
+                                        itemsList = (JList<Object>) ((JScrollPane) object).getViewport().getView();
+                                        break;
+                                    }
+                                for(int i = 0; i < Objects.requireNonNull(itemsList).getModel().getSize(); i++){
+                                    CheckListItem checkListItem = ((CheckListItem) itemsList.getModel().getElementAt(i));
+                                    if(checkListItem.isSelected()) {
+                                        for(Item item : ReceiptsManager._items)
+                                            if(item.get_name().equals(((Item) checkListItem.getObject()).get_name()) && !itemsArray.contains(item))
+                                                itemsArray.add(item);
+                                    }
+                                }
+                                if(itemsArray.size() == 0) return;
+                                System.out.println(System.currentTimeMillis() - startTime);
+                                generateSearchResultPanel(itemsArray);
+                            }
+                        }).start();
                     }
                 });
             }
@@ -334,6 +362,7 @@ public class OverviewPanel extends JPanel {
         SearchResultPanel searchResultPanel = new SearchResultPanel(items);
         data.removeAll();
         content.removeAll();
+        content.setLayout(new BorderLayout());
         content.add(searchResultPanel, BorderLayout.CENTER);
         JButton backButton = new JButton("Back");
         backButton.addMouseListener(new MouseAdapter() {
