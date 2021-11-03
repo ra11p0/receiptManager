@@ -6,10 +6,7 @@ import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
 import com.ra11p0.structures.ReceiptItem;
-import javafx.scene.layout.Border;
-import net.sourceforge.jdatepicker.JDatePicker;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
-import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;

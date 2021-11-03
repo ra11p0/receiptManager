@@ -1,17 +1,15 @@
 package com.ra11p0.structures;
 
-import com.google.gson.Gson;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 
-import javax.swing.*;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
 public class Receipt {
     private String _ID; public String get_ID() {
         return _ID;
+    } public void set_ID(String newId){
+        _ID = newId;
     }
     private final String _store; public String get_store() {
         return _store;
@@ -27,7 +25,7 @@ public class Receipt {
     private Date _date; public Date get_date() {
         return _date;
     }
-    private transient String _newId = "";
+    public transient String _newId = "";
     public transient boolean _changesMade = false;
     public Receipt(String store, Date date){
         Calendar calendar = Calendar.getInstance();
@@ -38,32 +36,22 @@ public class Receipt {
         setNewId(date);
     }
     public void addItem(ReceiptItem item){
-        if(_items.contains(item)) {
-            _items.get(_items.indexOf(item)).addQty(item.get_qty());
-            _changesMade = true;
-            return;
+        for(ReceiptItem receiptItem : _items){
+            if(receiptItem.get_Item().equals(item.get_Item())){
+                receiptItem.addQty(item.get_qty());
+                _changesMade = true;
+                return;
+            }
         }
         _items.add(item);
         _paid += item.get_Item().get_price() * item.get_qty();
         _totalTax += 1+ item.get_Item().get_taxRate()/(item.get_Item().get_price() * item.get_qty());
         _qty ++;
         _changesMade=true;
+        ReceiptsManager.changesMade = true;
     }
     public void saveReceipt() throws IOException {
-        File oldReceipt = new File("res/receipts/" + _ID + ".json");
-        ReceiptsManager.removeReceipt(this);
-        if (_newId != null) _ID = _newId;
-        try {
-            if (oldReceipt.exists())  oldReceipt.renameTo(new File("res/receipts/" + _ID + ".json"));
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(new JFrame(), e, "Error!", JOptionPane.ERROR_MESSAGE);
-        }
-        Gson gson = new Gson();
-        FileWriter fw = new FileWriter("res/receipts/" + _ID + ".json");
-        gson.toJson(this, fw);
-        fw.close();
-        _changesMade=false;
-        ReceiptsManager.addReceipt(this);
+        ReceiptsManager.saveReceipt(this);
     }
     public void removeItem(ReceiptItem item){
         _items.remove(item);
@@ -71,6 +59,7 @@ public class Receipt {
         _totalTax -= 1+ item.get_Item().get_taxRate()/(item.get_Item().get_price() * item.get_qty());
         _qty --;
         _changesMade=true;
+        ReceiptsManager.changesMade = true;
     }
     public void setNewId(Date date){
         _changesMade=true;
@@ -90,9 +79,7 @@ public class Receipt {
 
     }
     public boolean deleteReceipt(){
-        File receiptFile = new File("res/receipts/" + this.get_ID() + ".json");
-        ReceiptsManager.removeReceipt(this);
-        return receiptFile.delete();
+        return ReceiptsManager.removeReceipt(this);
     }
     public String toString(){
         Calendar calendar = Calendar.getInstance();

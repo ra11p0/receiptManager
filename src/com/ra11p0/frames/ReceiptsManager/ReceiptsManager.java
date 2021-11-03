@@ -13,6 +13,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -22,6 +24,7 @@ public class ReceiptsManager {
     private static JFrame _frame;
     private final static ArrayList<Receipt> _receipts = new ArrayList<>();
     public final static ArrayList<Item> _items = new ArrayList<>();
+    public static Boolean changesMade = false;
     public static void showDialog(){
         _frame = new JFrame("Select or create new receipt.");
         JComboBox<Receipt> receiptSelector = new JComboBox<>();
@@ -55,7 +58,7 @@ public class ReceiptsManager {
         remove.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                removeReceipt(receiptSelector);
+                removeReceiptFromSelector(receiptSelector);
             }
         });
         //EDIT RECEIPT DIALOG
@@ -99,7 +102,7 @@ public class ReceiptsManager {
         }
         _items.sort(Comparator.comparing(Item::get_name));
     }
-    private static void removeReceipt(JComboBox<Receipt> receiptSelector){
+    private static void removeReceiptFromSelector(JComboBox<Receipt> receiptSelector){
         Receipt selectedReceipt = (Receipt)receiptSelector.getSelectedItem();
         JFrame youSure = new JFrame("Are you sure?");
         youSure.setLayout(new GridLayout(1, 2));
@@ -154,31 +157,32 @@ public class ReceiptsManager {
     }
     public static void addReceipt(Receipt receipt){
         _receipts.add(receipt);
+        changesMade = true;
     }
-    public static void removeReceipt(Receipt receipt){
+    public static boolean removeReceipt(Receipt receipt){
         _receipts.remove(receipt);
+        changesMade = true;
+        File receiptFile = new File("res/receipts/" + receipt.get_ID() + ".json");
+        return receiptFile.delete();
+    }
+    public static void saveReceipt(Receipt receipt) throws IOException {
+        File oldReceipt = new File("res/receipts/" + receipt.get_ID() + ".json");
+        ReceiptsManager.removeReceipt(receipt);
+        if (receipt._newId != null) receipt.set_ID(receipt._newId);
+        try {
+            if (oldReceipt.exists())  oldReceipt.renameTo(new File("res/receipts/" + receipt.get_ID() + ".json"));
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(new JFrame(), e, "Error!", JOptionPane.ERROR_MESSAGE);
+        }
+        Gson gson = new Gson();
+        FileWriter fw = new FileWriter("res/receipts/" + receipt.get_ID() + ".json");
+        gson.toJson(receipt, fw);
+        fw.close();
+        receipt._changesMade=false;
+        changesMade = true;
+        ReceiptsManager.addReceipt(receipt);
     }
     public static boolean checkIfChangesMade(){
-        ArrayList<Receipt> oldReceipts = new ArrayList<>();
-        String[] receiptFiles = new File("res/.temp/receipts/").list();
-        assert receiptFiles != null;
-        for(String file : receiptFiles){
-            Gson gson = new Gson();
-            try {
-                if (file.charAt(0) != '.') {
-                    FileReader gsonFileReader = new FileReader("res/.temp/receipts/" + file);
-                    Receipt receipt = gson.fromJson(gsonFileReader, Receipt.class);
-                    gsonFileReader.close();
-                    oldReceipts.add(receipt);
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e + " in: " + file,"Error!", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-        if(_receipts.size() != oldReceipts.size()) return true;
-        for(Receipt receipt : oldReceipts){
-            if(!_receipts.contains(receipt)) return true;
-        }
-        return false;
+        return changesMade;
     }
 }

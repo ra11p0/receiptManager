@@ -10,20 +10,45 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
 
 public class HomeFrame extends JFrame {
     public HomeFrame(String title, int width, int height) throws Exception{
         UIManager.setLookAndFeel( new FlatDarculaLaf());
-        File temp = new File("res/.temp");
-        if(temp.exists()) {
-            FileUtils.cleanDirectory(temp);
-            temp.delete();
-        }
-        File source = new File("res/receipts");
-        FileUtils.copyDirectoryToDirectory(source, temp);
-        //*****
-        new OverviewFrame(title);
-        dispose();
+        JFrame preparingFiles = new JFrame();
+        preparingFiles.setLayout(new BorderLayout());
+        preparingFiles.setSize(200, 100);
+        preparingFiles.add(new JLabel("Wait until all files are processed..."), BorderLayout.CENTER);
+        preparingFiles.setVisible(true);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                File temp = new File("res/.temp");
+                if(temp.exists()) {
+                    try {
+                        FileUtils.cleanDirectory(temp);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    temp.delete();
+                }
+                File source = new File("res/receipts");
+                try {
+                    FileUtils.copyDirectoryToDirectory(source, temp);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                ReceiptsManager.refreshItemsAndReceipts();
+                //*****
+                preparingFiles.dispose();
+                try {
+                    new OverviewFrame(title);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                dispose();
+            }
+        }).start();
         //***** DISABLED FRAME
         /*
         File file = new File("res");

@@ -3,7 +3,6 @@ package com.ra11p0.frames.ReceiptsEditor;
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
-import com.ra11p0.structures.CheckListRenderer;
 import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
 import com.ra11p0.structures.ReceiptItem;

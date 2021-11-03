@@ -36,10 +36,18 @@ public class OverviewPanel extends JPanel {
         noTax.setForeground(Color.LIGHT_GRAY);
         total.setForeground(Color.LIGHT_GRAY);
         //*****
+        Long timer = System.currentTimeMillis();
         generateDaySet(new Date(System.currentTimeMillis()-(6*24 * 60 * 60 * 1000)), new Date(System.currentTimeMillis() + (24 * 60 * 60 * 1000)));
+        System.out.println("generateDaySet done in: " + (System.currentTimeMillis() - timer));
+        timer = System.currentTimeMillis();
         generateDataPanel();
+        System.out.println("generateDataPanel done in: " + (System.currentTimeMillis() - timer));
+        timer = System.currentTimeMillis();
         generateNavigationPanel();
+        System.out.println("generateNavigationPanel done in: " + (System.currentTimeMillis() - timer));
+        timer = System.currentTimeMillis();
         generateContentPanel();
+        System.out.println("generateContentPanel done in: " + (System.currentTimeMillis() - timer));
     }
     private void generateNavigationPanel(){
         navigation.setVisible(false);
@@ -198,13 +206,6 @@ public class OverviewPanel extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 JFrame getItemFrame = new GetItem().showDialog();
-                Thread refreshItemsAndReceipts = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ReceiptsManager.refreshItemsAndReceipts();
-                    }
-                });
-                refreshItemsAndReceipts.start();
                 getItemFrame.addWindowListener(new WindowAdapter() {
                     @Override
                     public void windowClosed(WindowEvent e) {
@@ -216,12 +217,6 @@ public class OverviewPanel extends JPanel {
                         content.setLayout(new FlowLayout());
                         content.add(statusLabel);
                         setVisible(true);
-                        Long startTime = System.currentTimeMillis();
-                        try {
-                            refreshItemsAndReceipts.join();
-                        } catch (InterruptedException ex) {
-                            ex.printStackTrace();
-                        }
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -241,7 +236,6 @@ public class OverviewPanel extends JPanel {
                                     }
                                 }
                                 if(itemsArray.size() == 0) return;
-                                System.out.println(System.currentTimeMillis() - startTime);
                                 generateSearchResultPanel(itemsArray);
                             }
                         }).start();
@@ -282,10 +276,11 @@ public class OverviewPanel extends JPanel {
         float totalValue = 0;
         long diffInMs = Math.abs(to.getTime() - from.getTime());
         int dayCount = (int)TimeUnit.DAYS.convert(diffInMs, TimeUnit.MILLISECONDS);
+        ArrayList<Receipt> receipts = ReceiptsManager.getReceipts();
         for(int i=0; i<dayCount; i++){
             Date currentlyProcessedDate = new Date((from.getTime() + ((long) (i) * 24 * 60 * 60 * 1000)));
             ArrayList<Receipt> currentDayReceipts = new ArrayList<>();
-            for(Receipt receipt : ReceiptsManager.getReceipts()) {
+            for(Receipt receipt : receipts) {
                 Calendar cal1 = Calendar.getInstance();
                 Calendar cal2 = Calendar.getInstance();
                 //*****
@@ -301,7 +296,7 @@ public class OverviewPanel extends JPanel {
         //*****
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(days.get(0).get_date());
-        for(Receipt receipt : ReceiptsManager.getReceipts()){
+        for(Receipt receipt : receipts){
             Calendar receiptCalendar = Calendar.getInstance();
             receiptCalendar.setTime(receipt.get_date());
             if(receiptCalendar.get(Calendar.MONTH) == calendar.get(Calendar.MONTH) &&

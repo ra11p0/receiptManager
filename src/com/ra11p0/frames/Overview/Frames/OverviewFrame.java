@@ -5,6 +5,7 @@ import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -12,10 +13,17 @@ import java.io.IOException;
 import java.util.function.Function;
 
 public class OverviewFrame extends JFrame {
+    JPanel mainPanel = new JPanel();
+    JFrame current = this;
     public OverviewFrame (String title) throws Exception{
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
+                current.setVisible(false);
+                JFrame filesProcessing = new JFrame();
+                filesProcessing.setLayout(new BorderLayout());
+                filesProcessing.setSize(200, 100);
+                filesProcessing.add(new JLabel("Wait until all files are processed..."), BorderLayout.CENTER);
                 Function<Object, Object> removeTemp = o -> {
                     File temp = new File("res/.temp/");
                     if(temp.exists()) {
@@ -30,6 +38,7 @@ public class OverviewFrame extends JFrame {
                 };
                 if(!ReceiptsManager.checkIfChangesMade()) {
                     removeTemp.apply(null);
+                    current.dispose();
                     return;
                 }
                 Object choice = JOptionPane.showOptionDialog(null,
@@ -37,35 +46,40 @@ public class OverviewFrame extends JFrame {
                         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
                         null, new Object[]{"NO", "YES"},
                         "NO");
-                if((int)choice != 1) {
-                    File changedReceipts = new File("res/receipts");
-                    if(changedReceipts.exists()) {
-                        try {
-                            FileUtils.cleanDirectory(changedReceipts);
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
+                filesProcessing.setVisible(true);
+                new Thread(() -> {
+                    if((int)choice != 1) {
+                        File changedReceipts = new File("res/receipts");
+                        if(changedReceipts.exists()) {
+                            try {
+                                FileUtils.cleanDirectory(changedReceipts);
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+                            changedReceipts.delete();
                         }
-                        changedReceipts.delete();
-                    }
-                    File notChangedReceipts = new File("res/.temp/receipts");
-                    try {
-                        FileUtils.copyDirectoryToDirectory(notChangedReceipts, changedReceipts.getParentFile());
-                    } catch (IOException ex) {
-                        JOptionPane.showMessageDialog(null, "Failed to process receipts!", "Error", JOptionPane.ERROR_MESSAGE);
-                        return;
+                        File notChangedReceipts = new File("res/.temp/receipts");
+                        try {
+                            FileUtils.copyDirectoryToDirectory(notChangedReceipts, changedReceipts.getParentFile());
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(null, "Failed to process receipts!", "Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
                     }
                     removeTemp.apply(null);
-                    return;
-                }
-                removeTemp.apply(null);
+                    current.dispose();
+                    filesProcessing.dispose();
+                }).start();
             }
         });
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         //*****
         setSize(800, 375);
         setResizable(false);
         setTitle(title);
-        add(new OverviewPanel());
+        mainPanel.setLayout(new GridLayout(1, 1));
+        mainPanel.add(new OverviewPanel());
+        add(mainPanel);
         setVisible(true);
     }
 }
