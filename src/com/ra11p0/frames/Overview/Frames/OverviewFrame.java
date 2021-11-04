@@ -10,8 +10,6 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -42,9 +40,10 @@ public class OverviewFrame extends JFrame {
         exportReceipts.addActionListener(e -> exportReceipts());
         quit.addActionListener(e -> quitAction());
         saveAs.addActionListener(e -> saveAs());
+        load.addActionListener(e-> load());
+        fileMenu.add(load);
         fileMenu.add(save);
         fileMenu.add(saveAs);
-        fileMenu.add(load);
         fileMenu.add(importReceipts);
         fileMenu.add(exportReceipts);
         fileMenu.add(quit);
@@ -56,7 +55,7 @@ public class OverviewFrame extends JFrame {
         setResizable(false);
         setTitle(title);
         mainPanel.setLayout(new GridLayout(1, 1));
-        overviewPanel = new OverviewPanel();
+        overviewPanel = new OverviewPanel(this);
         mainPanel.add(overviewPanel);
         add(mainPanel);
         setVisible(true);
@@ -116,11 +115,11 @@ public class OverviewFrame extends JFrame {
     }
     private void save(){
         ReceiptsPacket receiptsPacket = new ReceiptsPacket(ReceiptsManager.getReceipts());
-        new File("res/receipts.json").delete();
+        new File(ReceiptsManager.getReceiptPath()).delete();
         Gson gson = new Gson();
         FileWriter fw = null;
         try {
-            fw = new FileWriter("res/receipts.json");
+            fw = new FileWriter(ReceiptsManager.getReceiptPath());
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -132,6 +131,7 @@ public class OverviewFrame extends JFrame {
             ex.printStackTrace();
         }
         ReceiptsManager.changesMade = false;
+        overviewPanel.generateOverviewPanel();
         JOptionPane.showMessageDialog(null, "Saved!");
     }
     private void importReceipts(){
@@ -291,6 +291,55 @@ public class OverviewFrame extends JFrame {
                     overviewPanel.generateOverviewPanel();
                     fileChooserFrame.dispose();
                     JOptionPane.showMessageDialog(null, "Saved!");
+                }).start();
+            }
+            else fileChooserFrame.dispose();
+        });
+    }
+    private void load(){
+        JFrame fileChooserFrame = new JFrame();
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("*.json", "json"));
+        fileChooser.removeChoosableFileFilter(fileChooser.getAcceptAllFileFilter());
+        fileChooser.setSelectedFile(
+                new File(fileChooser.getCurrentDirectory().getAbsolutePath() +
+                        "\\" + "receipts.json"));
+        fileChooser.addPropertyChangeListener(JFileChooser.DIRECTORY_CHANGED_PROPERTY,
+                evt -> {
+                    fileChooser.setSelectedFile(
+                            new File(fileChooser.getCurrentDirectory().getAbsolutePath() +
+                                    "\\" + "receipts.json"));
+                    fileChooser.updateUI();
+
+                });
+        fileChooserFrame.add(fileChooser);
+        fileChooserFrame.pack();
+        fileChooserFrame.setResizable(false);
+        fileChooserFrame.setVisible(true);
+        WindowAdapter closeWindowAdapter = new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                fileChooserFrame.dispose();
+            }
+        };
+        fileChooserFrame.addWindowListener(closeWindowAdapter);
+        fileChooser.addActionListener(e -> {
+            final int[] counter = {0};
+            if(e.getActionCommand().equals("ApproveSelection")) {
+                JLabel exportStateLabel = new JLabel("Loading...");
+                fileChooserFrame.getRootPane().setVisible(false);
+                fileChooserFrame.remove(fileChooser);
+                fileChooserFrame.add(exportStateLabel);
+                fileChooserFrame.getRootPane().setVisible(true);
+                fileChooserFrame.setSize(200, 75);
+                fileChooserFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                fileChooserFrame.removeWindowListener(closeWindowAdapter);
+                new Thread(() -> {
+                    File target = fileChooser.getSelectedFile();
+                    ReceiptsManager.refreshItemsAndReceipts(target.getPath());
+                    overviewPanel.generateOverviewPanel();
+                    fileChooserFrame.dispose();
+                    JOptionPane.showMessageDialog(null, "Loaded!");
                 }).start();
             }
             else fileChooserFrame.dispose();

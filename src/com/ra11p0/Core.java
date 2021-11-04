@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 
 public class Core {
-    private static final float BUILD = 0.54F;
+    public static final float BUILD = 0.54F;
     public static void main(String[] args) throws Exception{
         if(BUILD != getBuild() && !Arrays.asList(args).contains("-passVersionCheck")) {
             File versionFile = new File("version.info");
