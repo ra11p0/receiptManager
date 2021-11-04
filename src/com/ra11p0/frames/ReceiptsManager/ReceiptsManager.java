@@ -14,16 +14,18 @@ import java.util.Comparator;
 public class ReceiptsManager {
     private static JFrame _frame;
     private final static ArrayList<Receipt> _receipts = new ArrayList<>();
-    public final static ArrayList<Item> _items = new ArrayList<>();
     private static ArrayList<String> _namesOfProducts = new ArrayList<>();
+    private static String _receiptPath;
+    public final static ArrayList<Item> _items = new ArrayList<>();
     public static Boolean changesMade = false;
-    public static void refreshItemsAndReceipts(){
+    public static void refreshItemsAndReceipts(String path){
         _items.clear();
         _receipts.clear();
+        _receiptPath = path;
         Gson gson = new Gson();
         FileReader gsonFileReader = null;
         try {
-            gsonFileReader = new FileReader("res/receipts.json");
+            gsonFileReader = new FileReader(path);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -44,7 +46,7 @@ public class ReceiptsManager {
         _items.sort(Comparator.comparing(Item::get_name));
     }
     public static ArrayList<Receipt> getReceipts() {
-        if(_receipts.size() == 0) refreshItemsAndReceipts();
+        if(_receipts.size() == 0) refreshItemsAndReceipts(_receiptPath);
         return _receipts;
     }
     public static ArrayList<Item> getItems() {
@@ -55,7 +57,7 @@ public class ReceiptsManager {
                 }
             }
         _items.sort(Comparator.comparing(Item::get_name));
-        if(_items.size() == 0) refreshItemsAndReceipts();
+        if(_items.size() == 0) refreshItemsAndReceipts(_receiptPath);
         return _items;
     }
     public static ArrayList<Receipt> getReceiptsContaining(ArrayList<Item> items){
@@ -88,5 +90,8 @@ public class ReceiptsManager {
         _namesOfProducts.clear();
         for(Item item : _items) if(!_namesOfProducts.contains(item.get_name())) _namesOfProducts.add(item.get_name());
         return _namesOfProducts;
+    }
+    public static String getReceiptPath(){
+        return _receiptPath;
     }
 }

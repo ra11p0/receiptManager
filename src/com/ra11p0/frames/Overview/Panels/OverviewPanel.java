@@ -1,5 +1,6 @@
 package com.ra11p0.frames.Overview.Panels;
 
+import com.ra11p0.Core;
 import com.ra11p0.frames.Overview.Frames.GetItem;
 import com.ra11p0.frames.Overview.structures.Day;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
@@ -26,8 +27,10 @@ public class OverviewPanel extends JPanel {
     private final JLabel cTax = new JLabel("0", SwingConstants.CENTER);
     private final JLabel noTax = new JLabel("0", SwingConstants.CENTER);
     private final JLabel total = new JLabel("0", SwingConstants.CENTER);
+    private final JFrame parentFrame;
     //*****
-    public OverviewPanel() {
+    public OverviewPanel(JFrame frame) {
+        parentFrame = frame;
         setLayout(new BorderLayout());
         //*****
         aTax.setForeground(Color.LIGHT_GRAY);
@@ -37,9 +40,7 @@ public class OverviewPanel extends JPanel {
         total.setForeground(Color.LIGHT_GRAY);
         //*****
         generateDaySet(new Date(System.currentTimeMillis()-(6*24 * 60 * 60 * 1000)), new Date(System.currentTimeMillis() + (24 * 60 * 60 * 1000)));
-        generateDataPanel();
-        generateNavigationPanel();
-        generateContentPanel();
+        generateOverviewPanel();
     }
     private void generateNavigationPanel(){
         navigation.setVisible(false);
@@ -301,6 +302,14 @@ public class OverviewPanel extends JPanel {
         total.setText(String.format("%.2f", totalValue) + " PLN");
     }
     public void generateOverviewPanel(){
+        if(ReceiptsManager.changesMade)
+            parentFrame.setTitle("Receipts manager v." +
+                    Core.BUILD + " - *" +
+                    ReceiptsManager.getReceiptPath().substring(ReceiptsManager.getReceiptPath().lastIndexOf("\\")+1));
+        else
+            parentFrame.setTitle("Receipts manager v." +
+                    Core.BUILD + " - " +
+                    ReceiptsManager.getReceiptPath().substring(ReceiptsManager.getReceiptPath().lastIndexOf("\\")+1));
         generateDaySet(days.get(0).get_date(), new Date(days.get(0).get_date().getTime() + (7 * 24 * 60 * 60 * 1000)));
         setVisible(false);
         generateNavigationPanel();

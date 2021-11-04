@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public class HomeFrame extends JFrame {
+    private final String DEFAULT_RECEIPT_PATH = "res\\receipts.json";
     public HomeFrame(String title, int width, int height) throws Exception{
         UIManager.setLookAndFeel( new FlatDarculaLaf());
         JFrame preparingFiles = new JFrame();
@@ -47,7 +48,7 @@ public class HomeFrame extends JFrame {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            ReceiptsManager.refreshItemsAndReceipts();
+            ReceiptsManager.refreshItemsAndReceipts(DEFAULT_RECEIPT_PATH);
             //*****
             preparingFiles.dispose();
             try {
