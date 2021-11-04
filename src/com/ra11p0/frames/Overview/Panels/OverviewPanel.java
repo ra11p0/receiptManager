@@ -36,18 +36,10 @@ public class OverviewPanel extends JPanel {
         noTax.setForeground(Color.LIGHT_GRAY);
         total.setForeground(Color.LIGHT_GRAY);
         //*****
-        Long timer = System.currentTimeMillis();
         generateDaySet(new Date(System.currentTimeMillis()-(6*24 * 60 * 60 * 1000)), new Date(System.currentTimeMillis() + (24 * 60 * 60 * 1000)));
-        System.out.println("generateDaySet done in: " + (System.currentTimeMillis() - timer));
-        timer = System.currentTimeMillis();
         generateDataPanel();
-        System.out.println("generateDataPanel done in: " + (System.currentTimeMillis() - timer));
-        timer = System.currentTimeMillis();
         generateNavigationPanel();
-        System.out.println("generateNavigationPanel done in: " + (System.currentTimeMillis() - timer));
-        timer = System.currentTimeMillis();
         generateContentPanel();
-        System.out.println("generateContentPanel done in: " + (System.currentTimeMillis() - timer));
     }
     private void generateNavigationPanel(){
         navigation.setVisible(false);
@@ -209,36 +201,27 @@ public class OverviewPanel extends JPanel {
                 getItemFrame.addWindowListener(new WindowAdapter() {
                     @Override
                     public void windowClosed(WindowEvent e) {
-                        Label statusLabel = new Label("Collecting data...", SwingConstants.CENTER);
-                        setVisible(false);
-                        content.removeAll();
-                        navigation.removeAll();
-                        data.removeAll();
-                        content.setLayout(new FlowLayout());
-                        content.add(statusLabel);
-                        setVisible(true);
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ArrayList<Item> itemsArray = new ArrayList<>();
-                                JList<Object> itemsList = null;
-                                for(Object object : getItemFrame.getRootPane().getContentPane().getComponents())
-                                    if (object.getClass() == JScrollPane.class) {
-                                        itemsList = (JList<Object>) ((JScrollPane) object).getViewport().getView();
-                                        break;
-                                    }
-                                for(int i = 0; i < Objects.requireNonNull(itemsList).getModel().getSize(); i++){
-                                    CheckListItem checkListItem = ((CheckListItem) itemsList.getModel().getElementAt(i));
-                                    if(checkListItem.isSelected()) {
-                                        for(Item item : ReceiptsManager._items)
-                                            if(item.get_name().equals(((Item) checkListItem.getObject()).get_name()) && !itemsArray.contains(item))
-                                                itemsArray.add(item);
-                                    }
-                                }
-                                if(itemsArray.size() == 0) return;
-                                generateSearchResultPanel(itemsArray);
+                        ArrayList<Item> itemsArray = new ArrayList<>();
+                        JList<Object> itemsList = null;
+                        for(Object object : ((JPanel)getItemFrame.getRootPane().getContentPane().getComponents()[0]).getComponents()) {
+                            if (object.getClass() == JScrollPane.class) {
+                                itemsList = (JList<Object>) ((JScrollPane) object).getViewport().getView();
+                                break;
                             }
-                        }).start();
+                        }
+                        for(int i = 0; i < Objects.requireNonNull(itemsList).getModel().getSize(); i++){
+                            CheckListItem checkListItem = ((CheckListItem) itemsList.getModel().getElementAt(i));
+                            if(checkListItem.isSelected()) {
+                                for(Item item : ReceiptsManager._items)
+                                    if(item.get_name().equals(((Item) checkListItem.getObject()).get_name()) && !itemsArray.contains(item))
+                                        itemsArray.add(item);
+                            }
+                        }
+                        if(itemsArray.size() == 0) {
+                            getItemFrame.dispose();
+                            return;
+                        }
+                        generateSearchResultPanel(itemsArray);
                     }
                 });
             }
@@ -317,7 +300,7 @@ public class OverviewPanel extends JPanel {
         noTax.setText(String.format("%.2f", noTaxValue) + " PLN");
         total.setText(String.format("%.2f", totalValue) + " PLN");
     }
-    private void generateOverviewPanel(){
+    public void generateOverviewPanel(){
         generateDaySet(days.get(0).get_date(), new Date(days.get(0).get_date().getTime() + (7 * 24 * 60 * 60 * 1000)));
         setVisible(false);
         generateNavigationPanel();
@@ -354,11 +337,10 @@ public class OverviewPanel extends JPanel {
     }
     private void generateSearchResultPanel(ArrayList<Item> items){
         setVisible(false);
-        SearchResultPanel searchResultPanel = new SearchResultPanel(items);
         data.removeAll();
         content.removeAll();
         content.setLayout(new BorderLayout());
-        content.add(searchResultPanel, BorderLayout.CENTER);
+        content.add(new SearchResultPanel(items), BorderLayout.CENTER);
         JButton backButton = new JButton("Back");
         backButton.addMouseListener(new MouseAdapter() {
             @Override

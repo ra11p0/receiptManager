@@ -17,14 +17,15 @@ import java.util.Objects;
 public class AddItem {
     public static void showDialog(ArrayList<Item> items, Receipt receipt, ReceiptEditor receiptEditor){
         JFrame addItemFrame = new JFrame("Add item.");
-        addItemFrame.setLayout(new GridLayout(8, 1));
-        addItemFrame.setSize(350, 250);
         JComboBox<Item> itemsBox = new JComboBox<>();
         ArrayList<Item> itemsAtThisStore = new ArrayList<>();
-        for(Item item : items) if (item.get_store().equals(receipt.get_store())) itemsAtThisStore.add(item);
-        for(Item item : itemsAtThisStore) itemsBox.addItem(item);
         JTextField qty = new JTextField();
         JTextField searchBar = new JTextField();
+        JButton confirm = new JButton("Confirm.");
+        addItemFrame.setLayout(new GridLayout(8, 1));
+        addItemFrame.setSize(350, 250);
+        for(Item item : items) if (item.get_store().equals(receipt.get_store())) itemsAtThisStore.add(item);
+        for(Item item : itemsAtThisStore) itemsBox.addItem(item);
         //SEARCH BAR BEHAVIOR
         searchBar.addKeyListener(new KeyAdapter() {
             @Override
@@ -73,7 +74,6 @@ public class AddItem {
                 }
             }
         });
-        JButton confirm = new JButton("Confirm.");
         //CONFIRM
         confirm.addMouseListener(new MouseAdapter() {
             @Override
@@ -120,16 +120,13 @@ public class AddItem {
         AutoCompleteSupport.install(name,
                 GlazedLists.eventListOf(namesOfProducts.toArray()));
         name.setPreferredSize(new Dimension(175, 25));
-        name.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if(name.getSelectedItem() == null) return;
-                for(Item _item : ReceiptsManager.getItems())
-                    if(_item.get_name().equals(name.getSelectedItem())){
-                        taxRate.setSelectedItem(_item.get_taxRate());
-                        break;
-                    }
-            }
+        name.addItemListener(e -> {
+            if(name.getSelectedItem() == null) return;
+            for(Item _item : ReceiptsManager._items)
+                if(_item.get_name().equals(name.getSelectedItem())){
+                    taxRate.setSelectedItem(_item.get_taxRate());
+                    break;
+                }
         });
         //TAX RATE BEHAVIOR
         taxRate.addItem(0.23F);
@@ -137,14 +134,11 @@ public class AddItem {
         taxRate.addItem(0.05F);
         taxRate.addItem(0F);
         taxRate.setPreferredSize(new Dimension(80, 25));
-        taxRate.setRenderer(new ListCellRenderer<Float>() {
-            @Override
-            public Component getListCellRendererComponent(JList<? extends Float> list, Float value, int index, boolean isSelected, boolean cellHasFocus) {
-                DefaultListCellRenderer renderer = new DefaultListCellRenderer();
-                Component component = renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                renderer.setText(String.format("%.0f", value*100) + "%");
-                return component;
-            }
+        taxRate.setRenderer((list, value, index, isSelected, cellHasFocus) -> {
+            DefaultListCellRenderer renderer = new DefaultListCellRenderer();
+            Component component = renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            renderer.setText(String.format("%.0f", value*100) + "%");
+            return component;
         });
         //PRICE PARSE CHECK
         cost.addKeyListener(new KeyAdapter() {

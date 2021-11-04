@@ -78,8 +78,8 @@ public class Receipt {
         _newId += "-" + counter;
 
     }
-    public boolean deleteReceipt(){
-        return ReceiptsManager.removeReceipt(this);
+    public void deleteReceipt(){
+        ReceiptsManager.removeReceipt(this);
     }
     public String toString(){
         Calendar calendar = Calendar.getInstance();

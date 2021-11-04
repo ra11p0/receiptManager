@@ -21,6 +21,7 @@ public class SearchResultPanel extends JPanel {
     private final JPanel receiptsPanel = new JPanel(new BorderLayout());
     private final JPanel dataPanel = new JPanel(new GridLayout(5, 2));
     private final JPanel optionsPanel = new JPanel(new GridLayout(3, 1));
+    private final JPanel receiptPreview = new JPanel(new BorderLayout());
     private ArrayList<Receipt> _receipts = new ArrayList<>();
     private ArrayList<Item> _items;
     private Date _fromDate = new Date(0);
@@ -28,15 +29,46 @@ public class SearchResultPanel extends JPanel {
     public SearchResultPanel(ArrayList<Item> items){
         setVisible(false);
         removeAll();
+        JLabel statusLabel = new JLabel("Preparing workplace...", SwingConstants.CENTER);
+        setVisible(true);
         setLayout(new BorderLayout());
-        initializeDateAndItems(items);
-        generateReceiptsPanel();
-        generateDataPanel();
-        generateOptionsPanel();
+        add(statusLabel, BorderLayout.PAGE_START);
         add(receiptsPanel, BorderLayout.LINE_START);
         add(dataPanel, BorderLayout.CENTER);
         add(optionsPanel, BorderLayout.LINE_END);
-        setVisible(true);
+        new Thread(() -> {
+            initializeDateAndItems(items);
+            Thread generateReceiptsPanelThread = new Thread(() -> {
+                generateReceiptsPanel();
+                receiptsPanel.setVisible(false);
+            });
+            generateReceiptsPanelThread.start();
+
+            Thread generateDataPanelThread = new Thread(() -> {
+                generateDataPanel();
+                dataPanel.setVisible(false);
+            });
+            generateDataPanelThread.start();
+
+            Thread generateOptionsPanelThread = new Thread(() -> {
+                generateOptionsPanel();
+                optionsPanel.setVisible(false);
+            });
+            generateOptionsPanelThread.start();
+            try {
+                generateDataPanelThread.join();
+                generateReceiptsPanelThread.join();
+                generateOptionsPanelThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            setVisible(false);
+            remove(statusLabel);
+            receiptsPanel.setVisible(true);
+            dataPanel.setVisible(true);
+            optionsPanel.setVisible(true);
+            setVisible(true);
+        }).start();
     }
     private void initializeDateAndItems(ArrayList<Item> items){
         _receipts.clear();
@@ -89,7 +121,7 @@ public class SearchResultPanel extends JPanel {
         JLabel totalTaxLabel = new JLabel();
         JPanel pricesInStores;
         //TOTAL LABEL
-        for(Receipt receipt : _receipts)
+        for(Receipt receipt : (ArrayList<Receipt>) _receipts.clone())
             for(ReceiptItem receiptItem : receipt.get_items())
                 for(Item item : _items)
                     if(receiptItem.get_Item().equals(item)) total += (receiptItem.get_qty() * item.get_price());
@@ -117,7 +149,10 @@ public class SearchResultPanel extends JPanel {
             boolean contains = false;
             for(Receipt receipt : _receipts)
                 for(ReceiptItem receiptItem : receipt.get_items())
-                    if(receiptItem.get_Item().equals(item)) contains = true;
+                    if (receiptItem.get_Item().equals(item)) {
+                        contains = true;
+                        break;
+                    }
             if(contains) itemsCounter++;
         }
         pricesInStores = new JPanel(new GridLayout(itemsCounter, 2));
@@ -127,7 +162,10 @@ public class SearchResultPanel extends JPanel {
             boolean contains = false;
             for(Receipt receipt : _receipts)
                 for(ReceiptItem receiptItem : receipt.get_items())
-                    if(receiptItem.get_Item().equals(item)) contains = true;
+                    if (receiptItem.get_Item().equals(item)) {
+                        contains = true;
+                        break;
+                    }
             if(contains) {
                 pricesInStores.add(new JLabel(item.get_store()));
                 pricesInStores.add(new JLabel(String.format("%.2f", item.get_price()) + " PLN"));
@@ -177,7 +215,7 @@ public class SearchResultPanel extends JPanel {
                     public void windowClosed(WindowEvent e) {
                         if(!editItem.anyChange || editItem.oldItem == null || editItem.newItem == null) return;
                         Object choice = JOptionPane.showOptionDialog(null,
-                                "Are you sure you want to replace " + editItem.oldItem.toString() + " with " + editItem.newItem.toString() + "?" , "",
+                                "Are you sure you want to replace " + editItem.oldItem + " with " + editItem.newItem + "?" , "",
                                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
                                 null, new Object[]{"NO", "YES"},
                                 "NO");
@@ -185,9 +223,41 @@ public class SearchResultPanel extends JPanel {
                         _items.remove(editItem.oldItem);
                         _items.add(new Item(editItem.newItem.get_name(), editItem.oldItem.get_taxRate(), editItem.newItem.get_price(), editItem.oldItem.get_store()));
                         _receipts = ReceiptsManager.getReceiptsContaining(_items);
-                        generateReceiptsPanel();
-                        generateOptionsPanel();
-                        generateDataPanel();
+                        JLabel statusLabel = new JLabel("Reloading workplace...", SwingConstants.CENTER);
+                        add(statusLabel, BorderLayout.PAGE_START);
+                        new Thread(() -> {
+                            Thread generateReceiptsPanelThread = new Thread(() -> {
+                                generateReceiptsPanel();
+                                receiptsPanel.setVisible(false);
+                            });
+                            generateReceiptsPanelThread.start();
+
+                            Thread generateDataPanelThread = new Thread(() -> {
+                                generateDataPanel();
+                                dataPanel.setVisible(false);
+                            });
+                            generateDataPanelThread.start();
+
+                            Thread generateOptionsPanel = new Thread(() -> {
+                                generateOptionsPanel();
+                                optionsPanel.setVisible(false);
+                            });
+                            generateOptionsPanel.start();
+                            try {
+                                generateReceiptsPanelThread.join();
+                                generateDataPanelThread.join();
+                                generateOptionsPanel.join();
+                            } catch (InterruptedException e1) {
+                                e1.printStackTrace();
+                            }
+                            setVisible(false);
+                            remove(statusLabel);
+                            receiptsPanel.setVisible(true);
+                            dataPanel.setVisible(true);
+                            optionsPanel.setVisible(true);
+                            setVisible(true);
+                            editItem.dispose();
+                        }).start();
                     }
                 });
             }
@@ -199,7 +269,9 @@ public class SearchResultPanel extends JPanel {
     }
     private void setDateBoundsFrame(){
         JFrame frame = new JFrame();
-        frame.setLayout(new BorderLayout());
+        JPanel panel = new JPanel();
+        frame.add(panel);
+        panel.setLayout(new BorderLayout());
         JPanel labelPanel = new JPanel(new GridLayout(1, 2));
         JPanel datePickerPanel = new JPanel(new GridLayout(1, 2));
         UtilDateModel fromModel = new UtilDateModel();
@@ -215,14 +287,50 @@ public class SearchResultPanel extends JPanel {
         confirm.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                setVisible(false);
+                JLabel statusLabel = new JLabel("Reloading workplace...", SwingConstants.CENTER);
+                add(statusLabel, BorderLayout.PAGE_START);
+                receiptsPanel.setVisible(false);
+                dataPanel.setVisible(false);
+                optionsPanel.setVisible(false);
+                setVisible(true);
                 _fromDate = fromModel.getValue();
                 _toDate = toModel.getValue();
-                initializeDateAndItems(_items);
-                generateReceiptsPanel();
-                generateOptionsPanel();
-                generateDataPanel();
-                frame.setVisible(false);
                 frame.dispose();
+                new Thread(() -> {
+                    initializeDateAndItems(_items);
+                    Thread generateReceiptsPanelThread = new Thread(() -> {
+                        generateReceiptsPanel();
+                        receiptsPanel.setVisible(false);
+                    });
+                    generateReceiptsPanelThread.start();
+
+                    Thread generateDataPanelThread = new Thread(() -> {
+                        generateDataPanel();
+                        dataPanel.setVisible(false);
+                    });
+                    generateDataPanelThread.start();
+
+                    Thread generateOptionsPanel = new Thread(() -> {
+                        generateOptionsPanel();
+                        optionsPanel.setVisible(false);
+                    });
+                    generateOptionsPanel.start();
+
+                    try {
+                        generateReceiptsPanelThread.join();
+                        generateDataPanelThread.join();
+                        generateOptionsPanel.join();
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                    setVisible(false);
+                    remove(statusLabel);
+                    receiptsPanel.setVisible(true);
+                    dataPanel.setVisible(true);
+                    optionsPanel.setVisible(true);
+                    setVisible(true);
+                }).start();
             }
         });
         //*****
@@ -237,27 +345,31 @@ public class SearchResultPanel extends JPanel {
         datePickerPanel.add(toDatePanel);
         //*****
         frame.setSize(400, 277);
-        frame.add(labelPanel, BorderLayout.PAGE_START);
-        frame.add(datePickerPanel, BorderLayout.CENTER);
-        frame.add(confirm, BorderLayout.AFTER_LAST_LINE);
+        panel.add(labelPanel, BorderLayout.PAGE_START);
+        panel.add(datePickerPanel, BorderLayout.CENTER);
+        panel.add(confirm, BorderLayout.AFTER_LAST_LINE);
         frame.setVisible(true);
     }
     private void showReceiptPreview(JButton previewReceipt){
         if(previewReceipt.getText().equals("Show receipt")) {
             JList<Receipt> receiptList = (JList<Receipt>) (((JScrollPane) receiptsPanel.getComponents()[0]).getViewport().getView());
             if(receiptList.getSelectedValue() == null) return;
-            receiptsPanel.setVisible(false);
-            receiptsPanel.removeAll();
+            remove(receiptsPanel);
+            add(receiptPreview, BorderLayout.LINE_START);
+            receiptPreview.setVisible(false);
+            receiptPreview.removeAll();
             ReceiptEditor editor = new ReceiptEditor(receiptList.getSelectedValue(), true);
-            receiptsPanel.add(editor.get_receiptView());
-            receiptsPanel.setVisible(true);
+            receiptPreview.add(editor.get_receiptView());
+            receiptPreview.setVisible(true);
             optionsPanel.setVisible(false);
             previewReceipt.setText("Hide receipt");
             optionsPanel.setVisible(true);
         }else{
-            generateReceiptsPanel();
-            generateOptionsPanel();
+            previewReceipt.setText("Show receipt");
+            remove(receiptPreview);
+            add(receiptsPanel, BorderLayout.LINE_START);
         }
+        repaint();
     }
     public static String findCommon(ArrayList<String> inputArray) {
         ArrayList<String> arr = new ArrayList<>();
@@ -270,7 +382,10 @@ public class SearchResultPanel extends JPanel {
                 if (word.length() > 1) {
                     boolean contains = true;
                     for (String name : arr) {
-                        if (!name.toUpperCase(Locale.ROOT).contains(word.toUpperCase(Locale.ROOT))) contains = false;
+                        if (!name.toUpperCase(Locale.ROOT).contains(word.toUpperCase(Locale.ROOT))) {
+                            contains = false;
+                            break;
+                        }
                     }
                     if (contains) result.append(word).append(" ");
                 }

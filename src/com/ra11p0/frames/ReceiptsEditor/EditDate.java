@@ -2,14 +2,12 @@ package com.ra11p0.frames.ReceiptsEditor;
 
 import com.ra11p0.structures.Receipt;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
-import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 public class EditDate {
     public static void showDialog(Receipt receipt, ReceiptEditor receiptEditor){
