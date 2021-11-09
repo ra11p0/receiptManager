@@ -33,6 +33,7 @@ public class Item {
         try {
             if (obj == null) return false;
             Item item = (Item) obj;
+            if((item.get_store().length() == 0 || _store.length()==0) && (item.get_price() == 0.0F || _price == 0.0F)) return item.get_name().toLowerCase(Locale.ROOT).equals(this.get_name().toLowerCase(Locale.ROOT));
             if(item.get_store().length() == 0 || _store.length()==0) return item.get_name().toLowerCase(Locale.ROOT).equals(this.get_name().toLowerCase(Locale.ROOT)) && item.get_price() == this.get_price();
             return item.get_name().toLowerCase(Locale.ROOT).equals(this.get_name().toLowerCase(Locale.ROOT)) && item.get_price() == this.get_price() && item.get_store().equals(_store);
         }catch (Exception ex){

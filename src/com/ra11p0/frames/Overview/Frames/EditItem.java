@@ -21,12 +21,25 @@ public class EditItem extends JFrame {
     public Item oldItem = null;
     public Item newItem = null;
     public EditItem(ArrayList<Item> items){
-        JPanel main = new JPanel(new GridLayout(7, 1));
+        JPanel main = new JPanel(new GridLayout(8, 1));
         JComboBox<Item> itemsCombo = new JComboBox<>();
         JComboBox<Object> nameCombo = new JComboBox<>();
+        JLabel priceLabel = new JLabel("Type new price of product:");
         JTextField price = new JTextField();
         JButton confirm = new JButton("Confirm");
+        JCheckBox changeNameForAll = new JCheckBox();
         ArrayList<String> namesOfProducts = new ArrayList<>();
+        changeNameForAll.setText("Change name for all matching items.");
+        changeNameForAll.addActionListener(e->{
+            if(changeNameForAll.isSelected()){
+                price.setVisible(false);
+                priceLabel.setVisible(false);
+            }
+            else{
+                price.setVisible(true);
+                priceLabel.setVisible(true);
+            }
+        });
         //INITIALIZE ITEMS COMBO
         items.sort(new Comparator<Item>() {
             @Override
@@ -80,19 +93,36 @@ public class EditItem extends JFrame {
                     return;
                 }
                 oldItem = (Item) itemsCombo.getSelectedItem();
-                newItem = new Item(Objects.requireNonNull(nameCombo.getSelectedItem()).toString(),
-                        oldItem.get_taxRate(),
-                        Float.parseFloat(price.getText()),
-                        "");
+                if(changeNameForAll.isSelected()){
+                    newItem = new Item(Objects.requireNonNull(nameCombo.getSelectedItem()).toString(),
+                            oldItem.get_taxRate(),
+                            0.0F,
+                            "");
+                }
+                else {
+                    newItem = new Item(Objects.requireNonNull(nameCombo.getSelectedItem()).toString(),
+                            oldItem.get_taxRate(),
+                            Float.parseFloat(price.getText()),
+                            "");
+                }
                 ArrayList<Receipt> receiptsToSave = new ArrayList<>();
                 for(Receipt receipt : ReceiptsManager.getReceipts()){
                     ArrayList<ReceiptItem> receiptItems = receipt.get_items();
                     for(ReceiptItem receiptItem : receiptItems){
-                        if(receiptItem.get_Item().equals(itemsCombo.getSelectedItem())){
-                            Item _newItem = new Item(Objects.requireNonNull(nameCombo.getSelectedItem()).toString(),
-                                    receiptItem.get_Item().get_taxRate(),
-                                    Float.parseFloat(price.getText()),
-                                    receiptItem.get_Item().get_store());
+                        if(receiptItem.get_Item().equals(newItem)){
+                            Item _newItem;
+                            if(newItem.get_price() == 0.0F){
+                                _newItem = new Item(Objects.requireNonNull(nameCombo.getSelectedItem()).toString(),
+                                        receiptItem.get_Item().get_taxRate(),
+                                        receiptItem.get_Item().get_price(),
+                                        receiptItem.get_Item().get_store());
+                            }
+                            else {
+                                _newItem = new Item(Objects.requireNonNull(nameCombo.getSelectedItem()).toString(),
+                                        receiptItem.get_Item().get_taxRate(),
+                                        Float.parseFloat(price.getText()),
+                                        receiptItem.get_Item().get_store());
+                            }
                             ReceiptItem newReceiptItem = new ReceiptItem(_newItem, receiptItem.get_qty());
                             receipt.removeItem(receiptItem);
                             receipt.addItem(newReceiptItem);
@@ -119,8 +149,9 @@ public class EditItem extends JFrame {
         main.add(itemsCombo);
         main.add(new JLabel("Type new name of product:"));
         main.add(nameCombo);
-        main.add(new JLabel("Type new price of product:"));
+        main.add(priceLabel);
         main.add(price);
+        main.add(changeNameForAll);
         main.add(confirm);
         //*****
         setResizable(false);

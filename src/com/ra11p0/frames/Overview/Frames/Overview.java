@@ -17,9 +17,9 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class OverviewFrame extends JFrame {
+public class Overview extends JFrame {
     private final OverviewPanel overviewPanel;
-    public OverviewFrame (String title) {
+    public Overview(String title) {
         JPanel mainPanel = new JPanel();
         addWindowListener(new WindowAdapter() {
             @Override

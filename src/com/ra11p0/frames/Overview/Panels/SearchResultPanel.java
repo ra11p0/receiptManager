@@ -128,7 +128,7 @@ public class SearchResultPanel extends JPanel {
         totalLabel.setText(String.format("%.2f", total) + " PLN");
         //TAX LABEL
         int counter = 0;
-        for(Receipt receipt : _receipts)
+        for(Receipt receipt : (ArrayList<Receipt>) _receipts.clone())
             for(ReceiptItem receiptItem : receipt.get_items())
                 for(Item item : _items)
                     if(receiptItem.get_Item().equals(item)) {
@@ -147,7 +147,7 @@ public class SearchResultPanel extends JPanel {
         int itemsCounter = 0;
         for(Item item : _items) {
             boolean contains = false;
-            for(Receipt receipt : _receipts)
+            for(Receipt receipt : (ArrayList<Receipt>) _receipts.clone())
                 for(ReceiptItem receiptItem : receipt.get_items())
                     if (receiptItem.get_Item().equals(item)) {
                         contains = true;
@@ -160,7 +160,7 @@ public class SearchResultPanel extends JPanel {
         _items.sort((o1, o2) -> Float.compare(o1.get_price(), o2.get_price()));
         for(Item item : _items) {
             boolean contains = false;
-            for(Receipt receipt : _receipts)
+            for(Receipt receipt : (ArrayList<Receipt>) _receipts.clone())
                 for(ReceiptItem receiptItem : receipt.get_items())
                     if (receiptItem.get_Item().equals(item)) {
                         contains = true;
@@ -220,9 +220,22 @@ public class SearchResultPanel extends JPanel {
                                 null, new Object[]{"NO", "YES"},
                                 "NO");
                         if((int)choice != 1) return;
-                        _items.remove(editItem.oldItem);
-                        _items.add(new Item(editItem.newItem.get_name(), editItem.oldItem.get_taxRate(), editItem.newItem.get_price(), editItem.oldItem.get_store()));
-                        _receipts = ReceiptsManager.getReceiptsContaining(_items);
+                        if(editItem.newItem.get_price() == 0.0F){
+                            ArrayList<Item> itemsToRemove = new ArrayList<>();
+                            for(Item item : _items)
+                                if(item.equals(new Item(editItem.oldItem.get_name(), editItem.oldItem.get_taxRate(), 0.0F, "")))
+                                    itemsToRemove.add(item);
+                            for(Item item : itemsToRemove)
+                                _items.remove(item);
+                            for(Item item : itemsToRemove)
+                                _items.add(new Item(editItem.newItem.get_name(), editItem.oldItem.get_taxRate(), item.get_price(), editItem.oldItem.get_store()));
+                            _receipts = ReceiptsManager.getReceiptsContaining(_items);
+                        }
+                        else {
+                            _items.remove(editItem.oldItem);
+                            _items.add(new Item(editItem.newItem.get_name(), editItem.oldItem.get_taxRate(), editItem.newItem.get_price(), editItem.oldItem.get_store()));
+                            _receipts = ReceiptsManager.getReceiptsContaining(_items);
+                        }
                         JLabel statusLabel = new JLabel("Reloading workplace...", SwingConstants.CENTER);
                         add(statusLabel, BorderLayout.PAGE_START);
                         new Thread(() -> {
@@ -231,13 +244,11 @@ public class SearchResultPanel extends JPanel {
                                 receiptsPanel.setVisible(false);
                             });
                             generateReceiptsPanelThread.start();
-
                             Thread generateDataPanelThread = new Thread(() -> {
                                 generateDataPanel();
                                 dataPanel.setVisible(false);
                             });
                             generateDataPanelThread.start();
-
                             Thread generateOptionsPanel = new Thread(() -> {
                                 generateOptionsPanel();
                                 optionsPanel.setVisible(false);

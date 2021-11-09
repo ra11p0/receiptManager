@@ -1,6 +1,4 @@
-package com.ra11p0.frames.Overview.structures;
-
-import com.ra11p0.structures.Receipt;
+package com.ra11p0.structures;
 
 import java.util.ArrayList;
 import java.util.Date;

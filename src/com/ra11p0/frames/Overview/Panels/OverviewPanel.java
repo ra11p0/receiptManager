@@ -2,7 +2,7 @@ package com.ra11p0.frames.Overview.Panels;
 
 import com.ra11p0.Core;
 import com.ra11p0.frames.Overview.Frames.GetItem;
-import com.ra11p0.frames.Overview.structures.Day;
+import com.ra11p0.structures.Day;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.ra11p0.frames.ReceiptsManager.StoreSelector;
 import com.ra11p0.structures.CheckListItem;

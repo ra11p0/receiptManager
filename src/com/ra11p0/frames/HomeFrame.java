@@ -1,7 +1,7 @@
 package com.ra11p0.frames;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
-import com.ra11p0.frames.Overview.Frames.OverviewFrame;
+import com.ra11p0.frames.Overview.Frames.Overview;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import org.apache.commons.io.FileUtils;
 
@@ -52,8 +52,8 @@ public class HomeFrame extends JFrame {
             //*****
             preparingFiles.dispose();
             try {
-                OverviewFrame overviewFrame = new OverviewFrame(title);
-                overviewFrame.addWindowListener(new WindowAdapter() {
+                Overview overview = new Overview(title);
+                overview.addWindowListener(new WindowAdapter() {
                     @Override
                     public void windowClosed(WindowEvent e) {
                         System.exit(0);
