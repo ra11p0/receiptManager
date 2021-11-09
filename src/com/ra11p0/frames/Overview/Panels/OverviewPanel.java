@@ -1,6 +1,7 @@
 package com.ra11p0.frames.Overview.Panels;
 
 import com.ra11p0.Core;
+import com.ra11p0.frames.HomeFrame;
 import com.ra11p0.frames.Overview.Frames.GetItem;
 import com.ra11p0.structures.Day;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
@@ -18,6 +19,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class OverviewPanel extends JPanel {
+    private static final ResourceBundle locale = HomeFrame.localeBundle;
     private final ArrayList<Day> days = new ArrayList<>();
     private JPanel content = new JPanel();
     private JPanel navigation = new JPanel();
@@ -47,8 +49,8 @@ public class OverviewPanel extends JPanel {
         navigation = new JPanel(new BorderLayout());
         add(navigation, BorderLayout.PAGE_START);
         //*****
-        JButton previous = new JButton("Previous");
-        JButton next = new JButton("Next");
+        JButton previous = new JButton(locale.getString("prev"));
+        JButton next = new JButton(locale.getString("next"));
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeZone(TimeZone.getTimeZone("GMT+1"));
         calendar.setTimeInMillis(days.get(0).get_date().getTime());
@@ -121,7 +123,7 @@ public class OverviewPanel extends JPanel {
                     }
                 }
             });
-            totalValues.add(new JLabel(String.format("%.2f", days.get(receiptListModels.size()).get_total()) + "PLN", SwingConstants.CENTER));
+            totalValues.add(new JLabel(String.format("%.2f", days.get(receiptListModels.size()).get_total()) + locale.getString("currency"), SwingConstants.CENTER));
             receiptListModels.add(new DefaultListModel<>());
             jList.setModel(receiptListModels.get(receiptListModels.size() - 1));
             panel.add(scrollPane, BorderLayout.CENTER);
@@ -139,10 +141,10 @@ public class OverviewPanel extends JPanel {
     }
     private JPanel generateControlButtons(ArrayList<JList<Receipt>> receiptListArray){
         JPanel controlButtons = new JPanel(new GridLayout(1, 3));
-        JButton edit = new JButton("Edit");
-        JButton newReceipt = new JButton("New receipt");
-        JButton remove = new JButton("Remove");
-        JButton search = new JButton("Search items");
+        JButton edit = new JButton(locale.getString("edit"));
+        JButton newReceipt = new JButton(locale.getString("newReceipt"));
+        JButton remove = new JButton(locale.getString("remove"));
+        JButton search = new JButton(locale.getString("searchItems"));
         //EDIT BUTTON BEHAVIOR
         edit.addMouseListener(new MouseAdapter() {
             @Override
@@ -185,10 +187,10 @@ public class OverviewPanel extends JPanel {
                 }
                 if(receiptToDelete == null) return;
                 Object choice = JOptionPane.showOptionDialog(null,
-                        "Are you sure you want to remove receipt?" , "",
+                        locale.getString("youSureYouWantToRemoveReceipt") , "",
                         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-                        null, new Object[]{"NO", "YES"},
-                        "NO");
+                        null, new Object[]{locale.getString("no"), locale.getString("yes")},
+                        locale.getString("no"));
                 if((int)choice != 1) return;
                 receiptToDelete.deleteReceipt();
                 generateOverviewPanel();
@@ -239,11 +241,11 @@ public class OverviewPanel extends JPanel {
         data = new JPanel(new GridLayout(2, 5));
         add(data, BorderLayout.PAGE_END);
         //*****
-        data.add(new JLabel("23% Tax", SwingConstants.CENTER));
-        data.add(new JLabel("8% Tax", SwingConstants.CENTER));
-        data.add(new JLabel("5% Tax", SwingConstants.CENTER));
-        data.add(new JLabel("0% Tax", SwingConstants.CENTER));
-        data.add(new JLabel("Total", SwingConstants.CENTER));
+        data.add(new JLabel("23% " + locale.getString("tax"), SwingConstants.CENTER));
+        data.add(new JLabel("8% " + locale.getString("tax"), SwingConstants.CENTER));
+        data.add(new JLabel("5% " + locale.getString("tax"), SwingConstants.CENTER));
+        data.add(new JLabel("0% " + locale.getString("tax"), SwingConstants.CENTER));
+        data.add(new JLabel(locale.getString("total"), SwingConstants.CENTER));
         data.add(aTax);
         data.add(bTax);
         data.add(cTax);
@@ -295,11 +297,11 @@ public class OverviewPanel extends JPanel {
             }
         }
         //*****
-        aTax.setText(String.format("%.2f", aTaxValue) + " PLN");
-        bTax.setText(String.format("%.2f", bTaxValue) + " PLN");
-        cTax.setText(String.format("%.2f", cTaxValue) + " PLN");
-        noTax.setText(String.format("%.2f", noTaxValue) + " PLN");
-        total.setText(String.format("%.2f", totalValue) + " PLN");
+        aTax.setText(String.format("%.2f", aTaxValue) + " " + locale.getString("currency"));
+        bTax.setText(String.format("%.2f", bTaxValue) + " " + locale.getString("currency"));
+        cTax.setText(String.format("%.2f", cTaxValue) + " " + locale.getString("currency"));
+        noTax.setText(String.format("%.2f", noTaxValue) + " " + locale.getString("currency"));
+        total.setText(String.format("%.2f", totalValue) + " " + locale.getString("currency"));
     }
     public void generateOverviewPanel(){
         if(ReceiptsManager.changesMade)
@@ -323,7 +325,7 @@ public class OverviewPanel extends JPanel {
         data.removeAll();
         content.removeAll();
         content.add(editorPanel, BorderLayout.CENTER);
-        JButton backButton = new JButton("Back");
+        JButton backButton = new JButton(locale.getString("back"));
         backButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -350,7 +352,7 @@ public class OverviewPanel extends JPanel {
         content.removeAll();
         content.setLayout(new BorderLayout());
         content.add(new SearchResultPanel(items), BorderLayout.CENTER);
-        JButton backButton = new JButton("Back");
+        JButton backButton = new JButton(locale.getString("back"));
         backButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

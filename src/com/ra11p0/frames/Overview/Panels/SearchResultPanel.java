@@ -1,5 +1,6 @@
 package com.ra11p0.frames.Overview.Panels;
 
+import com.ra11p0.frames.HomeFrame;
 import com.ra11p0.frames.Overview.Frames.EditItem;
 import com.ra11p0.frames.ReceiptsEditor.ReceiptEditor;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
@@ -18,6 +19,7 @@ import java.awt.event.WindowEvent;
 import java.util.*;
 
 public class SearchResultPanel extends JPanel {
+    private final ResourceBundle locale = HomeFrame.localeBundle;
     private final JPanel receiptsPanel = new JPanel(new BorderLayout());
     private final JPanel dataPanel = new JPanel(new GridLayout(5, 2));
     private final JPanel optionsPanel = new JPanel(new GridLayout(3, 1));
@@ -29,7 +31,7 @@ public class SearchResultPanel extends JPanel {
     public SearchResultPanel(ArrayList<Item> items){
         setVisible(false);
         removeAll();
-        JLabel statusLabel = new JLabel("Preparing workplace...", SwingConstants.CENTER);
+        JLabel statusLabel = new JLabel(locale.getString("preparingWorkplace"), SwingConstants.CENTER);
         setVisible(true);
         setLayout(new BorderLayout());
         add(statusLabel, BorderLayout.PAGE_START);
@@ -96,7 +98,7 @@ public class SearchResultPanel extends JPanel {
                     if(receiptItem.get_Item().equals(_item)) sum += _item.get_price() * receiptItem.get_qty();
             JLabel store = new JLabel(value.get_store());
             JLabel date = new JLabel(value.get_dateString());
-            JLabel sumLabel = new JLabel(String.format("%.2f", sum) + " PLN");
+            JLabel sumLabel = new JLabel(String.format("%.2f", sum) + " " + locale.getString("currency"));
             store.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 15));
             date.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 15));
             sumLabel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
@@ -126,7 +128,7 @@ public class SearchResultPanel extends JPanel {
             for(ReceiptItem receiptItem : receipt.get_items())
                 for(Item item : _items)
                     if(receiptItem.get_Item().equals(item)) total += (receiptItem.get_qty() * item.get_price());
-        totalLabel.setText(String.format("%.2f", total) + " PLN");
+        totalLabel.setText(String.format("%.2f", total) + " " + locale.getString("currency"));
         //TAX LABEL
         int counter = 0;
         for(Receipt receipt : (ArrayList<Receipt>) _receipts.clone())
@@ -139,7 +141,7 @@ public class SearchResultPanel extends JPanel {
         tax = tax/counter;
         taxLabel.setText(String.format("%.0f", tax*100)+"%");
         //TOTAL TAX LABEL
-        totalTaxLabel.setText(String.format("%.2f", tax*total) + " PLN");
+        totalTaxLabel.setText(String.format("%.2f", tax*total) + " " + locale.getString("currency"));
         //NAME LABEL
         ArrayList<String> namesArray = new ArrayList<>();
         for(Item item : _items) namesArray.add(item.get_name());
@@ -169,29 +171,29 @@ public class SearchResultPanel extends JPanel {
                     }
             if(contains) {
                 pricesInStores.add(new JLabel(item.get_store()));
-                pricesInStores.add(new JLabel(String.format("%.2f", item.get_price()) + " PLN"));
+                pricesInStores.add(new JLabel(String.format("%.2f", item.get_price()) + " " + locale.getString("currency")));
                 itemsCounter++;
             }
         }
         //*****
-        dataPanel.add(new JLabel("Name: "));
+        dataPanel.add(new JLabel( locale.getString("name") + ": "));
         dataPanel.add(nameLabel);
-        dataPanel.add(new JLabel("Total: "));
+        dataPanel.add(new JLabel(locale.getString("total") + ": "));
         dataPanel.add(totalLabel);
-        dataPanel.add(new JLabel("Tax rate: "));
+        dataPanel.add(new JLabel(locale.getString("taxRate") + ": "));
         dataPanel.add(taxLabel);
-        dataPanel.add(new JLabel("Total tax: "));
+        dataPanel.add(new JLabel(locale.getString("totalTax") + ": "));
         dataPanel.add(totalTaxLabel);
-        dataPanel.add(new JLabel("Prices in stores:"));
+        dataPanel.add(new JLabel(locale.getString("pricesInStores") + ": "));
         dataPanel.add(pricesInStoresScrollPane);
         dataPanel.setVisible(true);
     }
     private void generateOptionsPanel(){
         optionsPanel.setVisible(false);
         optionsPanel.removeAll();
-        JButton setDateBounds = new JButton("Set date bounds");
-        JButton previewReceipt = new JButton("Show receipt");
-        JButton editItem = new JButton("Edit item");
+        JButton setDateBounds = new JButton(locale.getString("setDateBounds"));
+        JButton previewReceipt = new JButton(locale.getString("showReceipt"));
+        JButton editItem = new JButton(locale.getString("editItem"));
         //SET DATE BOUNDS BUTTON BEHAVIOR
         setDateBounds.addMouseListener(new MouseAdapter() {
             @Override
@@ -216,9 +218,9 @@ public class SearchResultPanel extends JPanel {
                     public void windowClosed(WindowEvent e) {
                         if(!editItem.anyChange || editItem.oldItem == null || editItem.newItem == null) return;
                         Object choice = JOptionPane.showOptionDialog(null,
-                                "Are you sure you want to replace " + editItem.oldItem + " with " + editItem.newItem + "?" , "",
+                                locale.getString("sureYouWantToReplace") + " " + editItem.oldItem + " " + locale.getString("with") + " " + editItem.newItem + "?" , "",
                                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-                                null, new Object[]{"NO", "YES"},
+                                null, new Object[]{locale.getString("no"), locale.getString("yes")},
                                 "NO");
                         if((int)choice != 1) return;
                         if(editItem.newItem.get_price() == 0.0F){
@@ -236,7 +238,7 @@ public class SearchResultPanel extends JPanel {
                             _items.add(new Item(editItem.newItem.get_name(), editItem.oldItem.get_taxRate(), editItem.newItem.get_price(), editItem.oldItem.get_store()));
                         }
                         _receipts = ReceiptsManager.getReceiptsContaining(_items);
-                        JLabel statusLabel = new JLabel("Reloading workplace...", SwingConstants.CENTER);
+                        JLabel statusLabel = new JLabel(locale.getString("reloadingWorkplace"), SwingConstants.CENTER);
                         add(statusLabel, BorderLayout.PAGE_START);
                         new Thread(() -> {
                             Thread generateReceiptsPanelThread = new Thread(() -> {
@@ -363,7 +365,7 @@ public class SearchResultPanel extends JPanel {
     }
     @SuppressWarnings("unchecked")
     private void showReceiptPreview(JButton previewReceipt){
-        if(previewReceipt.getText().equals("Show receipt")) {
+        if(previewReceipt.getText().equals(locale.getString("showReceipt"))) {
             JList<Receipt> receiptList = (JList<Receipt>) (((JScrollPane) receiptsPanel.getComponents()[0]).getViewport().getView());
             if(receiptList.getSelectedValue() == null) return;
             remove(receiptsPanel);
@@ -374,10 +376,10 @@ public class SearchResultPanel extends JPanel {
             receiptPreview.add(editor.get_receiptView());
             receiptPreview.setVisible(true);
             optionsPanel.setVisible(false);
-            previewReceipt.setText("Hide receipt");
+            previewReceipt.setText(locale.getString("hideReceipt"));
             optionsPanel.setVisible(true);
         }else{
-            previewReceipt.setText("Show receipt");
+            previewReceipt.setText(locale.getString("showReceipt"));
             remove(receiptPreview);
             add(receiptsPanel, BorderLayout.LINE_START);
         }

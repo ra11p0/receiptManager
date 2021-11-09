@@ -12,10 +12,15 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class HomeFrame extends JFrame {
     private final String DEFAULT_RECEIPT_PATH = "res\\receipts.json";
+    public static ResourceBundle localeBundle;
     public HomeFrame(String title, int width, int height) throws Exception{
+        Locale locale = new Locale("en");
+        localeBundle = ResourceBundle.getBundle("lang", locale);
         UIManager.setLookAndFeel( new FlatDarculaLaf());
         JFrame preparingFiles = new JFrame();
         preparingFiles.setResizable(false);
