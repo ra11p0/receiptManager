@@ -1,6 +1,7 @@
 package com.ra11p0.frames.Overview.Frames;
 
 import com.google.gson.Gson;
+import com.ra11p0.frames.HomeFrame;
 import com.ra11p0.frames.Overview.Panels.OverviewPanel;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.ra11p0.structures.*;
@@ -15,10 +16,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.ResourceBundle;
 import java.util.function.Function;
 
 public class Overview extends JFrame {
     private final OverviewPanel overviewPanel;
+    private final static ResourceBundle locale = HomeFrame.localeBundle;
     public Overview(String title) {
         JPanel mainPanel = new JPanel();
         addWindowListener(new WindowAdapter() {
@@ -28,13 +31,13 @@ public class Overview extends JFrame {
             }
         });
         JMenuBar menuBar = new JMenuBar();
-        JMenu fileMenu = new JMenu("File");
-        JMenuItem importReceipts = new JMenuItem("Import receipts.");
-        JMenuItem exportReceipts = new JMenuItem("Export receipts.");
-        JMenuItem save = new JMenuItem("Save.");
-        JMenuItem quit = new JMenuItem("Quit.");
-        JMenuItem saveAs = new JMenuItem("Save as.");
-        JMenuItem load = new JMenuItem("Open.");
+        JMenu fileMenu = new JMenu(locale.getString("file"));
+        JMenuItem importReceipts = new JMenuItem(locale.getString("importReceipts"));
+        JMenuItem exportReceipts = new JMenuItem(locale.getString("exportReceipts"));
+        JMenuItem save = new JMenuItem(locale.getString("save"));
+        JMenuItem quit = new JMenuItem(locale.getString("quit"));
+        JMenuItem saveAs = new JMenuItem(locale.getString("saveAs"));
+        JMenuItem load = new JMenuItem(locale.getString("open"));
         save.addActionListener(e -> save());
         importReceipts.addActionListener(e -> importReceipts());
         exportReceipts.addActionListener(e -> exportReceipts());
@@ -66,7 +69,7 @@ public class Overview extends JFrame {
         JFrame filesProcessing = new JFrame();
         filesProcessing.setLayout(new BorderLayout());
         filesProcessing.setSize(200, 100);
-        filesProcessing.add(new JLabel("Wait until all files are processed..."), BorderLayout.CENTER);
+        filesProcessing.add(new JLabel(locale.getString("waitUntilAllFilesAreProcessed")), BorderLayout.CENTER);
         Function<Object, Object> removeTemp = o -> {
             File temp = new File("res/.temp/");
             if(temp.exists()) {
@@ -85,10 +88,10 @@ public class Overview extends JFrame {
             return;
         }
         Object choice = JOptionPane.showOptionDialog(null,
-                "Do you want to save the changes?" , "",
+                locale.getString("doYouWantToSaveTheChanges") + "?" , "",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-                null, new Object[]{"NO", "YES"},
-                "NO");
+                null, new Object[]{locale.getString("no"), locale.getString("yes")},
+                locale.getString("no"));
         filesProcessing.setVisible(true);
         new Thread(() -> {
             File changedReceipts = new File("res/receipts.json");
@@ -100,7 +103,7 @@ public class Overview extends JFrame {
                 try {
                     FileUtils.copyFile(notChangedReceipts, changedReceipts);
                 } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(null, "Failed to process receipts!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, locale.getString("failedToProcessReceipts") + "!", locale.getString("error"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
@@ -132,7 +135,7 @@ public class Overview extends JFrame {
         }
         ReceiptsManager.changesMade = false;
         overviewPanel.generateOverviewPanel();
-        JOptionPane.showMessageDialog(null, "Saved!");
+        JOptionPane.showMessageDialog(null, locale.getString("saved") + "!");
     }
     private void importReceipts(){
         JFrame fileChooserFrame = new JFrame();
@@ -153,7 +156,7 @@ public class Overview extends JFrame {
             final int[] counter = {0};
             if(e.getActionCommand().equals("ApproveSelection")) {
                 File receiptsFolder = fileChooser.getSelectedFile();
-                JLabel importStateLabel = new JLabel("Imported " + counter[0] + " out of " + Objects.requireNonNull(receiptsFolder.list()).length + ".");
+                JLabel importStateLabel = new JLabel(locale.getString("imported") + " " + counter[0] + " " + locale.getString("outOf")+ " " + Objects.requireNonNull(receiptsFolder.list()).length + ".");
                 fileChooserFrame.getRootPane().setVisible(false);
                 fileChooserFrame.remove(fileChooser);
                 fileChooserFrame.add(importStateLabel);
@@ -176,7 +179,7 @@ public class Overview extends JFrame {
                                     processedReceipt.addItem(receiptItem);
                                 ReceiptsManager.saveReceipt(processedReceipt);
                                 counter[0]++;
-                                importStateLabel.setText("Imported " + counter[0] + " out of " + Objects.requireNonNull(receiptsFolder.list()).length + ".");
+                                importStateLabel.setText(locale.getString("imported") + " " + counter[0] + " " + locale.getString("outOf")+ " " + Objects.requireNonNull(receiptsFolder.list()).length + ".");
                             }
                         } catch (Exception ex) {
                             ex.printStackTrace();
@@ -184,7 +187,7 @@ public class Overview extends JFrame {
                     }
                     overviewPanel.generateOverviewPanel();
                     fileChooserFrame.dispose();
-                    JOptionPane.showMessageDialog(null, "Imported " + counter[0] + " receipts.");
+                    JOptionPane.showMessageDialog(null, locale.getString("imported") + " " + counter[0]);
                 }).start();
             }
             else fileChooserFrame.dispose();
@@ -208,7 +211,7 @@ public class Overview extends JFrame {
         fileChooser.addActionListener(e -> {
             final int[] counter = {0};
             if(e.getActionCommand().equals("ApproveSelection")) {
-                JLabel exportStateLabel = new JLabel("Exported " + counter[0] + " out of " + ReceiptsManager.getReceipts().size() + ".");
+                JLabel exportStateLabel = new JLabel(locale.getString("exported") + " " + counter[0] + " " + counter[0] + " " + locale.getString("outOf")+ " " + ReceiptsManager.getReceipts().size() + ".");
                 fileChooserFrame.getRootPane().setVisible(false);
                 fileChooserFrame.remove(fileChooser);
                 fileChooserFrame.add(exportStateLabel);
@@ -229,11 +232,11 @@ public class Overview extends JFrame {
                             ex.printStackTrace();
                         }
                         counter[0]++;
-                        exportStateLabel.setText("Exported " + counter[0] + " out of " + ReceiptsManager.getReceipts().size() + ".");
+                        exportStateLabel.setText(locale.getString("exported") + " " + counter[0] + " " + counter[0] + " " + locale.getString("outOf")+ " " + ReceiptsManager.getReceipts().size() + ".");
                     }
                     overviewPanel.generateOverviewPanel();
                     fileChooserFrame.dispose();
-                    JOptionPane.showMessageDialog(null, "Exported " + counter[0] + " receipts.");
+                    JOptionPane.showMessageDialog(null, locale.getString("exported") + " " + counter[0]);
                 }).start();
             }
             else fileChooserFrame.dispose();
@@ -268,7 +271,7 @@ public class Overview extends JFrame {
         fileChooserFrame.addWindowListener(closeWindowAdapter);
         fileChooser.addActionListener(e -> {
             if(e.getActionCommand().equals("ApproveSelection")) {
-                JLabel exportStateLabel = new JLabel("Saving...");
+                JLabel exportStateLabel = new JLabel(locale.getString("saving"));
                 fileChooserFrame.getRootPane().setVisible(false);
                 fileChooserFrame.remove(fileChooser);
                 fileChooserFrame.add(exportStateLabel);
@@ -289,7 +292,7 @@ public class Overview extends JFrame {
                     }
                     overviewPanel.generateOverviewPanel();
                     fileChooserFrame.dispose();
-                    JOptionPane.showMessageDialog(null, "Saved!");
+                    JOptionPane.showMessageDialog(null, locale.getString("saved") + "!");
                 }).start();
             }
             else fileChooserFrame.dispose();
@@ -324,7 +327,7 @@ public class Overview extends JFrame {
         fileChooserFrame.addWindowListener(closeWindowAdapter);
         fileChooser.addActionListener(e -> {
             if(e.getActionCommand().equals("ApproveSelection")) {
-                JLabel exportStateLabel = new JLabel("Loading...");
+                JLabel exportStateLabel = new JLabel(locale.getString("loading"));
                 fileChooserFrame.getRootPane().setVisible(false);
                 fileChooserFrame.remove(fileChooser);
                 fileChooserFrame.add(exportStateLabel);
@@ -337,7 +340,7 @@ public class Overview extends JFrame {
                     ReceiptsManager.refreshItemsAndReceipts(target.getPath());
                     overviewPanel.generateOverviewPanel();
                     fileChooserFrame.dispose();
-                    JOptionPane.showMessageDialog(null, "Loaded!");
+                    JOptionPane.showMessageDialog(null, locale.getString("loaded") + "!");
                 }).start();
             }
             else fileChooserFrame.dispose();

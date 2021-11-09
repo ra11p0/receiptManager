@@ -1,11 +1,15 @@
 package com.ra11p0.frames.ReceiptsManager;
 
+import com.ra11p0.frames.HomeFrame;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 
 public class AddNewStore extends JFrame {
+    private final static ResourceBundle locale = HomeFrame.localeBundle;
     public static void showDialog(ArrayList<String> storesList, JComboBox<String> stores){
         JFrame addNewStoreFrame = new JFrame();
         JTextField nameOfNewStore = new JTextField();
@@ -20,7 +24,7 @@ public class AddNewStore extends JFrame {
                 }
             }
         });
-        JButton confirm = new JButton("Confirm");
+        JButton confirm = new JButton(locale.getString("confirm"));
         //CONFIRM BUTTON
         confirm.addMouseListener(new MouseAdapter() {
             @Override
@@ -32,8 +36,8 @@ public class AddNewStore extends JFrame {
         });
         addNewStoreFrame.setLayout(new GridLayout());
         addNewStoreFrame.setSize(400, 65);
-        addNewStoreFrame.setTitle("Add new store.");
-        addNewStoreFrame.add(new Label("Name the new store:"));
+        addNewStoreFrame.setTitle(locale.getString("addNewStore"));
+        addNewStoreFrame.add(new Label(locale.getString("nameTheNewStore") + ":"));
         addNewStoreFrame.add(nameOfNewStore);
         addNewStoreFrame.add(confirm);
         addNewStoreFrame.setVisible(true);

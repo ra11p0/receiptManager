@@ -123,7 +123,7 @@ public class OverviewPanel extends JPanel {
                     }
                 }
             });
-            totalValues.add(new JLabel(String.format("%.2f", days.get(receiptListModels.size()).get_total()) + locale.getString("currency"), SwingConstants.CENTER));
+            totalValues.add(new JLabel(String.format("%.2f", days.get(receiptListModels.size()).get_total()) + locale.getString("currencySymbol"), SwingConstants.CENTER));
             receiptListModels.add(new DefaultListModel<>());
             jList.setModel(receiptListModels.get(receiptListModels.size() - 1));
             panel.add(scrollPane, BorderLayout.CENTER);
@@ -297,11 +297,11 @@ public class OverviewPanel extends JPanel {
             }
         }
         //*****
-        aTax.setText(String.format("%.2f", aTaxValue) + " " + locale.getString("currency"));
-        bTax.setText(String.format("%.2f", bTaxValue) + " " + locale.getString("currency"));
-        cTax.setText(String.format("%.2f", cTaxValue) + " " + locale.getString("currency"));
-        noTax.setText(String.format("%.2f", noTaxValue) + " " + locale.getString("currency"));
-        total.setText(String.format("%.2f", totalValue) + " " + locale.getString("currency"));
+        aTax.setText(String.format("%.2f", aTaxValue) + " " + locale.getString("currencySymbol"));
+        bTax.setText(String.format("%.2f", bTaxValue) + " " + locale.getString("currencySymbol"));
+        cTax.setText(String.format("%.2f", cTaxValue) + " " + locale.getString("currencySymbol"));
+        noTax.setText(String.format("%.2f", noTaxValue) + " " + locale.getString("currencySymbol"));
+        total.setText(String.format("%.2f", totalValue) + " " + locale.getString("currencySymbol"));
     }
     public void generateOverviewPanel(){
         if(ReceiptsManager.changesMade)

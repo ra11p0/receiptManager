@@ -98,7 +98,7 @@ public class SearchResultPanel extends JPanel {
                     if(receiptItem.get_Item().equals(_item)) sum += _item.get_price() * receiptItem.get_qty();
             JLabel store = new JLabel(value.get_store());
             JLabel date = new JLabel(value.get_dateString());
-            JLabel sumLabel = new JLabel(String.format("%.2f", sum) + " " + locale.getString("currency"));
+            JLabel sumLabel = new JLabel(String.format("%.2f", sum) + " " + locale.getString("currencySymbol"));
             store.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 15));
             date.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 15));
             sumLabel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
@@ -128,7 +128,7 @@ public class SearchResultPanel extends JPanel {
             for(ReceiptItem receiptItem : receipt.get_items())
                 for(Item item : _items)
                     if(receiptItem.get_Item().equals(item)) total += (receiptItem.get_qty() * item.get_price());
-        totalLabel.setText(String.format("%.2f", total) + " " + locale.getString("currency"));
+        totalLabel.setText(String.format("%.2f", total) + " " + locale.getString("currencySymbol"));
         //TAX LABEL
         int counter = 0;
         for(Receipt receipt : (ArrayList<Receipt>) _receipts.clone())
@@ -141,7 +141,7 @@ public class SearchResultPanel extends JPanel {
         tax = tax/counter;
         taxLabel.setText(String.format("%.0f", tax*100)+"%");
         //TOTAL TAX LABEL
-        totalTaxLabel.setText(String.format("%.2f", tax*total) + " " + locale.getString("currency"));
+        totalTaxLabel.setText(String.format("%.2f", tax*total) + " " + locale.getString("currencySymbol"));
         //NAME LABEL
         ArrayList<String> namesArray = new ArrayList<>();
         for(Item item : _items) namesArray.add(item.get_name());
@@ -171,7 +171,7 @@ public class SearchResultPanel extends JPanel {
                     }
             if(contains) {
                 pricesInStores.add(new JLabel(item.get_store()));
-                pricesInStores.add(new JLabel(String.format("%.2f", item.get_price()) + " " + locale.getString("currency")));
+                pricesInStores.add(new JLabel(String.format("%.2f", item.get_price()) + " " + locale.getString("currencySymbol")));
                 itemsCounter++;
             }
         }
@@ -291,8 +291,8 @@ public class SearchResultPanel extends JPanel {
         UtilDateModel toModel = new UtilDateModel();
         JDatePanelImpl fromDatePanel = new JDatePanelImpl(fromModel);
         JDatePanelImpl toDatePanel = new JDatePanelImpl(toModel);
-        JButton confirm = new JButton("Confirm");
-        JLabel toLabel = new JLabel("to:");
+        JButton confirm = new JButton(locale.getString("confirm"));
+        JLabel toLabel = new JLabel( locale.getString("to") + ":");
         fromModel.setDate(fromModel.getYear(), fromModel.getMonth(), 1);
         toModel.setDate(toModel.getYear(), toModel.getMonth(), Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH));
         fromModel.setSelected(true);
@@ -301,7 +301,7 @@ public class SearchResultPanel extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 setVisible(false);
-                JLabel statusLabel = new JLabel("Reloading workplace...", SwingConstants.CENTER);
+                JLabel statusLabel = new JLabel(locale.getString("reloadingWorkplace"), SwingConstants.CENTER);
                 add(statusLabel, BorderLayout.PAGE_START);
                 receiptsPanel.setVisible(false);
                 dataPanel.setVisible(false);
@@ -349,7 +349,7 @@ public class SearchResultPanel extends JPanel {
         //*****
         labelPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
         toLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-        labelPanel.add(new JLabel("Date bounds since:"));
+        labelPanel.add(new JLabel(locale.getString("dateBoundsSince")+ ":"));
         labelPanel.add(toLabel);
         //*****
         fromDatePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 5));

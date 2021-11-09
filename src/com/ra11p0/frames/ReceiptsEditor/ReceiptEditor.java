@@ -1,5 +1,6 @@
 package com.ra11p0.frames.ReceiptsEditor;
 
+import com.ra11p0.frames.HomeFrame;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
@@ -12,7 +13,7 @@ import java.io.*;
 import java.util.*;
 
 public class ReceiptEditor extends JFrame {
-
+    private final static ResourceBundle locale = HomeFrame.localeBundle;
     private final JPanel _receiptView = new JPanel();
         public JPanel get_receiptView() {return _receiptView;}
     private final JPanel _management = new JPanel();
@@ -67,11 +68,11 @@ public class ReceiptEditor extends JFrame {
         JScrollPane tablePane = new JScrollPane(table);
         _receiptView.setLayout(new FlowLayout());
         _receiptView.setBorder(BorderFactory.createLoweredBevelBorder());
-        tableModel.addColumn("Item");
-        tableModel.addColumn("QTY");
-        tableModel.addColumn("Price");
-        tableModel.addColumn("Tax");
-        tableModel.addColumn("Total");
+        tableModel.addColumn(locale.getString("item"));
+        tableModel.addColumn(locale.getString("qty"));
+        tableModel.addColumn(locale.getString("price"));
+        tableModel.addColumn(locale.getString("tax"));
+        tableModel.addColumn(locale.getString("total"));
         for(ReceiptItem item : _receipt.get_items())
             tableModel.addRow(new String[] {
                 item.get_Item().get_name(),
@@ -89,9 +90,9 @@ public class ReceiptEditor extends JFrame {
         JTextField ID = new JTextField(_receipt.get_ID());
         JTextField date = new JTextField(_receipt.get_dateString());
         JTextField total = new JTextField(String.format("%.2f", _receipt.get_paid()));
-        JButton addItem = new JButton("Add item.");
-        JButton editDate = new JButton("Edit date.");
-        JButton save = new JButton("Save.");
+        JButton addItem = new JButton(locale.getString("addItem"));
+        JButton editDate = new JButton(locale.getString("editDate"));
+        JButton save = new JButton(locale.getString("save"));
         storeName.setEditable(false);
         ID.setEditable(false);
         date.setEditable(false);
@@ -103,7 +104,7 @@ public class ReceiptEditor extends JFrame {
                 AddItem.showDialog(_items, _receipt, currentReceiptEditor);
             }
         });
-        JButton removeItem = new JButton("Remove item.");
+        JButton removeItem = new JButton(locale.getString("removeItem"));
         //REMOVE ITEM
         removeItem.addMouseListener(new MouseAdapter() {
             @Override
@@ -124,7 +125,7 @@ public class ReceiptEditor extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 try {
                     _receipt.saveReceipt();
-                    JOptionPane.showMessageDialog(_management, _receipt.get_ID() + " saved!","Saved!", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(_management, _receipt.get_ID() + " " + locale.getString("saved") + "!",locale.getString("saved") + "!", JOptionPane.INFORMATION_MESSAGE);
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -133,13 +134,13 @@ public class ReceiptEditor extends JFrame {
         });
         //*****
         _management.setLayout(new GridLayout(6, 2));
-        _management.add(new Label("Store: "));
+        _management.add(new Label(  locale.getString("store") + ": "));
         _management.add(storeName);
         _management.add(new Label("ID: "));
         _management.add(ID);
-        _management.add(new Label("Date (YY-MM-DD): "));
+        _management.add(new Label(locale.getString("date") + ": "));
         _management.add(date);
-        _management.add(new Label("Total: "));
+        _management.add(new Label(locale.getString("total") + ": "));
         _management.add(total);
         _management.add(addItem);
         _management.add(removeItem);
@@ -160,9 +161,9 @@ public class ReceiptEditor extends JFrame {
     }
     public JFrame saveOnClose(){
         if(!_receipt._changesMade) return null;
-        JFrame youSure = new JFrame("Save changes before exiting?");
-        JButton save = new JButton("Save.");
-        JButton discard = new JButton("Discard");
+        JFrame youSure = new JFrame(locale.getString("doYouWantToSaveTheChanges") + "?");
+        JButton save = new JButton(locale.getString("yes"));
+        JButton discard = new JButton(locale.getString("no"));
         save.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

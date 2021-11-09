@@ -19,7 +19,7 @@ public class HomeFrame extends JFrame {
     private final String DEFAULT_RECEIPT_PATH = "res\\receipts.json";
     public static ResourceBundle localeBundle;
     public HomeFrame(String title, int width, int height) throws Exception{
-        Locale locale = new Locale("en");
+        Locale locale = new Locale("pl");
         localeBundle = ResourceBundle.getBundle("lang", locale);
         UIManager.setLookAndFeel( new FlatDarculaLaf());
         JFrame preparingFiles = new JFrame();

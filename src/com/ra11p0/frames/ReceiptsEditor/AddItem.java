@@ -2,6 +2,7 @@ package com.ra11p0.frames.ReceiptsEditor;
 
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
+import com.ra11p0.frames.HomeFrame;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
@@ -13,15 +14,17 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.ResourceBundle;
 
 public class AddItem {
+    private static final ResourceBundle locale = HomeFrame.localeBundle;
     public static void showDialog(ArrayList<Item> items, Receipt receipt, ReceiptEditor receiptEditor){
-        JFrame addItemFrame = new JFrame("Add item.");
+        JFrame addItemFrame = new JFrame(locale.getString("addItem"));
         JComboBox<Item> itemsBox = new JComboBox<>();
         ArrayList<Item> itemsAtThisStore = new ArrayList<>();
         JTextField qty = new JTextField();
         JTextField searchBar = new JTextField();
-        JButton confirm = new JButton("Confirm.");
+        JButton confirm = new JButton(locale.getString("confirm"));
         addItemFrame.setLayout(new GridLayout(8, 1));
         addItemFrame.setSize(350, 250);
         for(Item item : items) if (item.get_store().equals(receipt.get_store())) itemsAtThisStore.add(item);
@@ -84,7 +87,7 @@ public class AddItem {
                 receiptEditor.repaintFrame();
             }
         });
-        JButton newItem = new JButton("Create new item.");
+        JButton newItem = new JButton(locale.getString("createNewItem"));
         //NEW ITEM DIALOG
         newItem.addMouseListener(new MouseAdapter() {
             @Override
@@ -92,23 +95,23 @@ public class AddItem {
                 newItem(itemsBox, receipt, items);
             }
         });
-        addItemFrame.add(new Label("Select item or create new one, then type quantity:"));
-        addItemFrame.add(new Label("Search:"));
+        addItemFrame.add(new Label(locale.getString("selectItemOrCreateNewOneThenTypeQty") + ":"));
+        addItemFrame.add(new Label(locale.getString("search") + ":"));
         addItemFrame.add(searchBar);
         addItemFrame.add(itemsBox);
-        addItemFrame.add(new Label("Quantity:"));
+        addItemFrame.add(new Label(locale.getString("qty") + ":"));
         addItemFrame.add(qty);
         addItemFrame.add(newItem);
         addItemFrame.add(confirm);
         addItemFrame.setVisible(true);
     }
     private static void newItem(JComboBox<Item> itemsBox, Receipt receipt, ArrayList<Item> items) throws NullPointerException{
-        JFrame createNewItemFrame = new JFrame("Create new item.");
+        JFrame createNewItemFrame = new JFrame(locale.getString("createNewItem"));
         ArrayList<String> namesOfProducts = new ArrayList<>();
         JComboBox<Object> name = new JComboBox<>();
         JComboBox<Float> taxRate = new JComboBox<>();
         JTextField cost = new JTextField();
-        JButton confirm = new JButton("Confirm.");
+        JButton confirm = new JButton(locale.getString("confirm"));
         //*****
         createNewItemFrame.setAlwaysOnTop(true);
         createNewItemFrame.setSize(200, 200);
@@ -181,11 +184,11 @@ public class AddItem {
             }
         });
         //*****
-        createNewItemFrame.add(new Label("Name of new item:"));
+        createNewItemFrame.add(new Label(locale.getString("nameOfNewItem") + ":"));
         createNewItemFrame.add(name);
-        createNewItemFrame.add(new Label("Cost of one unit:"));
+        createNewItemFrame.add(new Label(locale.getString("costOfOneUnit") + ":"));
         createNewItemFrame.add(cost);
-        createNewItemFrame.add(new Label("Tax rate:"));
+        createNewItemFrame.add(new Label(locale.getString("taxRate") + ":"));
         createNewItemFrame.add(taxRate);
         createNewItemFrame.add(confirm);
         createNewItemFrame.setVisible(true);
