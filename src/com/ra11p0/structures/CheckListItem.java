@@ -1,7 +1,7 @@
 package com.ra11p0.structures;
 
 public class CheckListItem {
-    private Object _object = new Object();
+    private final Object _object;
     private boolean _isSelected = false;
     //*****
     public CheckListItem(Object object) {

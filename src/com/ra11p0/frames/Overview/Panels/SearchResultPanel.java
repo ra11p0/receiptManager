@@ -109,6 +109,7 @@ public class SearchResultPanel extends JPanel {
         receiptsPanel.add(receiptListScrollPane, BorderLayout.CENTER);
         receiptsPanel.setVisible(true);
     }
+    @SuppressWarnings("unchecked")
     private void generateDataPanel(){
         dataPanel.setVisible(false);
         dataPanel.removeAll();
@@ -229,13 +230,12 @@ public class SearchResultPanel extends JPanel {
                                 _items.remove(item);
                             for(Item item : itemsToRemove)
                                 _items.add(new Item(editItem.newItem.get_name(), editItem.oldItem.get_taxRate(), item.get_price(), editItem.oldItem.get_store()));
-                            _receipts = ReceiptsManager.getReceiptsContaining(_items);
                         }
                         else {
                             _items.remove(editItem.oldItem);
                             _items.add(new Item(editItem.newItem.get_name(), editItem.oldItem.get_taxRate(), editItem.newItem.get_price(), editItem.oldItem.get_store()));
-                            _receipts = ReceiptsManager.getReceiptsContaining(_items);
                         }
+                        _receipts = ReceiptsManager.getReceiptsContaining(_items);
                         JLabel statusLabel = new JLabel("Reloading workplace...", SwingConstants.CENTER);
                         add(statusLabel, BorderLayout.PAGE_START);
                         new Thread(() -> {
@@ -361,6 +361,7 @@ public class SearchResultPanel extends JPanel {
         panel.add(confirm, BorderLayout.AFTER_LAST_LINE);
         frame.setVisible(true);
     }
+    @SuppressWarnings("unchecked")
     private void showReceiptPreview(JButton previewReceipt){
         if(previewReceipt.getText().equals("Show receipt")) {
             JList<Receipt> receiptList = (JList<Receipt>) (((JScrollPane) receiptsPanel.getComponents()[0]).getViewport().getView());

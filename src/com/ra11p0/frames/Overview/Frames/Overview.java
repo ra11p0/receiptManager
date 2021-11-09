@@ -267,7 +267,6 @@ public class Overview extends JFrame {
         };
         fileChooserFrame.addWindowListener(closeWindowAdapter);
         fileChooser.addActionListener(e -> {
-            final int[] counter = {0};
             if(e.getActionCommand().equals("ApproveSelection")) {
                 JLabel exportStateLabel = new JLabel("Saving...");
                 fileChooserFrame.getRootPane().setVisible(false);
@@ -324,7 +323,6 @@ public class Overview extends JFrame {
         };
         fileChooserFrame.addWindowListener(closeWindowAdapter);
         fileChooser.addActionListener(e -> {
-            final int[] counter = {0};
             if(e.getActionCommand().equals("ApproveSelection")) {
                 JLabel exportStateLabel = new JLabel("Loading...");
                 fileChooserFrame.getRootPane().setVisible(false);

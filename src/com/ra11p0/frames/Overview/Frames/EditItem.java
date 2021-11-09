@@ -41,30 +41,19 @@ public class EditItem extends JFrame {
             }
         });
         //INITIALIZE ITEMS COMBO
-        items.sort(new Comparator<Item>() {
-            @Override
-            public int compare(Item o1, Item o2) {
-                return Float.compare(o1.get_price(), o2.get_price());
-            }
-        });
+        items.sort((o1, o2) -> Float.compare(o1.get_price(), o2.get_price()));
         for(Item item : items) itemsCombo.addItem(item);
-        itemsCombo.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if(itemsCombo.getSelectedItem() == null) return;
-                price.setText(String.format("%.2f", ((Item)itemsCombo.getSelectedItem()).get_price()));
-                price.setText(price.getText().replaceAll(",", "."));
-                nameCombo.setSelectedItem(((Item)itemsCombo.getSelectedItem()).get_name());
-            }
+        itemsCombo.addItemListener(e -> {
+            if(itemsCombo.getSelectedItem() == null) return;
+            price.setText(String.format("%.2f", ((Item)itemsCombo.getSelectedItem()).get_price()));
+            price.setText(price.getText().replaceAll(",", "."));
+            nameCombo.setSelectedItem(((Item)itemsCombo.getSelectedItem()).get_name());
         });
         //INITIALIZE NAME COMBO
         //STRING COMPARATOR -> SORT ITEMS BY NAME
-        items.sort(new Comparator<Item>() {
-            @Override
-            public int compare(Item o1, Item o2) {
-                Comparator<String> comparator = Comparator.comparing((String s) -> s);
-                return comparator.compare(o1.get_name().toUpperCase(Locale.ROOT), o2.get_name().toUpperCase(Locale.ROOT));
-            }
+        items.sort((o1, o2) -> {
+            Comparator<String> comparator = Comparator.comparing((String s) -> s);
+            return comparator.compare(o1.get_name().toUpperCase(Locale.ROOT), o2.get_name().toUpperCase(Locale.ROOT));
         });
         for(Item item : items) if(!namesOfProducts.contains(item.get_name())) namesOfProducts.add(item.get_name());
         AutoCompleteSupport.install(nameCombo,
@@ -138,8 +127,7 @@ public class EditItem extends JFrame {
                         ex.printStackTrace();
                     }
                 }
-                if(newItem.equals(oldItem)) anyChange = false;
-                else anyChange = true;
+                anyChange = !newItem.equals(oldItem);
                 setVisible(false);
                 dispose();
             }

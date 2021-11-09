@@ -6,7 +6,7 @@ public class Item {
     private final String _name; public String get_name() {
         return _name;
     }
-    private String _store; public String get_store() {
+    private final String _store; public String get_store() {
         return _store;
     }
     private final float _tax; public float get_taxRate() {
@@ -22,9 +22,7 @@ public class Item {
         _price = price;
         _store = store;
     }
-    public void setStore(String store){
-        _store = store;
-    }
+    //public void setStore(String store){ _store = store;}
     public String toString(){
         return _name + " - " + String.format("%.2f", _price);
     }
