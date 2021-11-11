@@ -29,8 +29,25 @@ public class Main {
             }
         }
         File file = new File("core.exe");
+        if(!file.exists()){
+            JOptionPane.showMessageDialog(null,
+                    "The problem has occurred while running program! Try again!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            File versionFile = new File("version.info");
+            if(!versionFile.delete()){
+                JOptionPane.showMessageDialog(null,
+                        "The problem has occurred while updating! Check if there is no instances of program in the background!",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                getBuild();
+                System.exit(0);
+            }
+            System.exit(0);
+        }
         Runtime.getRuntime().exec(file.getAbsolutePath(), null, new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().length()-8)));
-        return;
     }
     private static float checkLatestBuild() throws Exception{
         String json = readUrl(path);
@@ -61,7 +78,16 @@ public class Main {
         }
     }
     private static void update() throws Exception {
+        File oldCore = new File("core.exe");
         Label statusLabel = new Label("Downloading...");
+        if(!oldCore.delete() && oldCore.exists()) {
+            JOptionPane.showMessageDialog(null,
+                    "The problem has occurred while updating! Check if there is no instances of program in the background!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+                    );
+            System.exit(0);
+        }
         JFrame status = new JFrame();
         status.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         status.setSize(170, 75);
@@ -70,7 +96,7 @@ public class Main {
         status.setVisible(true);
         URL buildUrl = getUrlToLastBuild();
         BufferedInputStream inputStream = new BufferedInputStream(buildUrl.openStream());
-        FileOutputStream fileOutputStream = new FileOutputStream("core_temp.exe");
+        FileOutputStream fileOutputStream = new FileOutputStream("core.exe");
         byte[] dataBuffer = new byte[1024];
         int bytesRead;
         while ((bytesRead = inputStream.read(dataBuffer, 0, 1024)) != -1) {
@@ -78,12 +104,16 @@ public class Main {
         }
         fileOutputStream.close();
         inputStream.close();
-        File oldCore = new File("core.exe");
-        oldCore.delete();
-        File coreTemp = new File("core_temp.exe");
-        coreTemp.renameTo(new File("core.exe"));
         File versionFile = new File("version.info");
-        versionFile.delete();
+        if(!versionFile.delete()){
+            JOptionPane.showMessageDialog(null,
+                    "The problem has occurred while updating! Check if there is no instances of program in the background!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            getBuild();
+            System.exit(0);
+        }
         Path path = Paths.get("version.info");
         byte[] strToBytes = String.valueOf(checkLatestBuild()).getBytes();
         Files.write(path, strToBytes);

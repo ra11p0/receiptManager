@@ -1,6 +1,7 @@
 package com.ra11p0.frames.Overview.Panels;
 
 import com.ra11p0.Core;
+import com.ra11p0.frames.Init;
 import com.ra11p0.frames.Overview.Frames.GetItem;
 import com.ra11p0.structures.Day;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
@@ -9,6 +10,7 @@ import com.ra11p0.structures.CheckListItem;
 import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
 import com.ra11p0.structures.ReceiptItem;
+import com.ra11p0.utils.LangResource;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +20,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class OverviewPanel extends JPanel {
+    private static final ResourceBundle locale = Init.localeBundle;
     private final ArrayList<Day> days = new ArrayList<>();
     private JPanel content = new JPanel();
     private JPanel navigation = new JPanel();
@@ -47,8 +50,8 @@ public class OverviewPanel extends JPanel {
         navigation = new JPanel(new BorderLayout());
         add(navigation, BorderLayout.PAGE_START);
         //*****
-        JButton previous = new JButton("Previous");
-        JButton next = new JButton("Next");
+        JButton previous = new JButton(LangResource.get("prev"));
+        JButton next = new JButton(LangResource.get("next"));
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeZone(TimeZone.getTimeZone("GMT+1"));
         calendar.setTimeInMillis(days.get(0).get_date().getTime());
@@ -121,7 +124,7 @@ public class OverviewPanel extends JPanel {
                     }
                 }
             });
-            totalValues.add(new JLabel(String.format("%.2f", days.get(receiptListModels.size()).get_total()) + "PLN", SwingConstants.CENTER));
+            totalValues.add(new JLabel(String.format("%.2f", days.get(receiptListModels.size()).get_total()) + Init.settingsProp.getProperty("currency"), SwingConstants.CENTER));
             receiptListModels.add(new DefaultListModel<>());
             jList.setModel(receiptListModels.get(receiptListModels.size() - 1));
             panel.add(scrollPane, BorderLayout.CENTER);
@@ -139,10 +142,10 @@ public class OverviewPanel extends JPanel {
     }
     private JPanel generateControlButtons(ArrayList<JList<Receipt>> receiptListArray){
         JPanel controlButtons = new JPanel(new GridLayout(1, 3));
-        JButton edit = new JButton("Edit");
-        JButton newReceipt = new JButton("New receipt");
-        JButton remove = new JButton("Remove");
-        JButton search = new JButton("Search items");
+        JButton edit = new JButton(LangResource.get("edit"));
+        JButton newReceipt = new JButton(LangResource.get("newReceipt"));
+        JButton remove = new JButton(LangResource.get("remove"));
+        JButton search = new JButton(LangResource.get("searchItems"));
         //EDIT BUTTON BEHAVIOR
         edit.addMouseListener(new MouseAdapter() {
             @Override
@@ -185,10 +188,10 @@ public class OverviewPanel extends JPanel {
                 }
                 if(receiptToDelete == null) return;
                 Object choice = JOptionPane.showOptionDialog(null,
-                        "Are you sure you want to remove receipt?" , "",
+                        LangResource.get("youSureYouWantToRemoveReceipt") , "",
                         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-                        null, new Object[]{"NO", "YES"},
-                        "NO");
+                        null, new Object[]{LangResource.get("no"), LangResource.get("yes")},
+                        LangResource.get("no"));
                 if((int)choice != 1) return;
                 receiptToDelete.deleteReceipt();
                 generateOverviewPanel();
@@ -239,11 +242,11 @@ public class OverviewPanel extends JPanel {
         data = new JPanel(new GridLayout(2, 5));
         add(data, BorderLayout.PAGE_END);
         //*****
-        data.add(new JLabel("23% Tax", SwingConstants.CENTER));
-        data.add(new JLabel("8% Tax", SwingConstants.CENTER));
-        data.add(new JLabel("5% Tax", SwingConstants.CENTER));
-        data.add(new JLabel("0% Tax", SwingConstants.CENTER));
-        data.add(new JLabel("Total", SwingConstants.CENTER));
+        data.add(new JLabel("23% " + LangResource.get("tax"), SwingConstants.CENTER));
+        data.add(new JLabel("8% " + LangResource.get("tax"), SwingConstants.CENTER));
+        data.add(new JLabel("5% " + LangResource.get("tax"), SwingConstants.CENTER));
+        data.add(new JLabel("0% " + LangResource.get("tax"), SwingConstants.CENTER));
+        data.add(new JLabel(LangResource.get("total"), SwingConstants.CENTER));
         data.add(aTax);
         data.add(bTax);
         data.add(cTax);
@@ -295,11 +298,11 @@ public class OverviewPanel extends JPanel {
             }
         }
         //*****
-        aTax.setText(String.format("%.2f", aTaxValue) + " PLN");
-        bTax.setText(String.format("%.2f", bTaxValue) + " PLN");
-        cTax.setText(String.format("%.2f", cTaxValue) + " PLN");
-        noTax.setText(String.format("%.2f", noTaxValue) + " PLN");
-        total.setText(String.format("%.2f", totalValue) + " PLN");
+        aTax.setText(String.format("%.2f", aTaxValue) + " " + Init.settingsProp.getProperty("currency"));
+        bTax.setText(String.format("%.2f", bTaxValue) + " " + Init.settingsProp.getProperty("currency"));
+        cTax.setText(String.format("%.2f", cTaxValue) + " " + Init.settingsProp.getProperty("currency"));
+        noTax.setText(String.format("%.2f", noTaxValue) + " " + Init.settingsProp.getProperty("currency"));
+        total.setText(String.format("%.2f", totalValue) + " " + Init.settingsProp.getProperty("currency"));
     }
     public void generateOverviewPanel(){
         if(ReceiptsManager.changesMade)
@@ -323,7 +326,7 @@ public class OverviewPanel extends JPanel {
         data.removeAll();
         content.removeAll();
         content.add(editorPanel, BorderLayout.CENTER);
-        JButton backButton = new JButton("Back");
+        JButton backButton = new JButton(LangResource.get("back"));
         backButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -350,7 +353,7 @@ public class OverviewPanel extends JPanel {
         content.removeAll();
         content.setLayout(new BorderLayout());
         content.add(new SearchResultPanel(items), BorderLayout.CENTER);
-        JButton backButton = new JButton("Back");
+        JButton backButton = new JButton(LangResource.get("back"));
         backButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

@@ -2,10 +2,12 @@ package com.ra11p0.frames.ReceiptsEditor;
 
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
+import com.ra11p0.frames.Init;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
 import com.ra11p0.structures.ReceiptItem;
+import com.ra11p0.utils.LangResource;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,15 +15,17 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.ResourceBundle;
 
 public class AddItem {
+    private static final ResourceBundle locale = Init.localeBundle;
     public static void showDialog(ArrayList<Item> items, Receipt receipt, ReceiptEditor receiptEditor){
-        JFrame addItemFrame = new JFrame("Add item.");
+        JFrame addItemFrame = new JFrame(LangResource.get("addItem"));
         JComboBox<Item> itemsBox = new JComboBox<>();
         ArrayList<Item> itemsAtThisStore = new ArrayList<>();
         JTextField qty = new JTextField();
         JTextField searchBar = new JTextField();
-        JButton confirm = new JButton("Confirm.");
+        JButton confirm = new JButton(LangResource.get("confirm"));
         addItemFrame.setLayout(new GridLayout(8, 1));
         addItemFrame.setSize(350, 250);
         for(Item item : items) if (item.get_store().equals(receipt.get_store())) itemsAtThisStore.add(item);
@@ -84,7 +88,7 @@ public class AddItem {
                 receiptEditor.repaintFrame();
             }
         });
-        JButton newItem = new JButton("Create new item.");
+        JButton newItem = new JButton(LangResource.get("createNewItem"));
         //NEW ITEM DIALOG
         newItem.addMouseListener(new MouseAdapter() {
             @Override
@@ -92,26 +96,26 @@ public class AddItem {
                 newItem(itemsBox, receipt, items);
             }
         });
-        addItemFrame.add(new Label("Select item or create new one, then type quantity:"));
-        addItemFrame.add(new Label("Search:"));
+        addItemFrame.add(new Label(LangResource.get("selectItemOrCreateNewOneThenTypeQty") + ":"));
+        addItemFrame.add(new Label(LangResource.get("search") + ":"));
         addItemFrame.add(searchBar);
         addItemFrame.add(itemsBox);
-        addItemFrame.add(new Label("Quantity:"));
+        addItemFrame.add(new Label(LangResource.get("qty") + ":"));
         addItemFrame.add(qty);
         addItemFrame.add(newItem);
         addItemFrame.add(confirm);
         addItemFrame.setVisible(true);
     }
     private static void newItem(JComboBox<Item> itemsBox, Receipt receipt, ArrayList<Item> items) throws NullPointerException{
-        JFrame createNewItemFrame = new JFrame("Create new item.");
+        JFrame createNewItemFrame = new JFrame(LangResource.get("createNewItem"));
         ArrayList<String> namesOfProducts = new ArrayList<>();
         JComboBox<Object> name = new JComboBox<>();
         JComboBox<Float> taxRate = new JComboBox<>();
         JTextField cost = new JTextField();
-        JButton confirm = new JButton("Confirm.");
+        JButton confirm = new JButton(LangResource.get("confirm"));
         //*****
         createNewItemFrame.setAlwaysOnTop(true);
-        createNewItemFrame.setSize(200, 200);
+        createNewItemFrame.setSize(220, 200);
         createNewItemFrame.setLayout(new FlowLayout());
         //NAME COMBO BEHAVIOR
         for(Item item : items)
@@ -181,11 +185,11 @@ public class AddItem {
             }
         });
         //*****
-        createNewItemFrame.add(new Label("Name of new item:"));
+        createNewItemFrame.add(new Label(LangResource.get("nameOfNewItem") + ":"));
         createNewItemFrame.add(name);
-        createNewItemFrame.add(new Label("Cost of one unit:"));
+        createNewItemFrame.add(new Label(LangResource.get("costOfOneUnit") + ":"));
         createNewItemFrame.add(cost);
-        createNewItemFrame.add(new Label("Tax rate:"));
+        createNewItemFrame.add(new Label(LangResource.get("taxRate") + ":"));
         createNewItemFrame.add(taxRate);
         createNewItemFrame.add(confirm);
         createNewItemFrame.setVisible(true);

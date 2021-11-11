@@ -1,11 +1,13 @@
 package com.ra11p0.frames.Overview.Panels;
 
+import com.ra11p0.frames.Init;
 import com.ra11p0.frames.Overview.Frames.EditItem;
 import com.ra11p0.frames.ReceiptsEditor.ReceiptEditor;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
 import com.ra11p0.structures.ReceiptItem;
+import com.ra11p0.utils.LangResource;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
@@ -18,6 +20,7 @@ import java.awt.event.WindowEvent;
 import java.util.*;
 
 public class SearchResultPanel extends JPanel {
+    private final ResourceBundle locale = Init.localeBundle;
     private final JPanel receiptsPanel = new JPanel(new BorderLayout());
     private final JPanel dataPanel = new JPanel(new GridLayout(5, 2));
     private final JPanel optionsPanel = new JPanel(new GridLayout(3, 1));
@@ -29,7 +32,7 @@ public class SearchResultPanel extends JPanel {
     public SearchResultPanel(ArrayList<Item> items){
         setVisible(false);
         removeAll();
-        JLabel statusLabel = new JLabel("Preparing workplace...", SwingConstants.CENTER);
+        JLabel statusLabel = new JLabel(LangResource.get("preparingWorkplace"), SwingConstants.CENTER);
         setVisible(true);
         setLayout(new BorderLayout());
         add(statusLabel, BorderLayout.PAGE_START);
@@ -96,7 +99,7 @@ public class SearchResultPanel extends JPanel {
                     if(receiptItem.get_Item().equals(_item)) sum += _item.get_price() * receiptItem.get_qty();
             JLabel store = new JLabel(value.get_store());
             JLabel date = new JLabel(value.get_dateString());
-            JLabel sumLabel = new JLabel(String.format("%.2f", sum) + " PLN");
+            JLabel sumLabel = new JLabel(String.format("%.2f", sum) + " " + Init.settingsProp.getProperty("currency"));
             store.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 15));
             date.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 15));
             sumLabel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
@@ -126,7 +129,7 @@ public class SearchResultPanel extends JPanel {
             for(ReceiptItem receiptItem : receipt.get_items())
                 for(Item item : _items)
                     if(receiptItem.get_Item().equals(item)) total += (receiptItem.get_qty() * item.get_price());
-        totalLabel.setText(String.format("%.2f", total) + " PLN");
+        totalLabel.setText(String.format("%.2f", total) + " " + Init.settingsProp.getProperty("currency"));
         //TAX LABEL
         int counter = 0;
         for(Receipt receipt : (ArrayList<Receipt>) _receipts.clone())
@@ -139,7 +142,7 @@ public class SearchResultPanel extends JPanel {
         tax = tax/counter;
         taxLabel.setText(String.format("%.0f", tax*100)+"%");
         //TOTAL TAX LABEL
-        totalTaxLabel.setText(String.format("%.2f", tax*total) + " PLN");
+        totalTaxLabel.setText(String.format("%.2f", tax*total) + " " + Init.settingsProp.getProperty("currency"));
         //NAME LABEL
         ArrayList<String> namesArray = new ArrayList<>();
         for(Item item : _items) namesArray.add(item.get_name());
@@ -169,29 +172,29 @@ public class SearchResultPanel extends JPanel {
                     }
             if(contains) {
                 pricesInStores.add(new JLabel(item.get_store()));
-                pricesInStores.add(new JLabel(String.format("%.2f", item.get_price()) + " PLN"));
+                pricesInStores.add(new JLabel(String.format("%.2f", item.get_price()) + " " + Init.settingsProp.getProperty("currency")));
                 itemsCounter++;
             }
         }
         //*****
-        dataPanel.add(new JLabel("Name: "));
+        dataPanel.add(new JLabel( LangResource.get("name") + ": "));
         dataPanel.add(nameLabel);
-        dataPanel.add(new JLabel("Total: "));
+        dataPanel.add(new JLabel(LangResource.get("total") + ": "));
         dataPanel.add(totalLabel);
-        dataPanel.add(new JLabel("Tax rate: "));
+        dataPanel.add(new JLabel(LangResource.get("taxRate") + ": "));
         dataPanel.add(taxLabel);
-        dataPanel.add(new JLabel("Total tax: "));
+        dataPanel.add(new JLabel(LangResource.get("totalTax") + ": "));
         dataPanel.add(totalTaxLabel);
-        dataPanel.add(new JLabel("Prices in stores:"));
+        dataPanel.add(new JLabel(LangResource.get("pricesInStores") + ": "));
         dataPanel.add(pricesInStoresScrollPane);
         dataPanel.setVisible(true);
     }
     private void generateOptionsPanel(){
         optionsPanel.setVisible(false);
         optionsPanel.removeAll();
-        JButton setDateBounds = new JButton("Set date bounds");
-        JButton previewReceipt = new JButton("Show receipt");
-        JButton editItem = new JButton("Edit item");
+        JButton setDateBounds = new JButton(LangResource.get("setDateBounds"));
+        JButton previewReceipt = new JButton(LangResource.get("showReceipt"));
+        JButton editItem = new JButton(LangResource.get("editItem"));
         //SET DATE BOUNDS BUTTON BEHAVIOR
         setDateBounds.addMouseListener(new MouseAdapter() {
             @Override
@@ -216,9 +219,9 @@ public class SearchResultPanel extends JPanel {
                     public void windowClosed(WindowEvent e) {
                         if(!editItem.anyChange || editItem.oldItem == null || editItem.newItem == null) return;
                         Object choice = JOptionPane.showOptionDialog(null,
-                                "Are you sure you want to replace " + editItem.oldItem + " with " + editItem.newItem + "?" , "",
+                                LangResource.get("sureYouWantToReplace") + " " + editItem.oldItem + " " + LangResource.get("with") + " " + editItem.newItem + "?" , "",
                                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-                                null, new Object[]{"NO", "YES"},
+                                null, new Object[]{LangResource.get("no"), LangResource.get("yes")},
                                 "NO");
                         if((int)choice != 1) return;
                         if(editItem.newItem.get_price() == 0.0F){
@@ -236,7 +239,7 @@ public class SearchResultPanel extends JPanel {
                             _items.add(new Item(editItem.newItem.get_name(), editItem.oldItem.get_taxRate(), editItem.newItem.get_price(), editItem.oldItem.get_store()));
                         }
                         _receipts = ReceiptsManager.getReceiptsContaining(_items);
-                        JLabel statusLabel = new JLabel("Reloading workplace...", SwingConstants.CENTER);
+                        JLabel statusLabel = new JLabel(LangResource.get("reloadingWorkplace"), SwingConstants.CENTER);
                         add(statusLabel, BorderLayout.PAGE_START);
                         new Thread(() -> {
                             Thread generateReceiptsPanelThread = new Thread(() -> {
@@ -289,8 +292,8 @@ public class SearchResultPanel extends JPanel {
         UtilDateModel toModel = new UtilDateModel();
         JDatePanelImpl fromDatePanel = new JDatePanelImpl(fromModel);
         JDatePanelImpl toDatePanel = new JDatePanelImpl(toModel);
-        JButton confirm = new JButton("Confirm");
-        JLabel toLabel = new JLabel("to:");
+        JButton confirm = new JButton(LangResource.get("confirm"));
+        JLabel toLabel = new JLabel( LangResource.get("to") + ":");
         fromModel.setDate(fromModel.getYear(), fromModel.getMonth(), 1);
         toModel.setDate(toModel.getYear(), toModel.getMonth(), Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH));
         fromModel.setSelected(true);
@@ -299,7 +302,7 @@ public class SearchResultPanel extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 setVisible(false);
-                JLabel statusLabel = new JLabel("Reloading workplace...", SwingConstants.CENTER);
+                JLabel statusLabel = new JLabel(LangResource.get("reloadingWorkplace"), SwingConstants.CENTER);
                 add(statusLabel, BorderLayout.PAGE_START);
                 receiptsPanel.setVisible(false);
                 dataPanel.setVisible(false);
@@ -347,7 +350,7 @@ public class SearchResultPanel extends JPanel {
         //*****
         labelPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
         toLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-        labelPanel.add(new JLabel("Date bounds since:"));
+        labelPanel.add(new JLabel(LangResource.get("dateBoundsSince")+ ":"));
         labelPanel.add(toLabel);
         //*****
         fromDatePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 5));
@@ -363,7 +366,7 @@ public class SearchResultPanel extends JPanel {
     }
     @SuppressWarnings("unchecked")
     private void showReceiptPreview(JButton previewReceipt){
-        if(previewReceipt.getText().equals("Show receipt")) {
+        if(previewReceipt.getText().equals(LangResource.get("showReceipt"))) {
             JList<Receipt> receiptList = (JList<Receipt>) (((JScrollPane) receiptsPanel.getComponents()[0]).getViewport().getView());
             if(receiptList.getSelectedValue() == null) return;
             remove(receiptsPanel);
@@ -374,10 +377,10 @@ public class SearchResultPanel extends JPanel {
             receiptPreview.add(editor.get_receiptView());
             receiptPreview.setVisible(true);
             optionsPanel.setVisible(false);
-            previewReceipt.setText("Hide receipt");
+            previewReceipt.setText(LangResource.get("hideReceipt"));
             optionsPanel.setVisible(true);
         }else{
-            previewReceipt.setText("Show receipt");
+            previewReceipt.setText(LangResource.get("showReceipt"));
             remove(receiptPreview);
             add(receiptsPanel, BorderLayout.LINE_START);
         }

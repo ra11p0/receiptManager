@@ -6,15 +6,13 @@ import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
 import com.ra11p0.structures.ReceiptItem;
+import com.ra11p0.utils.LangResource;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 public class EditItem extends JFrame {
     public boolean anyChange = false;
@@ -24,12 +22,12 @@ public class EditItem extends JFrame {
         JPanel main = new JPanel(new GridLayout(8, 1));
         JComboBox<Item> itemsCombo = new JComboBox<>();
         JComboBox<Object> nameCombo = new JComboBox<>();
-        JLabel priceLabel = new JLabel("Type new price of product:");
+        JLabel priceLabel = new JLabel(LangResource.get("typeNewPriceOfProduct") + ":");
         JTextField price = new JTextField();
-        JButton confirm = new JButton("Confirm");
+        JButton confirm = new JButton(LangResource.get("confirm"));
         JCheckBox changeNameForAll = new JCheckBox();
         ArrayList<String> namesOfProducts = new ArrayList<>();
-        changeNameForAll.setText("Change name for all matching items.");
+        changeNameForAll.setText(LangResource.get("changeNameForAllMatchingItems"));
         changeNameForAll.addActionListener(e->{
             if(changeNameForAll.isSelected()){
                 price.setVisible(false);
@@ -78,7 +76,7 @@ public class EditItem extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(price.getText().length() == 0 || nameCombo.getSelectedItem() == null) {
-                    JOptionPane.showMessageDialog(null, "Wrong input!", "Error!", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, LangResource.get("wrongInput"), LangResource.get("error"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 oldItem = (Item) itemsCombo.getSelectedItem();
@@ -133,9 +131,9 @@ public class EditItem extends JFrame {
             }
         });
         //*****
-        main.add(new JLabel("Select item to edit:"));
+        main.add(new JLabel(LangResource.get("selectItemToEdit") + ":"));
         main.add(itemsCombo);
-        main.add(new JLabel("Type new name of product:"));
+        main.add(new JLabel(LangResource.get("typeNewNameOfProduct") + ":"));
         main.add(nameCombo);
         main.add(priceLabel);
         main.add(price);
