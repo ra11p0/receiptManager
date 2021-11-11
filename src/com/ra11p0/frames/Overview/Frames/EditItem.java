@@ -2,11 +2,11 @@ package com.ra11p0.frames.Overview.Frames;
 
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
-import com.ra11p0.frames.HomeFrame;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
 import com.ra11p0.structures.ReceiptItem;
+import com.ra11p0.utils.LangResource;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.*;
 
 public class EditItem extends JFrame {
-    private final static ResourceBundle locale = HomeFrame.localeBundle;
     public boolean anyChange = false;
     public Item oldItem = null;
     public Item newItem = null;
@@ -23,12 +22,12 @@ public class EditItem extends JFrame {
         JPanel main = new JPanel(new GridLayout(8, 1));
         JComboBox<Item> itemsCombo = new JComboBox<>();
         JComboBox<Object> nameCombo = new JComboBox<>();
-        JLabel priceLabel = new JLabel(locale.getString("typeNewPriceOfProduct") + ":");
+        JLabel priceLabel = new JLabel(LangResource.get("typeNewPriceOfProduct") + ":");
         JTextField price = new JTextField();
-        JButton confirm = new JButton(locale.getString("confirm"));
+        JButton confirm = new JButton(LangResource.get("confirm"));
         JCheckBox changeNameForAll = new JCheckBox();
         ArrayList<String> namesOfProducts = new ArrayList<>();
-        changeNameForAll.setText(locale.getString("changeNameForAllMatchingItems"));
+        changeNameForAll.setText(LangResource.get("changeNameForAllMatchingItems"));
         changeNameForAll.addActionListener(e->{
             if(changeNameForAll.isSelected()){
                 price.setVisible(false);
@@ -77,7 +76,7 @@ public class EditItem extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(price.getText().length() == 0 || nameCombo.getSelectedItem() == null) {
-                    JOptionPane.showMessageDialog(null, locale.getString("wrongInput"), locale.getString("error"), JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, LangResource.get("wrongInput"), LangResource.get("error"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 oldItem = (Item) itemsCombo.getSelectedItem();
@@ -132,9 +131,9 @@ public class EditItem extends JFrame {
             }
         });
         //*****
-        main.add(new JLabel(locale.getString("selectItemToEdit") + ":"));
+        main.add(new JLabel(LangResource.get("selectItemToEdit") + ":"));
         main.add(itemsCombo);
-        main.add(new JLabel(locale.getString("typeNewNameOfProduct") + ":"));
+        main.add(new JLabel(LangResource.get("typeNewNameOfProduct") + ":"));
         main.add(nameCombo);
         main.add(priceLabel);
         main.add(price);

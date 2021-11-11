@@ -4,11 +4,12 @@ package com.ra11p0.frames.Overview.Frames;
 
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
-import com.ra11p0.frames.HomeFrame;
+import com.ra11p0.frames.Init;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.ra11p0.structures.CheckListItem;
 import com.ra11p0.structures.CheckListRenderer;
 import com.ra11p0.structures.Item;
+import com.ra11p0.utils.LangResource;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,12 +17,11 @@ import java.awt.event.*;
 import java.util.*;
 
 public class GetItem {
-    private final static ResourceBundle locale = HomeFrame.localeBundle;
     public JFrame showDialog(){
         JFrame frame = new JFrame();
         JPanel panel = new JPanel();
         frame.add(panel);
-        panel.add(new JLabel(locale.getString("preparingWorkplace")));
+        panel.add(new JLabel(LangResource.get("preparingWorkplace")));
         frame.setSize(new Dimension(350, 400));
         frame.setResizable(false);
         frame.setVisible(true);
@@ -44,8 +44,8 @@ public class GetItem {
                 renderer.setText( "("+ ((Item)value.getObject()).get_store() +")" + ((Item)value.getObject()).get_name());
                 return component;
             };
-            JButton selectAll = new JButton(locale.getString("selectAll"));
-            JButton confirm = new JButton(locale.getString("confirm"));
+            JButton selectAll = new JButton(LangResource.get("selectAll"));
+            JButton confirm = new JButton(LangResource.get("confirm"));
             //*****
 
             searchField.setPreferredSize(new Dimension(300, 25));
@@ -122,7 +122,7 @@ public class GetItem {
             panel.removeAll();
             panel.setVisible(false);
             panel.setLayout(new FlowLayout());
-            panel.add(new JLabel(locale.getString("searchProductOrStoreThenHitEnter") + ":"));
+            panel.add(new JLabel(LangResource.get("searchProductOrStoreThenHitEnter") + ":"));
             panel.add(searchField);
             panel.add(selectAll);
             panel.add(itemListScrollPane);

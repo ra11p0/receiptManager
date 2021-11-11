@@ -1,7 +1,8 @@
 package com.ra11p0.frames.ReceiptsManager;
 
-import com.ra11p0.frames.HomeFrame;
+import com.ra11p0.frames.Init;
 import com.ra11p0.structures.Receipt;
+import com.ra11p0.utils.LangResource;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,13 +13,13 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 public class StoreSelector{
-    private static final ResourceBundle locale = HomeFrame.localeBundle;
+    private static final ResourceBundle locale = Init.localeBundle;
     public static JFrame getStoreDialog(){
-        JFrame frame = new JFrame(locale.getString("selectStore"));
+        JFrame frame = new JFrame(LangResource.get("selectStore"));
         JComboBox<String> stores = new JComboBox<>();
         ArrayList<String> storesList = new ArrayList<>();
-        JButton addNew = new JButton(locale.getString("addNewStore"));
-        JButton confirm = new JButton (locale.getString("confirm"));
+        JButton addNew = new JButton(LangResource.get("addNewStore"));
+        JButton confirm = new JButton (LangResource.get("confirm"));
         //Get stores from all receipts
         for(Receipt receipt : ReceiptsManager.getReceipts()) if (!storesList.contains(receipt.get_store())) storesList.add(receipt.get_store());
         storesList.sort(Comparator.naturalOrder());
@@ -40,7 +41,7 @@ public class StoreSelector{
         });
         frame.setSize(300, 150);
         frame.setLayout(new GridLayout(4, 1));
-        frame.add(new Label( locale.getString("selectStore")+ ":"));
+        frame.add(new Label( LangResource.get("selectStore")+ ":"));
         frame.add(stores);
         frame.add(addNew);
         frame.add(confirm);
