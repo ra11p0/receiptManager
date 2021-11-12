@@ -1,6 +1,5 @@
 package com.ra11p0.frames.ReceiptsEditor;
 
-import com.ra11p0.frames.Init;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
@@ -10,9 +9,12 @@ import com.ra11p0.utils.LangResource;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class ReceiptEditor extends JFrame {
     private final JPanel _receiptView = new JPanel();

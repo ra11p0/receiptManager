@@ -20,7 +20,6 @@ import java.awt.event.WindowEvent;
 import java.util.*;
 
 public class SearchResultPanel extends JPanel {
-    private final ResourceBundle locale = Init.localeBundle;
     private final JPanel receiptsPanel = new JPanel(new BorderLayout());
     private final JPanel dataPanel = new JPanel(new GridLayout(5, 2));
     private final JPanel optionsPanel = new JPanel(new GridLayout(3, 1));

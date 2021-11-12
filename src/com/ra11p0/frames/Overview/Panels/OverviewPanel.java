@@ -20,7 +20,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class OverviewPanel extends JPanel {
-    private static final ResourceBundle locale = Init.localeBundle;
     private final ArrayList<Day> days = new ArrayList<>();
     private JPanel content = new JPanel();
     private JPanel navigation = new JPanel();
@@ -140,6 +139,7 @@ public class OverviewPanel extends JPanel {
         content.add(generateControlButtons(receiptListArray), BorderLayout.PAGE_END);
         content.setVisible(true);
     }
+    @SuppressWarnings("unchecked")
     private JPanel generateControlButtons(ArrayList<JList<Receipt>> receiptListArray){
         JPanel controlButtons = new JPanel(new GridLayout(1, 3));
         JButton edit = new JButton(LangResource.get("edit"));

@@ -18,13 +18,13 @@ public class Main {
     public static void main(String[] args) throws Exception{
         float lastBuild = checkLatestBuild();
         if(lastBuild != getBuild()) {
-            Object choice = JOptionPane.showOptionDialog(null,
+            int choice = JOptionPane.showOptionDialog(null,
                     "New update to v." + lastBuild + " available. Current version: v." +
                             getBuild()+ ". Download update?", "Update!",
                     JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
                     null, new Object[]{"NO", "YES"},
                     "YES");
-            if((Integer)choice == 1) {
+            if(choice == 1) {
                 update();
             }
         }
@@ -50,22 +50,22 @@ public class Main {
         Runtime.getRuntime().exec(file.getAbsolutePath(), null, new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().length()-8)));
     }
     private static float checkLatestBuild() throws Exception{
-        String json = readUrl(path);
+        String json = readUrl();
         JsonObject jsonObject = (JsonObject) new Gson().fromJson(json, JsonArray.class).get(0);
         return jsonObject.get("tag_name").getAsFloat();
     }
     private static URL getUrlToLastBuild() throws Exception{
-        String json = readUrl(path);
+        String json = readUrl();
         JsonObject jsonObject = (JsonObject) new Gson().fromJson(json, JsonArray.class).get(0);
         JsonObject asset = (JsonObject) jsonObject.get("assets").getAsJsonArray().get(0);
         return new URL(asset.get("browser_download_url").getAsString());
     }
-    private static String readUrl(String urlString) throws Exception {
+    private static String readUrl() throws Exception {
         BufferedReader reader = null;
         try {
-            URL url = new URL(urlString);
+            URL url = new URL(Main.path);
             reader = new BufferedReader(new InputStreamReader(url.openStream()));
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             int read;
             char[] chars = new char[1024];
             while ((read = reader.read(chars)) != -1)

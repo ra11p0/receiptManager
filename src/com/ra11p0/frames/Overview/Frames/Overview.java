@@ -31,7 +31,7 @@ import java.util.ResourceBundle;
 import java.util.function.Function;
 
 public class Overview extends JFrame {
-    private OverviewPanel overviewPanel = null;
+    private final OverviewPanel overviewPanel;
     public Overview(String title) {
         JPanel mainPanel = new JPanel();
         addWindowListener(new WindowAdapter() {
