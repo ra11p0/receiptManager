@@ -23,14 +23,16 @@ public class Init {
     public static Boolean reloading = false;
     public Init(String title) throws Exception{
         //preparing last stuff before launching
-        loadSettings();
+        try {
+            loadSettings();
+        } catch (Exception ex){
+            loadDefaultSettings();
+        }
         //Check if settings file is right, if not, loading default settings.
         if(settingsProp.getProperty("language") == null ||
                 settingsProp.getProperty("currency") == null
         ){
-            JOptionPane.showMessageDialog(null, "Settings file is corrupted or empty! Loading default settings.", "Error!", JOptionPane.ERROR_MESSAGE);
-            settingsProp = new Properties();
-            settingsProp.loadFromXML(ResourceLoader.class.getResourceAsStream("/defaultSettings.xml"));
+            loadDefaultSettings();
         }
         _title = title;
         Locale locale = new Locale(settingsProp.getProperty("language"));
@@ -85,8 +87,12 @@ public class Init {
         settingsProp.loadFromXML(is);
         is.close();
     }
+    private static void loadDefaultSettings() throws IOException {
+        JOptionPane.showMessageDialog(null, "Settings file is corrupted or empty! Loading default settings.", "Error!", JOptionPane.ERROR_MESSAGE);
+        settingsProp = new Properties();
+        settingsProp.loadFromXML(ResourceLoader.class.getResourceAsStream("/defaultSettings.xml"));
+    }
     private static void saveSettings() throws IOException {
         settingsProp.storeToXML(new FileOutputStream("settings.xml"), "");
     }
-
 }
