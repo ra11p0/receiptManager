@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class Core {
-    public static final float BUILD = 0.545F;
+    public static final float BUILD = 0.55F;
     public static void main(String[] args) throws Exception{
         //check charset compatibility
         if(!Charset.defaultCharset().equals(StandardCharsets.UTF_8))
