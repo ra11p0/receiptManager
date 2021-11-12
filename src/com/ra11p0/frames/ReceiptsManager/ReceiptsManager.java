@@ -6,15 +6,13 @@ import com.ra11p0.structures.Receipt;
 import com.ra11p0.structures.ReceiptItem;
 import com.ra11p0.structures.ReceiptsPacket;
 
-import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 
 public class ReceiptsManager {
-    private static JFrame _frame;
     private final static ArrayList<Receipt> _receipts = new ArrayList<>();
-    private static ArrayList<String> _namesOfProducts = new ArrayList<>();
+    private static final ArrayList<String> _namesOfProducts = new ArrayList<>();
     private static String _receiptPath;
     public final static ArrayList<Item> _items = new ArrayList<>();
     public static Boolean changesMade = false;
@@ -76,7 +74,7 @@ public class ReceiptsManager {
         _receipts.remove(receipt);
         changesMade = true;
     }
-    public static void saveReceipt(Receipt receipt) throws IOException {
+    public static void saveReceipt(Receipt receipt) {
         removeReceipt(receipt);
         if (receipt._newId != null) receipt.set_ID(receipt._newId);
         receipt._changesMade=false;

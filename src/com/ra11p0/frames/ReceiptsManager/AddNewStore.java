@@ -1,13 +1,14 @@
 package com.ra11p0.frames.ReceiptsManager;
 
-import com.ra11p0.frames.Init;
 import com.ra11p0.utils.LangResource;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
 
 public class AddNewStore extends JFrame {
     public static void showDialog(ArrayList<String> storesList, JComboBox<String> stores){

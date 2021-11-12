@@ -1,6 +1,5 @@
 package com.ra11p0.frames.ReceiptsManager;
 
-import com.ra11p0.frames.Init;
 import com.ra11p0.structures.Receipt;
 import com.ra11p0.utils.LangResource;
 
@@ -10,10 +9,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.ResourceBundle;
 
 public class StoreSelector{
-    private static final ResourceBundle locale = Init.localeBundle;
     public static JFrame getStoreDialog(){
         JFrame frame = new JFrame(LangResource.get("selectStore"));
         JComboBox<String> stores = new JComboBox<>();

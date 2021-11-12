@@ -4,7 +4,6 @@ package com.ra11p0.frames.Overview.Frames;
 
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
-import com.ra11p0.frames.Init;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.ra11p0.structures.CheckListItem;
 import com.ra11p0.structures.CheckListRenderer;

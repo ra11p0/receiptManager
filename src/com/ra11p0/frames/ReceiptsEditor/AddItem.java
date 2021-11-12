@@ -2,7 +2,6 @@ package com.ra11p0.frames.ReceiptsEditor;
 
 import ca.odell.glazedlists.GlazedLists;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
-import com.ra11p0.frames.Init;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
@@ -11,14 +10,15 @@ import com.ra11p0.utils.LangResource;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.ResourceBundle;
 
 public class AddItem {
-    private static final ResourceBundle locale = Init.localeBundle;
     public static void showDialog(ArrayList<Item> items, Receipt receipt, ReceiptEditor receiptEditor){
         JFrame addItemFrame = new JFrame(LangResource.get("addItem"));
         JComboBox<Item> itemsBox = new JComboBox<>();

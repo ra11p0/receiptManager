@@ -11,15 +11,15 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
-import java.nio.file.Files;
-import java.util.*;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.ResourceBundle;
 
 public class Init {
     private final String DEFAULT_RECEIPT_PATH = "res\\receipts.json";
     public static ResourceBundle localeBundle;
     public static Properties settingsProp=null;
     private static String _title;
-    private static Overview overview;
     public static Boolean reloading = false;
     public Init(String title) throws Exception{
         //preparing last stuff before launching
@@ -62,7 +62,7 @@ public class Init {
     }
     public static void loadFrame(){
         try {
-            overview = new Overview(_title);
+            Overview overview = new Overview(_title);
             overview.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
@@ -86,7 +86,7 @@ public class Init {
         is.close();
     }
     private static void saveSettings() throws IOException {
-        settingsProp.storeToXML(new FileOutputStream(new File("settings.xml")), "");
+        settingsProp.storeToXML(new FileOutputStream("settings.xml"), "");
     }
 
 }
