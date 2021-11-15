@@ -36,18 +36,17 @@ public class Receipt {
         setNewId(date);
     }
     public void addItem(ReceiptItem item){
+        _paid += item.get_Item().get_price() * item.get_qty();
+        _totalTax += 1+ item.get_Item().get_taxRate()/(item.get_Item().get_price() + item.get_qty());
+        _changesMade = true;
         for(ReceiptItem receiptItem : _items){
             if(receiptItem.get_Item().equals(item.get_Item())){
                 receiptItem.addQty(item.get_qty());
-                _changesMade = true;
                 return;
             }
         }
         _items.add(item);
-        _paid += item.get_Item().get_price() * item.get_qty();
-        _totalTax += 1+ item.get_Item().get_taxRate()/(item.get_Item().get_price() * item.get_qty());
         _qty ++;
-        _changesMade=true;
         ReceiptsManager.changesMade = true;
     }
     public void saveReceipt() throws IOException {
