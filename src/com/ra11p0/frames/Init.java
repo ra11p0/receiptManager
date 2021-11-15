@@ -1,6 +1,7 @@
 package com.ra11p0.frames;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
+import com.ra11p0.Core;
 import com.ra11p0.frames.Overview.Frames.Overview;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.sun.xml.internal.ws.api.ResourceLoader;
@@ -30,14 +31,16 @@ public class Init {
         }
         //Check if settings file is right, if not, loading default settings.
         if(settingsProp.getProperty("language") == null ||
-                settingsProp.getProperty("currency") == null
+                settingsProp.getProperty("currency") == null ||
+                settingsProp.getProperty("version") == null
         ){
             loadDefaultSettings();
         }
-        _title = title;
-        Locale locale = new Locale(settingsProp.getProperty("language"));
-        localeBundle = ResourceBundle.getBundle("lang", locale);
         UIManager.setLookAndFeel( new FlatDarculaLaf());
+        if(Float.parseFloat(settingsProp.getProperty("version")) != Core.BUILD) settingsProp.setProperty("version", String.valueOf(Core.BUILD));
+        Locale locale = new Locale(settingsProp.getProperty("language"));
+        _title = title;
+        localeBundle = ResourceBundle.getBundle("lang", locale);
         //*****
         JFrame preparingFiles = new JFrame();
         preparingFiles.setResizable(false);

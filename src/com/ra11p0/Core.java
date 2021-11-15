@@ -6,7 +6,9 @@ import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -16,6 +18,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Properties;
 
 public class Core {
     public static final float BUILD = 0.551F;
@@ -45,6 +48,13 @@ public class Core {
             JOptionPane.showMessageDialog(null, "Some files are missing. Missing files: " + missingFiles, "Error!", JOptionPane.ERROR_MESSAGE);
             if(missingFiles.contains(new File("updater.exe"))) extractUpdater();
             if(missingFiles.contains(new File("settings.xml"))) extractDefaultSettings();
+        }
+        Properties settingsProp = new Properties();
+        InputStream is = new FileInputStream("settings.xml");
+        settingsProp.loadFromXML(is);
+        is.close();
+        if(Float.parseFloat(settingsProp.getProperty("version")) < BUILD){
+            extractUpdater();
         }
         //run init
         new Init("Receipt manager v." + BUILD);
