@@ -53,7 +53,7 @@ public class Core {
         InputStream is = new FileInputStream("settings.xml");
         settingsProp.loadFromXML(is);
         is.close();
-        if(Float.parseFloat(settingsProp.getProperty("version")) < BUILD){
+        if(settingsProp.getProperty("version") != null && Float.parseFloat(settingsProp.getProperty("version")) < BUILD){
             extractUpdater();
         }
         //run init
