@@ -20,7 +20,7 @@ public class Main {
         if(lastBuild != getBuild()) {
             int choice = JOptionPane.showOptionDialog(null,
                     "New update to v." + lastBuild + " available. Current version: v." +
-                            getBuild()+ ". Download update?", "Update!",
+                            getBuild()+ ". Download update?", "Updater build 231121",
                     JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
                     null, new Object[]{"NO", "YES"},
                     "YES");

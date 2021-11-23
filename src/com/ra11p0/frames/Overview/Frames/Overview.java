@@ -17,8 +17,6 @@ import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.metal.MetalLookAndFeel;
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -356,15 +354,9 @@ public class Overview extends JFrame {
         JCheckBoxMenuItem usd = new JCheckBoxMenuItem("USD");
         JCheckBoxMenuItem pln = new JCheckBoxMenuItem("PLN");
         //*****
-        JMenuItem darkMode = new JMenuItem(LangResource.get("darkMode"));
-        JMenuItem lightMode = new JMenuItem(LangResource.get("lightMode"));
-        JMenuItem darkModeSec = new JMenuItem(LangResource.get("darkModeSec"));
-        JMenuItem intellij = new JMenuItem(LangResource.get("intellij"));
-        JMenuItem metal = new JMenuItem(LangResource.get("metal"));
-        JMenuItem windowsClassic = new JMenuItem(LangResource.get("windowsClassic"));
-        JMenuItem windows = new JMenuItem(LangResource.get("windows"));
-        JMenuItem nimbus = new JMenuItem(LangResource.get("nimbus"));
-        JMenuItem motif = new JMenuItem(LangResource.get("motif"));
+        JCheckBoxMenuItem darkMode = new JCheckBoxMenuItem(LangResource.get("darkMode"));
+        JCheckBoxMenuItem intellij = new JCheckBoxMenuItem(LangResource.get("intellij"));
+        JCheckBoxMenuItem windowsClassic = new JCheckBoxMenuItem(LangResource.get("windowsClassic"));
         //*****
         //set selected language and currency
         switch(Init.localeBundle.getLocale().getLanguage()){
@@ -374,6 +366,11 @@ public class Overview extends JFrame {
         switch(Init.settingsProp.getProperty("currency")){
             case "USD" : {usd.setState(true); break;}
             case "PLN" : {pln.setState(true); break;}
+        }
+        switch(Init.settingsProp.getProperty("appearance")){
+            case "dark" : {darkMode.setState(true); break;}
+            case "light" : {intellij.setState(true); break;}
+            case "windows" : {windowsClassic.setState(true); break;}
         }
         //*****
         //what happens when currency and language changes
@@ -407,26 +404,7 @@ public class Overview extends JFrame {
         darkMode.addActionListener(e->{
             try {
                 UIManager.setLookAndFeel( new FlatDarculaLaf());
-                Init.reloading = true;
-                dispose();
-                Init.loadFrame();
-            } catch (UnsupportedLookAndFeelException ex) {
-                ex.printStackTrace();
-            }
-        });
-        lightMode.addActionListener(e->{
-            try {
-                UIManager.setLookAndFeel( new FlatLightLaf());
-                Init.reloading = true;
-                dispose();
-                Init.loadFrame();
-            } catch (UnsupportedLookAndFeelException ex) {
-                ex.printStackTrace();
-            }
-        });
-        darkModeSec.addActionListener(e->{
-            try {
-                UIManager.setLookAndFeel(new FlatDarkLaf());
+                Init.settingsProp.setProperty("appearance", "dark");
                 Init.reloading = true;
                 dispose();
                 Init.loadFrame();
@@ -437,16 +415,7 @@ public class Overview extends JFrame {
         intellij.addActionListener(e->{
             try {
                 UIManager.setLookAndFeel(new FlatIntelliJLaf());
-                Init.reloading = true;
-                dispose();
-                Init.loadFrame();
-            } catch (UnsupportedLookAndFeelException ex) {
-                ex.printStackTrace();
-            }
-        });
-        metal.addActionListener(e->{
-            try {
-                UIManager.setLookAndFeel(new MetalLookAndFeel());
+                Init.settingsProp.setProperty("appearance", "light");
                 Init.reloading = true;
                 dispose();
                 Init.loadFrame();
@@ -457,36 +426,7 @@ public class Overview extends JFrame {
         windowsClassic.addActionListener(e->{
             try {
                 UIManager.setLookAndFeel(new WindowsClassicLookAndFeel());
-                Init.reloading = true;
-                dispose();
-                Init.loadFrame();
-            } catch (UnsupportedLookAndFeelException ex) {
-                ex.printStackTrace();
-            }
-        });
-        windows.addActionListener(e->{
-            try {
-                UIManager.setLookAndFeel(new WindowsLookAndFeel());
-                Init.reloading = true;
-                dispose();
-                Init.loadFrame();
-            } catch (UnsupportedLookAndFeelException ex) {
-                ex.printStackTrace();
-            }
-        });
-        nimbus.addActionListener(e->{
-            try {
-                UIManager.setLookAndFeel(new NimbusLookAndFeel());
-                Init.reloading = true;
-                dispose();
-                Init.loadFrame();
-            } catch (UnsupportedLookAndFeelException ex) {
-                ex.printStackTrace();
-            }
-        });
-        motif.addActionListener(e->{
-            try {
-                UIManager.setLookAndFeel(new MotifLookAndFeel());
+                Init.settingsProp.setProperty("appearance", "windows");
                 Init.reloading = true;
                 dispose();
                 Init.loadFrame();
@@ -506,14 +446,8 @@ public class Overview extends JFrame {
         language.add(pol);
         //*****
         appearance.add(darkMode);
-        appearance.add(darkModeSec);
-        appearance.add(lightMode);
         appearance.add(intellij);
-        appearance.add(metal);
         appearance.add(windowsClassic);
-        appearance.add(windows);
-        appearance.add(nimbus);
-        appearance.add(motif);
         //*****
         currency.add(usd);
         currency.add(pln);

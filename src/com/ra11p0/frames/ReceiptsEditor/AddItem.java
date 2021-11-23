@@ -59,6 +59,7 @@ public class AddItem {
         qty.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
+                qty.setText(qty.getText().replace(",", "."));
                 try{
                     Float.parseFloat(qty.getText());
                 }catch(Exception ex){
@@ -148,6 +149,7 @@ public class AddItem {
         cost.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
+                cost.setText(cost.getText().replace(",", "."));
                 try{
                     Float.parseFloat(cost.getText());
                 }catch(Exception ex){

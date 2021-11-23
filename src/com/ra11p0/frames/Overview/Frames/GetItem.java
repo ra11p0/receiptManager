@@ -16,9 +16,12 @@ import java.awt.event.*;
 import java.util.*;
 
 public class GetItem {
-    public JFrame showDialog(){
+    public static ArrayList<Item> checkedItems = new ArrayList<>();
+    @SuppressWarnings({"unchecked"})
+    public static JFrame showDialog(){
         JFrame frame = new JFrame();
         JPanel panel = new JPanel();
+        checkedItems = new ArrayList<>();
         frame.add(panel);
         panel.add(new JLabel(LangResource.get("preparingWorkplace")));
         frame.setSize(new Dimension(350, 400));
@@ -44,9 +47,9 @@ public class GetItem {
                 return component;
             };
             JButton selectAll = new JButton(LangResource.get("selectAll"));
+            JButton unselectAll = new JButton(LangResource.get("unselectAll"));
             JButton confirm = new JButton(LangResource.get("confirm"));
             //*****
-
             searchField.setPreferredSize(new Dimension(300, 25));
             //INITIALIZING ITEMS LIST
             ArrayList<Item> items = new ArrayList<>();
@@ -69,19 +72,35 @@ public class GetItem {
                 }
             });
             itemListScrollPane.setPreferredSize(new Dimension(300, 240));
+            //*****
+            itemList.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    for(int i = 0; i < itemListModel.getSize(); i++){
+                        if(itemListModel.getElementAt(i).isSelected() && !checkedItems.contains(itemListModel.getElementAt(i).getObject())) checkedItems.add((Item) itemListModel.getElementAt(i).getObject());
+                        else if(!itemListModel.getElementAt(i).isSelected() && checkedItems.contains(itemListModel.getElementAt(i).getObject())) checkedItems.remove((Item) itemListModel.getElementAt(i).getObject());
+                    }
+                }
+            });
             //SEARCH FIELD BEHAVIOR
             searchField.addActionListener(e -> {
                 boolean storeBasedSearchCheck = false;
+                ArrayList<Item> tempCheckedItems = (ArrayList<Item>) checkedItems.clone();
                 if(searchField.getSelectedItem() == null) {
                     itemListModel.removeAllElements();
-                    for(Item item : items) itemListModel.addElement(new CheckListItem(item));
+                    for(Item item : items) {
+                        tempCheckedItems.remove(item);
+                        itemListModel.addElement(new CheckListItem(item));
+                    }
                     searchField.setBackground(null);
                     itemList.setCellRenderer(nonStoreBasedSearch);
-                    return;
                 }
-                if (Objects.requireNonNull(searchField.getSelectedItem()).toString().equals("")){
+                else if (Objects.requireNonNull(searchField.getSelectedItem()).toString().equals("")){
                     itemListModel.removeAllElements();
-                    for(Item item : items) itemListModel.addElement(new CheckListItem(item));
+                    for(Item item : items) {
+                        tempCheckedItems.remove(item);
+                        itemListModel.addElement(new CheckListItem(item));
+                    }
                     searchField.setBackground(null);
                     itemList.setCellRenderer(nonStoreBasedSearch);
                 }
@@ -91,7 +110,9 @@ public class GetItem {
                         if(item.toString().toUpperCase(Locale.ROOT).contains(searchField.getSelectedItem().toString().toUpperCase(Locale.ROOT)) ||
                                 item.get_store().toUpperCase(Locale.ROOT).contains(searchField.getSelectedItem().toString().toUpperCase(Locale.ROOT))) {
                             if(item.get_store().toUpperCase(Locale.ROOT).contains(searchField.getSelectedItem().toString().toUpperCase(Locale.ROOT))) storeBasedSearchCheck = true;
-                            itemListModel.addElement(new CheckListItem(item));
+                            tempCheckedItems.remove(item);
+                            CheckListItem checkListItem = new CheckListItem(item);
+                            itemListModel.addElement(checkListItem);
                             searchField.setBackground(null);
                         }
                     }
@@ -99,6 +120,10 @@ public class GetItem {
                 if(itemListModel.isEmpty()) searchField.setBackground(Color.RED);
                 if(storeBasedSearchCheck) itemList.setCellRenderer(storeBasedSearch);
                 else itemList.setCellRenderer(nonStoreBasedSearch);
+                for(Item item : tempCheckedItems) itemListModel.addElement(new CheckListItem(item));
+                for(int i = 0; i < itemListModel.getSize(); i++){
+                    if(checkedItems.contains(itemListModel.getElementAt(i).getObject())) itemListModel.getElementAt(i).setSelected(true);
+                }
             });
             //SELECT ALL BUTTON BEHAVIOR
             selectAll.addMouseListener(new MouseAdapter() {
@@ -106,6 +131,18 @@ public class GetItem {
                 public void mouseClicked(MouseEvent e) {
                     for(Object item : itemListModel.toArray()){
                         ((CheckListItem) item).setSelected(true);
+                        checkedItems.add(((Item) ((CheckListItem) item).getObject()));
+                    }
+                    itemList.repaint();
+                }
+            });
+            //UNSELECT ALL BUTTON BEHAVIOR
+            unselectAll.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    for(Object item : itemListModel.toArray()){
+                        ((CheckListItem) item).setSelected(false);
+                        checkedItems.remove(((Item) ((CheckListItem) item).getObject()));
                     }
                     itemList.repaint();
                 }
@@ -124,6 +161,7 @@ public class GetItem {
             panel.add(new JLabel(LangResource.get("searchProductOrStoreThenHitEnter") + ":"));
             panel.add(searchField);
             panel.add(selectAll);
+            panel.add(unselectAll);
             panel.add(itemListScrollPane);
             panel.add(confirm);
             panel.repaint();

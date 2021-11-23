@@ -21,7 +21,10 @@ import java.util.Objects;
 import java.util.Properties;
 
 public class Core {
-    public static final float BUILD = 0.551F;
+    public static final float BUILD = 0.555F;
+    public static final String whatsNew = "What's new in build v." + BUILD + ":\n"+
+            "-added what's new pane\n-backwards compatibility of settings file\n-now you can use comma typing prices and quantity\n-added unselect all button in search items\n" +
+            "-(in search items pane) searching items doesn't unselect not visible ones(some performance issues may occur)\n-appearance settings now are being saved\n-some performance improvements";
     public static void main(String[] args) throws Exception{
         //check charset compatibility
         if(!Charset.defaultCharset().equals(StandardCharsets.UTF_8))
@@ -31,7 +34,6 @@ public class Core {
                     JOptionPane.WARNING_MESSAGE
                     );
         //check version.info file
-        //TODO check version of updater
         if(BUILD != getBuild() && !Arrays.asList(args).contains("-passVersionCheck")) {
             File versionFile = new File("version.info");
             versionFile.delete();
@@ -55,6 +57,7 @@ public class Core {
         is.close();
         if(settingsProp.getProperty("version") != null && Float.parseFloat(settingsProp.getProperty("version")) < BUILD){
             extractUpdater();
+            JOptionPane.showMessageDialog(null, whatsNew);
         }
         //run init
         new Init("Receipt manager v." + BUILD);

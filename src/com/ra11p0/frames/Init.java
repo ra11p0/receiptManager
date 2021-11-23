@@ -1,9 +1,11 @@
 package com.ra11p0.frames;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.ra11p0.Core;
 import com.ra11p0.frames.Overview.Frames.Overview;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
+import com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel;
 import com.sun.xml.internal.ws.api.ResourceLoader;
 import org.apache.commons.io.FileUtils;
 
@@ -30,13 +32,12 @@ public class Init {
             loadDefaultSettings();
         }
         //Check if settings file is right, if not, loading default settings.
-        if(settingsProp.getProperty("language") == null ||
-                settingsProp.getProperty("currency") == null ||
-                settingsProp.getProperty("version") == null
-        ){
-            loadDefaultSettings();
+        checkSettings();
+        switch(Init.settingsProp.getProperty("appearance")){
+            case "dark" : {UIManager.setLookAndFeel(new FlatDarculaLaf()); break;}
+            case "light" : {UIManager.setLookAndFeel(new FlatIntelliJLaf()); break;}
+            case "windows" : {UIManager.setLookAndFeel(new WindowsClassicLookAndFeel()); break;}
         }
-        UIManager.setLookAndFeel( new FlatDarculaLaf());
         if(Float.parseFloat(settingsProp.getProperty("version")) != Core.BUILD) settingsProp.setProperty("version", String.valueOf(Core.BUILD));
         Locale locale = new Locale(settingsProp.getProperty("language"));
         _title = title;
@@ -97,5 +98,15 @@ public class Init {
     }
     private static void saveSettings() throws IOException {
         settingsProp.storeToXML(new FileOutputStream("settings.xml"), "");
+    }
+    private static void checkSettings(){
+        if(settingsProp.getProperty("version") == null)
+            settingsProp.setProperty("version", String.valueOf(Core.BUILD));
+        if(settingsProp.getProperty("language") == null)
+            settingsProp.setProperty("language", "english");
+        if(settingsProp.getProperty("currency") == null)
+            settingsProp.setProperty("currency", "USD");
+        if(settingsProp.getProperty("appearance") == null)
+            settingsProp.setProperty("appearance", "dark");
     }
 }

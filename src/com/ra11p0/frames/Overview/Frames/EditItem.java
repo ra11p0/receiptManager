@@ -64,6 +64,7 @@ public class EditItem extends JFrame {
         price.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
+                price.setText(price.getText().replaceAll(",", "."));
                 try{
                     Float.parseFloat(price.getText());
                 }catch(Exception ex){

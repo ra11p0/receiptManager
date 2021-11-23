@@ -6,7 +6,6 @@ import com.ra11p0.frames.Overview.Frames.GetItem;
 import com.ra11p0.structures.Day;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.ra11p0.frames.ReceiptsManager.StoreSelector;
-import com.ra11p0.structures.CheckListItem;
 import com.ra11p0.structures.Item;
 import com.ra11p0.structures.Receipt;
 import com.ra11p0.structures.ReceiptItem;
@@ -201,28 +200,12 @@ public class OverviewPanel extends JPanel {
         search.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                JFrame getItemFrame = new GetItem().showDialog();
-                getItemFrame.addWindowListener(new WindowAdapter() {
+                GetItem.showDialog().addWindowListener(new WindowAdapter() {
                     @Override
                     public void windowClosed(WindowEvent e) {
-                        ArrayList<Item> itemsArray = new ArrayList<>();
-                        JList<Object> itemsList = null;
-                        for(Object object : ((JPanel)getItemFrame.getRootPane().getContentPane().getComponents()[0]).getComponents()) {
-                            if (object.getClass() == JScrollPane.class) {
-                                itemsList = (JList<Object>) ((JScrollPane) object).getViewport().getView();
-                                break;
-                            }
-                        }
-                        for(int i = 0; i < Objects.requireNonNull(itemsList).getModel().getSize(); i++){
-                            CheckListItem checkListItem = ((CheckListItem) itemsList.getModel().getElementAt(i));
-                            if(checkListItem.isSelected()) {
-                                for(Item item : ReceiptsManager._items)
-                                    if(item.get_name().equals(((Item) checkListItem.getObject()).get_name()) && !itemsArray.contains(item))
-                                        itemsArray.add(item);
-                            }
-                        }
+                        ArrayList<Item> itemsArray = GetItem.checkedItems;
                         if(itemsArray.size() == 0) {
-                            getItemFrame.dispose();
+                            GetItem.showDialog().dispose();
                             return;
                         }
                         generateSearchResultPanel(itemsArray);
