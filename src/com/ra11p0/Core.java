@@ -21,10 +21,9 @@ import java.util.Objects;
 import java.util.Properties;
 
 public class Core {
-    public static final float BUILD = 0.555F;
+    public static final float BUILD = 0.5551F;
     public static final String whatsNew = "What's new in build v." + BUILD + ":\n"+
-            "-added what's new pane\n-backwards compatibility of settings file\n-now you can use comma typing prices and quantity\n-added unselect all button in search items\n" +
-            "-(in search items pane) searching items doesn't unselect not visible ones(some performance issues may occur)\n-appearance settings now are being saved\n-some performance improvements";
+            "-performance fix";
     public static void main(String[] args) throws Exception{
         //check charset compatibility
         if(!Charset.defaultCharset().equals(StandardCharsets.UTF_8))
