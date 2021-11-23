@@ -86,18 +86,35 @@ public class EditItem extends JFrame {
                             oldItem.get_taxRate(),
                             0.0F,
                             "");
+                    Object choice = JOptionPane.showOptionDialog(null,
+                            LangResource.get("sureYouWantToReplace") + " " + oldItem.get_name() + " " + LangResource.get("with") + " " + newItem.get_name() + "?" , "",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                            null, new Object[]{LangResource.get("no"), LangResource.get("yes")},
+                            "NO");
+                    if((int)choice != 1) {
+                        newItem = null;
+                        return;
+                    }
                 }
                 else {
                     newItem = new Item(Objects.requireNonNull(nameCombo.getSelectedItem()).toString(),
                             oldItem.get_taxRate(),
                             Float.parseFloat(price.getText()),
                             "");
+                    Object choice = JOptionPane.showOptionDialog(null,
+                            LangResource.get("sureYouWantToReplace") + " " + oldItem + " " + LangResource.get("with") + " " + newItem + "?" , "",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                            null, new Object[]{LangResource.get("no"), LangResource.get("yes")},
+                            "NO");
+                    if((int)choice != 1) {
+                        newItem = null;
+                        return;
+                    }
                 }
                 ArrayList<Receipt> receiptsToSave = new ArrayList<>();
                 for(Receipt receipt : ReceiptsManager.getReceipts()){
-                    ArrayList<ReceiptItem> receiptItems = receipt.get_items();
-                    for(ReceiptItem receiptItem : receiptItems){
-                        if(receiptItem.get_Item().equals(newItem)){
+                    for(ReceiptItem receiptItem : receipt.get_items()){
+                        if(receiptItem.get_Item().equals(oldItem)){
                             Item _newItem;
                             if(newItem.get_price() == 0.0F){
                                 _newItem = new Item(Objects.requireNonNull(nameCombo.getSelectedItem()).toString(),

@@ -155,11 +155,8 @@ public class SearchResultPanel extends JPanel {
         for(Item item : _items) namesArray.add(item.get_name());
         nameLabel.setText(findCommon(namesArray));
         //PRICES IN STORES
-        int itemsCounter = 0;
-        System.out.println(_items);
         pricesInStores = new JPanel(new GridLayout(_items.size(), 2));
         JScrollPane pricesInStoresScrollPane = new JScrollPane(pricesInStores);
-        System.out.println(itemsCounter);
         for(Item match : _items){
             pricesInStores.add(new JLabel(match.get_store()));
             pricesInStores.add(new JLabel(String.format("%.2f", match.get_price()) + " " + Init.settingsProp.getProperty("currency")));
@@ -206,25 +203,21 @@ public class SearchResultPanel extends JPanel {
                     @Override
                     public void windowClosed(WindowEvent e) {
                         if(!editItem.anyChange || editItem.oldItem == null || editItem.newItem == null) return;
-                        Object choice = JOptionPane.showOptionDialog(null,
-                                LangResource.get("sureYouWantToReplace") + " " + editItem.oldItem + " " + LangResource.get("with") + " " + editItem.newItem + "?" , "",
-                                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-                                null, new Object[]{LangResource.get("no"), LangResource.get("yes")},
-                                "NO");
-                        if((int)choice != 1) return;
                         if(editItem.newItem.get_price() == 0.0F){
                             ArrayList<Item> itemsToRemove = new ArrayList<>();
                             for(Item item : _items)
                                 if(item.equals(new Item(editItem.oldItem.get_name(), editItem.oldItem.get_taxRate(), 0.0F, "")))
                                     itemsToRemove.add(item);
-                            for(Item item : itemsToRemove)
+                            for(Item item : itemsToRemove) {
                                 _items.remove(item);
-                            for(Item item : itemsToRemove)
-                                _items.add(new Item(editItem.newItem.get_name(), editItem.oldItem.get_taxRate(), item.get_price(), editItem.oldItem.get_store()));
+                                Item newItem = new Item(editItem.newItem.get_name(), editItem.oldItem.get_taxRate(), item.get_price(), editItem.oldItem.get_store());
+                                _items.add(newItem);
+                            }
                         }
                         else {
                             _items.remove(editItem.oldItem);
-                            _items.add(new Item(editItem.newItem.get_name(), editItem.oldItem.get_taxRate(), editItem.newItem.get_price(), editItem.oldItem.get_store()));
+                            Item newItem = new Item(editItem.newItem.get_name(), editItem.oldItem.get_taxRate(), editItem.newItem.get_price(), editItem.oldItem.get_store());
+                            _items.add(newItem);
                         }
                         _receipts = ReceiptsManager.getReceiptsContaining(_items);
                         JLabel statusLabel = new JLabel(LangResource.get("reloadingWorkplace"), SwingConstants.CENTER);
@@ -403,6 +396,7 @@ public class SearchResultPanel extends JPanel {
                 length = string.split(" ").length;
             }
         }
+        if(outputArray.isEmpty()) return "";
         return outputArray.get(index);
     }
 }

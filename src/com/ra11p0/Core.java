@@ -21,9 +21,9 @@ import java.util.Objects;
 import java.util.Properties;
 
 public class Core {
-    public static final float BUILD = 0.5552F;
+    public static final float BUILD = 0.5553F;
     public static final String whatsNew = "What's new in build v." + BUILD + ":\n"+
-            "-performance fix\n-(in search result pane) 0 price fix";
+            "-performance fix\n-(in search result pane) 0 price fix\n-(in search result pane) fixed editing items";
     public static void main(String[] args) throws Exception{
         //check charset compatibility
         if(!Charset.defaultCharset().equals(StandardCharsets.UTF_8))

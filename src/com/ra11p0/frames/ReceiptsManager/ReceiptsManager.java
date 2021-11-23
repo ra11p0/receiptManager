@@ -68,10 +68,21 @@ public class ReceiptsManager {
     }
     public static void addReceipt(Receipt receipt){
         _receipts.add(receipt);
+        for(ReceiptItem item : receipt.get_items()){
+            if(!_items.contains(item.get_Item())) _items.add(item.get_Item());
+        }
         changesMade = true;
     }
     public static void removeReceipt(Receipt receipt){
         _receipts.remove(receipt);
+        _items.clear();
+        for(Receipt receiptInLoop : _receipts)
+            for(ReceiptItem receiptItem : receiptInLoop.get_items()) {
+                if (!_items.contains(receiptItem.get_Item())) {
+                    _items.add(receiptItem.get_Item());
+                }
+            }
+        _items.sort(Comparator.comparing(Item::get_name));
         changesMade = true;
     }
     public static void saveReceipt(Receipt receipt) {
