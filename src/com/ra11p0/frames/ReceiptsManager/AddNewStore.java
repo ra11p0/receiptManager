@@ -18,11 +18,11 @@ public class AddNewStore extends JFrame {
         nameOfNewStore.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ENTER){
-                    confirm(storesList, nameOfNewStore, stores);
-                    addNewStoreFrame.setVisible(false);
-                    addNewStoreFrame.dispose();
-                }
+            if(e.getKeyCode() == KeyEvent.VK_ENTER){
+                confirm(storesList, nameOfNewStore, stores);
+                addNewStoreFrame.setVisible(false);
+                addNewStoreFrame.dispose();
+            }
             }
         });
         JButton confirm = new JButton(LangResource.get("confirm"));

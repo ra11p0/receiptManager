@@ -1,18 +1,14 @@
 package com.ra11p0.frames.Overview.Frames;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
-import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
-import com.formdev.flatlaf.FlatLightLaf;
 import com.google.gson.Gson;
 import com.ra11p0.frames.Init;
 import com.ra11p0.frames.Overview.Panels.OverviewPanel;
 import com.ra11p0.frames.ReceiptsManager.ReceiptsManager;
 import com.ra11p0.structures.*;
 import com.ra11p0.utils.LangResource;
-import com.sun.java.swing.plaf.motif.MotifLookAndFeel;
 import com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel;
-import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
 import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;

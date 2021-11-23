@@ -14,6 +14,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.function.Function;
 
 public class GetItem {
     public static ArrayList<Item> checkedItems = new ArrayList<>();
@@ -76,60 +77,65 @@ public class GetItem {
             itemList.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    for(int i = 0; i < itemListModel.getSize(); i++){
-                        if(itemListModel.getElementAt(i).isSelected() && !checkedItems.contains(itemListModel.getElementAt(i).getObject())) checkedItems.add((Item) itemListModel.getElementAt(i).getObject());
-                        else if(!itemListModel.getElementAt(i).isSelected() && checkedItems.contains(itemListModel.getElementAt(i).getObject())) checkedItems.remove((Item) itemListModel.getElementAt(i).getObject());
+                    for(int i = 0; i < itemList.getModel().getSize(); i++){
+                        if(itemList.getModel().getElementAt(i).isSelected() && !checkedItems.contains(itemList.getModel().getElementAt(i).getObject()))
+                            checkedItems.add((Item) itemList.getModel().getElementAt(i).getObject());
+                        else if(!itemList.getModel().getElementAt(i).isSelected() && checkedItems.contains(itemList.getModel().getElementAt(i).getObject()))
+                            checkedItems.remove((Item) itemList.getModel().getElementAt(i).getObject());
                     }
                 }
             });
             //SEARCH FIELD BEHAVIOR
-            searchField.addActionListener(e -> {
+            Function<Object, Object> searchFieldAction = o -> {
+                DefaultListModel<CheckListItem> newModel = new DefaultListModel<>();
                 boolean storeBasedSearchCheck = false;
                 ArrayList<Item> tempCheckedItems = (ArrayList<Item>) checkedItems.clone();
-                if(searchField.getSelectedItem() == null) {
-                    itemListModel.removeAllElements();
+                if (searchField.getSelectedItem() == null){
                     for(Item item : items) {
                         tempCheckedItems.remove(item);
-                        itemListModel.addElement(new CheckListItem(item));
-                    }
-                    searchField.setBackground(null);
-                    itemList.setCellRenderer(nonStoreBasedSearch);
-                }
-                else if (Objects.requireNonNull(searchField.getSelectedItem()).toString().equals("")){
-                    itemListModel.removeAllElements();
-                    for(Item item : items) {
-                        tempCheckedItems.remove(item);
-                        itemListModel.addElement(new CheckListItem(item));
+                        newModel.addElement(new CheckListItem(item));
                     }
                     searchField.setBackground(null);
                     itemList.setCellRenderer(nonStoreBasedSearch);
                 }
                 else{
-                    itemListModel.removeAllElements();
                     for(Item item : items) {
                         if(item.toString().toUpperCase(Locale.ROOT).contains(searchField.getSelectedItem().toString().toUpperCase(Locale.ROOT)) ||
                                 item.get_store().toUpperCase(Locale.ROOT).contains(searchField.getSelectedItem().toString().toUpperCase(Locale.ROOT))) {
                             if(item.get_store().toUpperCase(Locale.ROOT).contains(searchField.getSelectedItem().toString().toUpperCase(Locale.ROOT))) storeBasedSearchCheck = true;
                             tempCheckedItems.remove(item);
                             CheckListItem checkListItem = new CheckListItem(item);
-                            itemListModel.addElement(checkListItem);
+                            newModel.addElement(checkListItem);
                             searchField.setBackground(null);
                         }
                     }
                 }
-                if(itemListModel.isEmpty()) searchField.setBackground(Color.RED);
+                if(newModel.isEmpty()) searchField.setBackground(Color.RED);
                 if(storeBasedSearchCheck) itemList.setCellRenderer(storeBasedSearch);
                 else itemList.setCellRenderer(nonStoreBasedSearch);
-                for(Item item : tempCheckedItems) itemListModel.addElement(new CheckListItem(item));
-                for(int i = 0; i < itemListModel.getSize(); i++){
-                    if(checkedItems.contains(itemListModel.getElementAt(i).getObject())) itemListModel.getElementAt(i).setSelected(true);
+                for(Item item : tempCheckedItems) {
+                    boolean contains = false;
+                    for(int i = 0; i < newModel.getSize(); i++)
+                    {
+                        if(newModel.getElementAt(i).getObject().equals(item)) {
+                            contains = true;
+                            break;
+                        }
+                    }
+                    if(!contains) newModel.addElement(new CheckListItem(item));
                 }
-            });
+                for(int i = 0; i < newModel.getSize(); i++){
+                    if(checkedItems.contains(newModel.getElementAt(i).getObject())) newModel.getElementAt(i).setSelected(true);
+                }
+                itemList.setModel(newModel);
+                return null;
+            };
+            searchField.addActionListener(e -> searchFieldAction.apply(null));
             //SELECT ALL BUTTON BEHAVIOR
             selectAll.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    for(Object item : itemListModel.toArray()){
+                    for(Object item : ((DefaultListModel<CheckListItem>)itemList.getModel()).toArray()){
                         ((CheckListItem) item).setSelected(true);
                         checkedItems.add(((Item) ((CheckListItem) item).getObject()));
                     }
@@ -140,7 +146,7 @@ public class GetItem {
             unselectAll.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    for(Object item : itemListModel.toArray()){
+                    for(Object item : ((DefaultListModel<CheckListItem>)itemList.getModel()).toArray()){
                         ((CheckListItem) item).setSelected(false);
                         checkedItems.remove(((Item) ((CheckListItem) item).getObject()));
                     }
