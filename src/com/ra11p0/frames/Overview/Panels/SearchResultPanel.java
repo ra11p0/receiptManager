@@ -72,21 +72,29 @@ public class SearchResultPanel extends JPanel {
             setVisible(true);
         }).start();
     }
+    @SuppressWarnings("unchecked")
     private void initializeDateAndItems(ArrayList<Item> items){
         _receipts.clear();
         for(Receipt receipt : ReceiptsManager.getReceiptsContaining(items))
             if(receipt.get_date().before(_toDate) && receipt.get_date().after(_fromDate))
                 _receipts.add(receipt);
-        _items = items;
+        ArrayList<Item> matches = new ArrayList<>();
+        for(Item item : items) {
+            for(Receipt receipt : (ArrayList<Receipt>) _receipts.clone())
+                for(ReceiptItem receiptItem : receipt.get_items())
+                    if (new Item(receiptItem.get_Item().get_name(), receiptItem.get_Item().get_taxRate(), 0.0F, "").equals(item) && !matches.contains(receiptItem.get_Item())) {
+                        matches.add(receiptItem.get_Item());
+                    }
+        }
+        matches.sort((o1, o2) -> Float.compare(o1.get_price(), o2.get_price()));
+        _items = matches;
     }
     private void generateReceiptsPanel(){
         receiptsPanel.setVisible(false);
         receiptsPanel.removeAll();
-
         DefaultListModel<Receipt> receiptListModel = new DefaultListModel<>();
         JList<Receipt> receiptList = new JList<>(receiptListModel);
         JScrollPane receiptListScrollPane = new JScrollPane(receiptList);
-
         _receipts.sort(Comparator.comparingLong(o -> o.get_date().getTime()));
         Collections.reverse(_receipts);
         for(Receipt receipt : _receipts) receiptListModel.addElement(receipt);
@@ -148,32 +156,13 @@ public class SearchResultPanel extends JPanel {
         nameLabel.setText(findCommon(namesArray));
         //PRICES IN STORES
         int itemsCounter = 0;
-        for(Item item : _items) {
-            boolean contains = false;
-            for(Receipt receipt : (ArrayList<Receipt>) _receipts.clone())
-                for(ReceiptItem receiptItem : receipt.get_items())
-                    if (receiptItem.get_Item().equals(item)) {
-                        contains = true;
-                        break;
-                    }
-            if(contains) itemsCounter++;
-        }
-        pricesInStores = new JPanel(new GridLayout(itemsCounter, 2));
+        System.out.println(_items);
+        pricesInStores = new JPanel(new GridLayout(_items.size(), 2));
         JScrollPane pricesInStoresScrollPane = new JScrollPane(pricesInStores);
-        _items.sort((o1, o2) -> Float.compare(o1.get_price(), o2.get_price()));
-        for(Item item : _items) {
-            boolean contains = false;
-            for(Receipt receipt : (ArrayList<Receipt>) _receipts.clone())
-                for(ReceiptItem receiptItem : receipt.get_items())
-                    if (receiptItem.get_Item().equals(item)) {
-                        contains = true;
-                        break;
-                    }
-            if(contains) {
-                pricesInStores.add(new JLabel(item.get_store()));
-                pricesInStores.add(new JLabel(String.format("%.2f", item.get_price()) + " " + Init.settingsProp.getProperty("currency")));
-                itemsCounter++;
-            }
+        System.out.println(itemsCounter);
+        for(Item match : _items){
+            pricesInStores.add(new JLabel(match.get_store()));
+            pricesInStores.add(new JLabel(String.format("%.2f", match.get_price()) + " " + Init.settingsProp.getProperty("currency")));
         }
         //*****
         dataPanel.add(new JLabel( LangResource.get("name") + ": "));

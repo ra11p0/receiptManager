@@ -208,6 +208,7 @@ public class OverviewPanel extends JPanel {
                             GetItem.showDialog().dispose();
                             return;
                         }
+                        System.out.println(itemsArray);
                         generateSearchResultPanel(itemsArray);
                     }
                 });
