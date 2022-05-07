@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ra11p0.GUI.SearchItemsResult.Panes.SearchItemsResultController">
+
+    <top>
+        <BorderPane>
+            <left>
+                <Button fx:id="goBackButton" onMouseClicked="#backButtonAction" text="%back" />
+            </left>
+        </BorderPane>
+    </top>
+    <left>
+        <ListView fx:id="receiptsList" />
+    </left>
+    <center>
+        <VBox>
+            <ListView fx:id="infoList" />
+            <ListView fx:id="pricesInStores" />
+        </VBox>
+    </center>
+    <right>
+        <VBox>
+            <Button fx:id="previewReceiptButton" onMouseClicked="#previewButtonAction" text="%showReceipt" />
+            <Button fx:id="editItemButton" onMouseClicked="#editItemButtonAction" text="%editItem" />
+        </VBox>
+    </right>
+</BorderPane>

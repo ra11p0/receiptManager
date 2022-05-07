@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Text?>
+<?import com.ra11p0.SharedTypes.*?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:id="root"
+      fx:controller="com.ra11p0.GUI.SearchItemsResult.Dialogs.EditItemDialog.EditItemDialogController">
+    <Text fx:id="titleLabel" text="%selectItemToEdit"/>
+    <ComboBox fx:id="itemsBox"/>
+    <Text fx:id="nameOfProductLabel" text="%typeNewNameOfProduct"/>
+    <AutoCompleteTextField fx:id="nameField"/>
+    <Text fx:id="priceLabel" text="%typeNewPriceOfProduct"/>
+    <TextField fx:id="priceField"/>
+    <CheckBox fx:id="changeNameForAll" text="%changeNameForAllMatchingItems"/>
+
+
+
+</VBox>

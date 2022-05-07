@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.ra11p0.GUI.ReceiptsManager.Panes.ReceiptsManagerController">
+    <top>
+        <BorderPane>
+            <left>
+                <Button fx:id="previousButton" onMouseClicked="#previousButtonHandler" text="%prev"/>
+            </left>
+            <center>
+                <Label fx:id="titleLabel" alignment="CENTER" />
+            </center>
+            <right>
+                <Button fx:id="nextButton" onMouseClicked="#nextButtonHandler" text="%next"/>
+            </right>
+        </BorderPane>
+    </top>
+    <center>
+        <BorderPane>
+            <center>
+                <HBox fx:id="daysContainer" alignment="CENTER" />
+            </center>
+            <bottom>
+                <HBox alignment="CENTER" spacing="25">
+                    <Button fx:id="newReceiptButton" prefHeight="50" prefWidth="100" onMouseClicked="#newReceiptButtonHandler" text="%newReceipt"/>
+                    <Button fx:id="editButton" prefHeight="50" prefWidth="100" onMouseClicked="#editButtonHandler" text="%edit"/>
+                    <Button fx:id="removeButton" prefHeight="50" prefWidth="100" onMouseClicked="#removeButtonHandler" text="%remove"/>
+                    <Button fx:id="searchButton" prefHeight="50" prefWidth="100" onMouseClicked="#searchButtonHandler" text="%searchItems"/>
+                </HBox>
+            </bottom>
+        </BorderPane>
+    </center>
+    <bottom>
+        <GridPane alignment="CENTER">
+            <columnConstraints>
+                <ColumnConstraints halignment="CENTER" percentWidth="20" />
+                <ColumnConstraints halignment="CENTER" percentWidth="20" />
+                <ColumnConstraints halignment="CENTER" percentWidth="20" />
+                <ColumnConstraints halignment="CENTER" percentWidth="20" />
+                <ColumnConstraints halignment="CENTER" percentWidth="20" />
+            </columnConstraints>
+            <Label fx:id="aTaxHeader" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <Label fx:id="bTaxHeader" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <Label fx:id="cTaxHeader" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+            <Label fx:id="noTaxHeader" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+            <Label fx:id="totalHeader" GridPane.columnIndex="4" GridPane.rowIndex="0" text="%total"/>
+
+            <Label fx:id="aTaxLabel" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <Label fx:id="bTaxLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label fx:id="cTaxLabel" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Label fx:id="noTaxLabel" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <Label fx:id="totalLabel" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+        </GridPane>
+    </bottom>
+</BorderPane>

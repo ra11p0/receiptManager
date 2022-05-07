@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import com.ra11p0.SharedTypes.*?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:id="root"
+      fx:controller="com.ra11p0.GUI.SearchItemsResult.Dialogs.SelectItemsDialog.SelectItemsDialogController">
+    <AutoCompleteTextField fx:id="searchField" onKeyTyped="#searchFieldOnKeyTyped"/>
+    <ListView fx:id="itemsList"/>
+    <Button fx:id="unselectAllButton" onMouseClicked="#unselectAll" text="%unselectAll"/>
+    <Button fx:id="selectAllButton" onMouseClicked="#selectAll" text="%selectAll"/>
+</VBox>

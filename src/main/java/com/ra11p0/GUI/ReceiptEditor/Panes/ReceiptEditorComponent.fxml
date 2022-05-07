@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.ra11p0.GUI.ReceiptEditor.Panes.ReceiptEditorController">
+    <top>
+        <BorderPane>
+            <left>
+                <Button fx:id="goBackButton" onMouseClicked="#goBackButtonHandler" text="%back"/>
+            </left>
+        </BorderPane>
+    </top>
+    <left>
+        <BorderPane>
+            <center>
+                <ListView fx:id="infoList"/>
+            </center>
+            <bottom>
+                <HBox>
+                    <Button fx:id="addItem" onMouseClicked="#addItemButtonHandler" text="%addItem"/>
+                    <Button fx:id="removeItem" onMouseClicked="#removeItemButtonHandler" text="%removeItem"/>
+                    <Button fx:id="editDate" onMouseClicked="#editDateButtonHandler" text="%editDate"/>
+                    <Button fx:id="save" onMouseClicked="#saveButtonHandler" text="%save"/>
+                </HBox>
+            </bottom>
+        </BorderPane>
+    </left>
+    <center>
+        <TableView fx:id="table"/>
+    </center>
+</BorderPane>

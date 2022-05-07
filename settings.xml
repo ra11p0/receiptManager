@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-<comment/>
-<entry key="currency">PLN</entry>
-<entry key="version">0.5553</entry>
 <entry key="appearance">dark</entry>
-<entry key="language">Polish</entry>
+<entry key="currency">PLN</entry>
+<entry key="language">English</entry>
+<entry key="version">0.5553</entry>
 </properties>

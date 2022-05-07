@@ -1,0 +1,23 @@
+<component name="libraryTable">
+  <library name="hildan.fxgson.fx.gson" type="repository">
+    <properties maven-id="org.hildan.fxgson:fx-gson:4.0.1">
+      <exclude>
+        <dependency maven-id="org.openjfx:javafx-base" />
+        <dependency maven-id="org.openjfx:javafx-base" />
+        <dependency maven-id="org.openjfx:javafx-base" />
+        <dependency maven-id="org.openjfx:javafx-graphics" />
+        <dependency maven-id="org.openjfx:javafx-graphics" />
+      </exclude>
+    </properties>
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/hildan/fxgson/fx-gson/4.0.1/fx-gson-4.0.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.8.6/gson-2.8.6.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/annotations/18.0.0/annotations-18.0.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <excluded>
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.8.6/gson-2.8.6.jar!/" />
+    </excluded>
+  </library>
+</component>
