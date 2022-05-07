@@ -1,13 +1,14 @@
 package com.ra11p0.GUI.ReceiptsManager.Panes;
 
 import com.ra11p0.App;
-import com.ra11p0.LocaleBundle;
-import com.ra11p0.GUI.ReceiptEditor.Panes.ReceiptEditorController;
-import com.ra11p0.GUI.ReceiptsManager.Dialogs.StoreSelectDialog;
-import com.ra11p0.GUI.SearchItemsResult.Dialogs.SelectItemsDialog.SelectItemsDialogController;
-import com.ra11p0.GUI.SearchItemsResult.Panes.SearchItemsResultController;
 import com.ra11p0.Classes.Receipt;
 import com.ra11p0.Classes.ReceiptItem;
+import com.ra11p0.GUI.ReceiptEditor.Panes.ReceiptEditorController;
+import com.ra11p0.GUI.ReceiptsManager.Dialogs.SelectStoreDialog.SelectStoreDialogController;
+import com.ra11p0.GUI.ReceiptsManager.Dialogs.SelectStoreDialog.SelectStoreDialogModel;
+import com.ra11p0.GUI.SearchItemsResult.Dialogs.SelectItemsDialog.SelectItemsDialogController;
+import com.ra11p0.GUI.SearchItemsResult.Panes.SearchItemsResultController;
+import com.ra11p0.LocaleBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -94,12 +95,17 @@ public class ReceiptsManagerController extends ReceiptsManagerModel {
 
     @FXML
     void newReceiptButtonHandler() throws IOException {
-        String store = StoreSelectDialog.ShowInputDialog();
+        FXMLLoader dialogLoader = new FXMLLoader(SelectStoreDialogController.class.getResource("SelectStoreDialog.fxml"));
+        dialogLoader.setResources(LocaleBundle.languageBundle);
+        dialogLoader.load();
+        SelectStoreDialogModel dialogModel = dialogLoader.getController();
+        dialogModel.showAndWait();
+        String store = dialogModel.getResult();
         if(store == null) return;
-        FXMLLoader loader = new FXMLLoader(ReceiptEditorController.class.getResource("ReceiptEditorComponent.fxml"));
-        loader.setControllerFactory(f-> new ReceiptEditorController(new Receipt(store, new Date())));
-        loader.setResources(LocaleBundle.languageBundle);
-        Parent parent = loader.load();
+        FXMLLoader parentLoader = new FXMLLoader(ReceiptEditorController.class.getResource("ReceiptEditorComponent.fxml"));
+        parentLoader.setControllerFactory(f-> new ReceiptEditorController(new Receipt(store, new Date())));
+        parentLoader.setResources(LocaleBundle.languageBundle);
+        Parent parent = parentLoader.load();
         App.root.setCenter(parent);
     }
 
@@ -134,7 +140,7 @@ public class ReceiptsManagerController extends ReceiptsManagerModel {
 
         List<String> namesOfItems = selectItemsDialogFX.getResult();
         if(namesOfItems == null | namesOfItems.isEmpty()) return;
-        ArrayList<ReceiptItem> matchedItems = (ArrayList<ReceiptItem>) App.dataAccessObject.getReceiptItems().stream().filter(o->namesOfItems.contains(o.name().get())).collect(Collectors.toList());
+        ArrayList<ReceiptItem> matchedItems = (ArrayList<ReceiptItem>) App.dataAccessObject.getReceiptItems().stream().filter(o->namesOfItems.contains(o.nameProperty().get())).collect(Collectors.toList());
         FXMLLoader parentLoader = new FXMLLoader(SearchItemsResultController.class.getResource("SearchItemsResultComponent.fxml"));
         parentLoader.setControllerFactory(e-> new SearchItemsResultController(matchedItems));
         parentLoader.setResources(LocaleBundle.languageBundle);

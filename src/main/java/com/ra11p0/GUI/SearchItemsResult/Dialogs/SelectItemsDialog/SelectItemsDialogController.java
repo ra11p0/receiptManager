@@ -3,14 +3,12 @@ package com.ra11p0.GUI.SearchItemsResult.Dialogs.SelectItemsDialog;
 
 import com.ra11p0.App;
 import com.ra11p0.Classes.SelectableItemNode;
-import com.ra11p0.LocaleBundle;
-import com.ra11p0.Models.ItemModel;
-import com.ra11p0.SharedTypes.AutoCompleteTextField;
+import com.ra11p0.Classes.Models.ItemModel;
+import com.ra11p0.Utils.AutoCompleteTextField;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
 
 public class SelectItemsDialogController extends SelectItemsDialogModel {
     @FXML
@@ -32,7 +30,7 @@ public class SelectItemsDialogController extends SelectItemsDialogModel {
         getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
         getDialogPane().getButtonTypes().add(ButtonType.APPLY);
         setResultConverter(buttonType -> {
-            if(buttonType.equals(ButtonType.APPLY)) return selectableItems.stream().filter(SelectableItemNode::isSelected).map(e -> e.get().name().get()).toList();
+            if(buttonType.equals(ButtonType.APPLY)) return selectableItems.stream().filter(SelectableItemNode::isSelected).map(e -> e.get().nameProperty().get()).toList();
             else return null;
         });
     }
@@ -48,8 +46,8 @@ public class SelectItemsDialogController extends SelectItemsDialogModel {
         String searchedPhrase = ((AutoCompleteTextField<?>)actionEvent.getSource()).getText();
         itemsList.getItems().clear();
         boolean isStoreBasedSearch = App.dataAccessObject.getStores().contains(searchedPhrase);
-        if(isStoreBasedSearch) itemsList.getItems().addAll(selectableItems.stream().filter(e->e.get().store().get().contains(searchedPhrase)).toList());
-        else itemsList.getItems().addAll(selectableItems.stream().filter(e->e.get().name().get().contains(searchedPhrase)).toList());
+        if(isStoreBasedSearch) itemsList.getItems().addAll(selectableItems.stream().filter(e->e.get().storeProperty().get().contains(searchedPhrase)).toList());
+        else itemsList.getItems().addAll(selectableItems.stream().filter(e->e.get().nameProperty().get().contains(searchedPhrase)).toList());
         itemsList.getItems().addAll(selectableItems.stream().filter(e->e.isSelected() & !itemsList.getItems().contains(e)).toList());
     }
 }

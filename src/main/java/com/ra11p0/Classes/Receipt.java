@@ -1,6 +1,6 @@
 package com.ra11p0.Classes;
 
-import com.ra11p0.Models.ReceiptModel;
+import com.ra11p0.Classes.Models.ReceiptModel;
 import javafx.beans.binding.FloatBinding;
 import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
@@ -9,28 +9,31 @@ import java.util.*;
 
 public class Receipt extends ReceiptModel {
 
-    public ReadOnlyStringProperty store() { return store; }
+    public ReadOnlyStringProperty storeProperty() { return store; }
 
-    public FloatProperty total() { return total; }
+    public FloatProperty totalProperty() { return total; }
 
-    public ObjectProperty<Date> date() { return date; }
+    public ObjectProperty<Date> dateProperty() { return date; }
 
-    public ReadOnlyListProperty<ReceiptItem> items() { return items; }
+    public ReadOnlyListProperty<ReceiptItem> itemsProperty() { return items; }
 
-    public StringProperty dateString(){ return dateString; }
+    public void addItem(ReceiptItem item){
+        if(items.contains(item)) items.get(items.indexOf(item)).addQuantity(item.quantityProperty().get());
+        else items.get().add(item);
+    }
 
-    public Boolean isChanged() { return changed; }
+    public void removeItem(ReceiptItem item){ items.remove(item); }
 
     public Receipt(String store, Date date){
         items.addListener(new ListChangeListener<>() {
             @Override
             public void onChanged(Change<? extends ReceiptItem> c) {
                 total.bind(new FloatBinding(){
-                    { items.forEach(e->super.bind(e.total())); }
+                    { items.forEach(e->super.bind(e.totalProperty())); }
 
                     @Override
                     protected float computeValue() {
-                        return (float) items.stream().mapToDouble(e->e.total().get()).sum();
+                        return (float) items.stream().mapToDouble(e->e.totalProperty().get()).sum();
                     }
                 });
             }
@@ -44,27 +47,15 @@ public class Receipt extends ReceiptModel {
     }
 
     public Receipt(Receipt receipt){
-        this(receipt.store().get(), receipt.date().get());
+        this(receipt.storeProperty().get(), receipt.dateProperty().get());
         items.get().addAll(receipt.items);
-    }
-
-    public void addItem(ReceiptItem item){
-        changed = true;
-        if(items.contains(item)) items.get(items.indexOf(item)).addQuantity(item.quantity().get());
-
-        else items.get().add(item);
-    }
-
-    public void removeItem(ReceiptItem item){
-        changed = true;
-        items.remove(item);
     }
 
     @Override
     public Receipt clone() {
-        Receipt clone = new Receipt(store().get(), date().get());
+        Receipt clone = new Receipt(storeProperty().get(), dateProperty().get());
         for(ReceiptItem receiptItem : items){
-            ReceiptItem newReceiptItem = new ReceiptItem(receiptItem, receiptItem.quantity().get());
+            ReceiptItem newReceiptItem = new ReceiptItem(receiptItem, receiptItem.quantityProperty().get());
             clone.addItem(newReceiptItem);
         }
         return clone;

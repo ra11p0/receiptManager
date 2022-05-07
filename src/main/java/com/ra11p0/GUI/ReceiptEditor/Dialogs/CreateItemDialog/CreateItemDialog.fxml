@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import com.ra11p0.Utils.*?>
+<?import javafx.collections.FXCollections?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.ra11p0.GUI.ReceiptEditor.Dialogs.CreateItemDialog.CreateItemDialogController"
+      fx:id="root">
+    <Label text="%nameOfNewItem"/>
+    <AutoCompleteTextField fx:id="nameField" onKeyTyped="#nameFieldKeyTyped"/>
+    <Label text="%costOfOneUnit"/>
+    <TextField fx:id="priceField"/>
+    <Label text="%taxRate"/>
+    <ComboBox fx:id="taxBox">
+        <items>
+            <FXCollections fx:factory="observableArrayList">
+                <Float fx:value="0.23"/>
+                <Float fx:value="0.08"/>
+                <Float fx:value="0.05"/>
+                <Float fx:value="0.0"/>
+            </FXCollections>
+        </items>
+    </ComboBox>
+</VBox>

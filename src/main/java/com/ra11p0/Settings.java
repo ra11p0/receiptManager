@@ -1,7 +1,7 @@
 package com.ra11p0;
 
-import com.ra11p0.Interfaces.ILoadable;
-import com.ra11p0.Interfaces.ISavable;
+import com.ra11p0.Classes.Interfaces.ILoadable;
+import com.ra11p0.Classes.Interfaces.ISavable;
 
 public class Settings implements ISavable, ILoadable {
     public float version;

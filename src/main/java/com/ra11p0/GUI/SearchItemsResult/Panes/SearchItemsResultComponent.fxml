@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.ra11p0.GUI.ReceiptEditor.Panes.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <BorderPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ra11p0.GUI.SearchItemsResult.Panes.SearchItemsResultController">
 
     <top>
@@ -13,12 +13,53 @@
         </BorderPane>
     </top>
     <left>
-        <ListView fx:id="receiptsList" />
+        <ListView fx:id="receiptsList">
+            <cellFactory>
+                <ReceiptsListCellFactory/>
+            </cellFactory>
+        </ListView>
     </left>
     <center>
         <VBox>
-            <ListView fx:id="infoList" />
-            <ListView fx:id="pricesInStores" />
+            <ListView>
+                <BorderPane>
+                    <left>
+                        <Label text="%name"/>
+                    </left>
+                    <right>
+                        <TextField editable="false" fx:id="nameField"/>
+                    </right>
+                </BorderPane>
+                <BorderPane>
+                    <left>
+                        <Label text="%total"/>
+                    </left>
+                    <right>
+                        <TextField editable="false" fx:id="totalField"/>
+                    </right>
+                </BorderPane>
+                <BorderPane>
+                    <left>
+                        <Label text="%taxRate"/>
+                    </left>
+                    <right>
+                        <TextField editable="false" fx:id="taxField"/>
+                    </right>
+                </BorderPane>
+                <BorderPane>
+                    <left>
+                        <Label text="%totalTax"/>
+                    </left>
+                    <right>
+                        <TextField editable="false" fx:id="totalTaxField"/>
+                    </right>
+                </BorderPane>
+            </ListView>
+            <ListView fx:id="pricesInStores" >
+                <cellFactory>
+                    <PricesCellFactory/>
+                </cellFactory>
+            </ListView>
         </VBox>
     </center>
     <right>

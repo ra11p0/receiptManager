@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:id="root"
+      fx:controller="com.ra11p0.GUI.ReceiptsManager.Dialogs.SelectStoreDialog.SelectStoreDialogController">
+    <Label text="%selectStore"/>
+    <ComboBox fx:id="storesBox" promptText="%selectStore"/>
+    <Button onMouseClicked="#addNewStoreAction" text="%addNewStore"/>
+
+</VBox>

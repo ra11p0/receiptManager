@@ -17,13 +17,13 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public abstract class ReceiptsManagerModel {
-    List<Day> days = new ArrayList<>();
+    final List<Day> days = new ArrayList<>();
 
-    ObjectProperty<Date> dateSince = new SimpleObjectProperty<>(new Date());
+    final ObjectProperty<Date> dateSince = new SimpleObjectProperty<>(new Date());
 
-    List<ListView<Receipt>> dayLists = new ArrayList<>();
+    final List<ListView<Receipt>> dayLists = new ArrayList<>();
 
-    List<Node> dayFields = new ArrayList<>();
+    final List<Node> dayFields = new ArrayList<>();
 
     Receipt selected;
 
@@ -35,9 +35,9 @@ public abstract class ReceiptsManagerModel {
             protected float computeValue() {
                 return (float) days.stream()
                         .flatMap(u->u.receipts().stream())
-                        .flatMap(u->u.items().stream())
-                        .filter(u->u.tax().get() == tax)
-                        .mapToDouble(e->e.total().get())
+                        .flatMap(u->u.itemsProperty().stream())
+                        .filter(u->u.taxProperty().get() == tax)
+                        .mapToDouble(e->e.totalProperty().get())
                         .sum();
             }
         }));
@@ -52,8 +52,8 @@ public abstract class ReceiptsManagerModel {
             protected float computeValue() {
                 return (float) days.stream()
                         .flatMap(u->u.receipts().stream())
-                        .flatMap(u->u.items().stream())
-                        .mapToDouble(e->e.total().get())
+                        .flatMap(u->u.itemsProperty().stream())
+                        .mapToDouble(e->e.totalProperty().get())
                         .sum();
             }
         }));

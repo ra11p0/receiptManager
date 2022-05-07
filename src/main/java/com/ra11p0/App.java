@@ -15,9 +15,9 @@ import javafx.stage.Stage;
 public class App extends Application {
     public static Settings settings;
     public static ReceiptsDAO dataAccessObject;
-    public static BorderPane root = new BorderPane();
+    public static final BorderPane root = new BorderPane();
     public static final String DEFAULT_RECEIPT_PATH = "res\\receipts.json";
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) {
         launch();
     }
 

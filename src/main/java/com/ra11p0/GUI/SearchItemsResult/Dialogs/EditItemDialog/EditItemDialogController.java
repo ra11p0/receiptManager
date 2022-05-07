@@ -1,9 +1,9 @@
 package com.ra11p0.GUI.SearchItemsResult.Dialogs.EditItemDialog;
 
+import com.ra11p0.Classes.Interfaces.IItem;
 import com.ra11p0.Classes.Item;
-import com.ra11p0.Interfaces.IItem;
-import com.ra11p0.Models.ItemModel;
-import com.ra11p0.SharedTypes.AutoCompleteTextField;
+import com.ra11p0.Classes.Models.ItemModel;
+import com.ra11p0.Utils.AutoCompleteTextField;
 import javafx.beans.property.ListProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -61,25 +61,24 @@ public class EditItemDialogController extends EditItemDialogModel {
                     protected void updateItem(ItemModel itemModel, boolean b) {
                         super.updateItem(itemModel, b);
                         if (itemModel == null) return;
-                        setText(String.format("%s (%s) - %s", itemModel.name().get(), itemModel.store().get(), itemModel.price().get()));
+                        setText(String.format("%s (%s) - %s", itemModel.nameProperty().get(), itemModel.storeProperty().get(), itemModel.priceProperty().get()));
                     }
                 };
             }
         });
         itemsBox.getSelectionModel().selectedItemProperty().addListener((observableValue, itemModel, t1) -> {
-            nameField.setText(observableValue.getValue().name().get());
-            priceField.setText(String.valueOf(observableValue.getValue().price().get()));
+            nameField.setText(observableValue.getValue().nameProperty().get());
+            priceField.setText(String.valueOf(observableValue.getValue().priceProperty().get()));
         });
 
         getDialogPane().setContent(root);
-        getDialogPane().getButtonTypes().add(ButtonType.APPLY);
-        getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        getDialogPane().getButtonTypes().addAll(ButtonType.APPLY, ButtonType.CLOSE);
         setResultConverter(buttonType -> {
             if(buttonType.equals(ButtonType.APPLY)) {
                 IItem oldItem = itemsBox.getSelectionModel().getSelectedItem();
                 String name = nameField.textProperty().get();
                 float _price = Float.parseFloat(priceField.textProperty().get());
-                return new Object[]{changeNameForAll.isSelected(), oldItem, new Item(name, oldItem.tax().get(), _price, oldItem.store().get())};
+                return new Object[]{changeNameForAll.isSelected(), oldItem, new Item(name, oldItem.taxProperty().get(), _price, oldItem.storeProperty().get())};
             }
             else return null;
         });

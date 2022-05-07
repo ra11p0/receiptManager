@@ -11,14 +11,13 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public abstract class ReceiptFieldModel {
-    StringProperty titleLabelText = new SimpleStringProperty();
+    final StringProperty titleLabelText = new SimpleStringProperty();
 
-    ListProperty<Receipt> receipts = new SimpleListProperty<>(FXCollections.observableArrayList());
+    final ListProperty<Receipt> receipts = new SimpleListProperty<>(FXCollections.observableArrayList());
 
-    StringProperty descriptionLabelText = new SimpleStringProperty();
+    final StringProperty descriptionLabelText = new SimpleStringProperty();
 
     public ReceiptFieldModel(Day day) {
         this.titleLabelText.bind(new StringBinding() {

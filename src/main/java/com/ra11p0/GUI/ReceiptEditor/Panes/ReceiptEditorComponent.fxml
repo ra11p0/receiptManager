@@ -3,6 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.ra11p0.GUI.ReceiptEditor.Panes.ReceiptEditorController">
@@ -16,7 +17,32 @@
     <left>
         <BorderPane>
             <center>
-                <ListView fx:id="infoList"/>
+                <ListView>
+                    <BorderPane>
+                        <left>
+                            <Label text="%store"/>
+                        </left>
+                        <right>
+                            <TextField editable="false" fx:id="storeField"/>
+                        </right>
+                    </BorderPane>
+                    <BorderPane>
+                        <left>
+                            <Label text="%date"/>
+                        </left>
+                        <right>
+                            <TextField editable="false" fx:id="dateField"/>
+                        </right>
+                    </BorderPane>
+                    <BorderPane>
+                        <left>
+                            <Label text="%total"/>
+                        </left>
+                        <right>
+                            <TextField editable="false" fx:id="totalField"/>
+                        </right>
+                    </BorderPane>
+                </ListView>
             </center>
             <bottom>
                 <HBox>
@@ -29,6 +55,38 @@
         </BorderPane>
     </left>
     <center>
-        <TableView fx:id="table"/>
+        <TableView fx:id="table">
+            <columns>
+                <TableColumn text="%item">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="name" />
+                    </cellValueFactory>
+                </TableColumn>
+
+                <TableColumn text="%qty">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="quantity" />
+                    </cellValueFactory>
+                </TableColumn>
+
+                <TableColumn text="%price">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="price" />
+                    </cellValueFactory>
+                </TableColumn>
+
+                <TableColumn text="%tax">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="tax" />
+                    </cellValueFactory>
+                </TableColumn>
+
+                <TableColumn text="%total">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="total" />
+                    </cellValueFactory>
+                </TableColumn>
+            </columns>
+        </TableView>
     </center>
 </BorderPane>

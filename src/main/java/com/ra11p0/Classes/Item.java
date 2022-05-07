@@ -1,17 +1,17 @@
 package com.ra11p0.Classes;
 
-import com.ra11p0.Models.ItemModel;
+import com.ra11p0.Classes.Models.ItemModel;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.StringProperty;
 
 public class Item extends ItemModel {
-    public StringProperty name() { return name; }
+    public StringProperty nameProperty() { return name; }
 
-    public StringProperty store() { return store; }
+    public StringProperty storeProperty() { return store; }
 
-    public FloatProperty tax() { return price; }
+    public FloatProperty taxProperty() { return price; }
 
-    public FloatProperty price() { return tax; }
+    public FloatProperty priceProperty() { return tax; }
 
     public Item(String name, float tax, float price){
         this.name.set(name);

@@ -1,23 +1,22 @@
 package com.ra11p0.GUI.ReceiptEditor.Panes;
 
 import com.ra11p0.App;
+import com.ra11p0.GUI.ReceiptEditor.Dialogs.AddItemDialog.AddItemDialogController;
+import com.ra11p0.GUI.ReceiptEditor.Dialogs.AddItemDialog.AddItemDialogModel;
+import com.ra11p0.GUI.ReceiptEditor.Dialogs.PickDateDialog.PickDateDialogController;
+import com.ra11p0.GUI.ReceiptEditor.Dialogs.PickDateDialog.PickDateDialogModel;
+import com.ra11p0.GUI.ReceiptEditor.Dialogs.RemoveItemDialog.RemoveItemDialogController;
+import com.ra11p0.GUI.ReceiptEditor.Dialogs.RemoveItemDialog.RemoveItemDialogModel;
 import com.ra11p0.LocaleBundle;
-import com.ra11p0.GUI.ReceiptEditor.Dialogs.AddItemDialog;
-import com.ra11p0.GUI.ReceiptEditor.Dialogs.PickDateDialog;
-import com.ra11p0.GUI.ReceiptEditor.Dialogs.SelectItemDialog;
 import com.ra11p0.GUI.ReceiptsManager.Panes.ReceiptsManagerController;
 import com.ra11p0.Classes.Receipt;
-import com.ra11p0.Models.ReceiptEditorModel;
+import com.ra11p0.Classes.Models.ReceiptEditorModel;
 import com.ra11p0.Classes.ReceiptItem;
-import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.util.Callback;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -25,9 +24,13 @@ import java.util.*;
 
 public class ReceiptEditorController extends ReceiptEditorModel {
     @FXML
-    TableView<ReceiptItem> table;
+    TextField storeField;
     @FXML
-    ListView<Map.Entry<String, ObservableValue<String>>> infoList;
+    TextField dateField;
+    @FXML
+    TextField totalField;
+    @FXML
+    TableView<ReceiptItem> table;
     @FXML
     Button addItem;
     @FXML
@@ -43,73 +46,54 @@ public class ReceiptEditorController extends ReceiptEditorModel {
 
     @FXML
     void initialize(){
-        AbstractMap.SimpleEntry<String, ObservableValue<String>> storeEntry = new AbstractMap.SimpleEntry<>(LocaleBundle.get("store") + ": ", store());
-        AbstractMap.SimpleEntry<String, ObservableValue<String>> dateEntry = new AbstractMap.SimpleEntry<>(LocaleBundle.get("date") + ": ", new StringBinding() {
-            {this.bind(date());}
+        storeField.textProperty().bind(store);
+        dateField.textProperty().bind(new StringBinding() {
+            {this.bind(dateProperty());}
             @Override
             protected String computeValue() {
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date().get());
+                calendar.setTime(dateProperty().get());
                 return String.format("%s - %s - %s", calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.YEAR));
             }
         });
-        AbstractMap.SimpleEntry<String, ObservableValue<String>> totalEntry = new AbstractMap.SimpleEntry<>(LocaleBundle.get("total") + ": ", total().asString());
-        infoList.setCellFactory(new Callback<>() {
-            @Override
-            public ListCell<Map.Entry<String, ObservableValue<String>>> call(ListView<Map.Entry<String, ObservableValue<String>>> param) {
-                return new ListCell<>() {
-                    @Override
-                    protected void updateItem(Map.Entry<String, ObservableValue<String>> item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) return;
-                        BorderPane parent = new BorderPane();
-                        Label label = new Label(item.getKey());
-                        TextField textField = new TextField();
-                        textField.textProperty().bind(item.getValue());
-                        textField.setEditable(false);
-                        parent.setLeft(label);
-                        parent.setRight(textField);
-                        setGraphic(parent);
-                    }
-                };
-            }
-        });
-        //noinspection unchecked
-        infoList.getItems().addAll(storeEntry, dateEntry, totalEntry);
-        TableColumn<ReceiptItem, String> name = new TableColumn<>(LocaleBundle.get("item"));
-        TableColumn<ReceiptItem, Float> qty = new TableColumn<>(LocaleBundle.get("qty"));
-        TableColumn<ReceiptItem, Float> price = new TableColumn<>(LocaleBundle.get("price"));
-        TableColumn<ReceiptItem, Float> tax = new TableColumn<>(LocaleBundle.get("tax"));
-        TableColumn<ReceiptItem, Float> total = new TableColumn<>(LocaleBundle.get("total"));
-        name.setCellValueFactory(item -> item.getValue().name());
-        qty.setCellValueFactory(item -> item.getValue().quantity().asObject());
-        price.setCellValueFactory(item -> item.getValue().price().asObject());
-        tax.setCellValueFactory(item -> item.getValue().tax().asObject());
-        total.setCellValueFactory(item -> item.getValue().total().asObject());
-        //noinspection unchecked
-        table.getColumns().addAll(name, qty, price, tax, total);
-        Bindings.bindContent(table.getItems(), items());
+        totalField.textProperty().bind(total.asString());
+        table.itemsProperty().bind(items);
     }
 
     @FXML
-    void addItemButtonHandler() {
-        ReceiptItem receiptItem = AddItemDialog.ShowInputDialog(store().get());
+    void addItemButtonHandler() throws IOException {
+        FXMLLoader dialogLoader = new FXMLLoader(AddItemDialogController.class.getResource("AddItemDialog.fxml"));
+        dialogLoader.setControllerFactory(e->new AddItemDialogController(storeProperty().get()));
+        dialogLoader.setResources(LocaleBundle.languageBundle);
+        dialogLoader.load();
+        AddItemDialogModel dialogModel = dialogLoader.getController();
+        dialogModel.showAndWait();
+        ReceiptItem receiptItem = dialogModel.getResult();
         if(receiptItem == null)  return;
         addItem(receiptItem);
     }
 
     @FXML
-    void removeItemButtonHandler() {
-        ReceiptItem receiptItem = SelectItemDialog.ShowInputDialog(new ArrayList<>(items()));
+    void removeItemButtonHandler() throws IOException {
+        FXMLLoader dialogLoader = new FXMLLoader(RemoveItemDialogController.class.getResource("RemoveItemDialog.fxml"));
+        dialogLoader.setControllerFactory(e->new RemoveItemDialogController(items));
+        dialogLoader.load();
+        RemoveItemDialogModel dialogModel = dialogLoader.getController();
+        dialogModel.showAndWait();
+        ReceiptItem receiptItem = dialogModel.getResult();
         if(receiptItem == null) return;
         removeItem(receiptItem);
     }
 
     @FXML
-    void editDateButtonHandler() {
-        Date date = PickDateDialog.ShowInputDialog();
+    void editDateButtonHandler() throws IOException {
+        FXMLLoader dialogLoader = new FXMLLoader(PickDateDialogController.class.getResource("PickDateDialog.fxml"));
+        dialogLoader.load();
+        PickDateDialogModel dialogModel = dialogLoader.getController();
+        dialogModel.showAndWait();
+        Date date = dialogModel.getResult();
         if(date == null) return;
-        date().set(date);
+        dateProperty().set(date);
     }
 
     @FXML

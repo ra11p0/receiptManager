@@ -5,9 +5,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
 public class SelectableItemNode<T> extends BorderPane {
-    CheckBox checkBox = new CheckBox();
+    final CheckBox checkBox = new CheckBox();
 
-    T t;
+    final T t;
 
     public boolean isSelected() { return checkBox.isSelected(); }
 
